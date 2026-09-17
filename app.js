@@ -1,5 +1,13 @@
-const SUPABASE_URL = "https://qadbabbfhrqcbmjrkuvw.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+const SUPABASE_URL =
+  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+
+
+/* =========================================
+   SUPABASE
+========================================= */
 
 let supabaseClient = null;
 
@@ -9,72 +17,914 @@ if (window.supabase) {
     SUPABASE_PUBLISHABLE_KEY
   );
 }
-const defaults=[
-{id:'001',src:'assets/clouds.jpg',title:'between weather',tags:['sky','clouds','quiet']},
-{id:'002',src:'assets/purple-glow.jpg',title:'violet static',tags:['purple','liminal','light']},
-{id:'003',src:'assets/purple-architecture.jpg',title:'afterimage',tags:['purple','night','liminal']},
-{id:'004',src:'assets/night-trails.jpg',title:'somewhere above',tags:['night','sky','light']},
-{id:'005',src:'assets/night-sky.jpg',title:'02:17',tags:['night','sky','stars']},
-{id:'006',src:'assets/night-blue.jpg',title:'blue hour',tags:['night','sky','blue']}];
-let added=JSON.parse(localStorage.getItem('kioku-added')||'[]');
-let favs=JSON.parse(localStorage.getItem('kioku-favs')||'[]');
-let profile=JSON.parse(localStorage.getItem('kioku-profile')||'{}');
-let filter='all',favoritesOnly=false,current=null;
-const $=s=>document.querySelector(s),all=()=>[...defaults,...added];
-function persist(){localStorage.setItem('kioku-added',JSON.stringify(added));localStorage.setItem('kioku-favs',JSON.stringify(favs));localStorage.setItem('kioku-profile',JSON.stringify(profile));$('#fav span').textContent=favs.length}
-function render(){
- let q=$('#search').value.toLowerCase().trim();
- let items=all().filter(p=>(filter==='all'||p.tags.includes(filter))&&(!q||p.title.toLowerCase().includes(q)||p.tags.some(t=>t.includes(q)))&&(!favoritesOnly||favs.includes(p.id)));
- $('#count').textContent=`${favoritesOnly?'saved':filter==='all'?'all photographs':filter} / ${items.length}`;
- $('#empty').hidden=items.length>0;$('#gallery').innerHTML='';
- items.forEach(p=>{let c=document.createElement('article');c.className='card '+(favs.includes(p.id)?'saved':'');c.innerHTML=`<img src="${p.src}" alt="${escapeHtml(p.title)}" loading="lazy"><button class="save">${favs.includes(p.id)?'♥':'♡'}</button><div class="info"><div class="title">${escapeHtml(p.title)}</div><div class="tags">${p.tags.map(t=>'#'+escapeHtml(t)).join('  ')}</div></div>`;c.onclick=e=>{if(e.target.classList.contains('save')){toggle(p.id);return}openViewer(p)};$('#gallery').append(c)});persist()
-}
-function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function toggle(id){favs=favs.includes(id)?favs.filter(x=>x!==id):[...favs,id];render();if(current&&current.id===id)updateViewer()}
-function openViewer(p){current=p;$('#vimg').src=p.src;$('#vimg').alt=p.title;$('#vnum').textContent='archive / '+p.id;$('#vtitle').textContent=p.title;$('#vmeta').textContent=p.tags.map(t=>'#'+t).join('   ');updateViewer();$('#viewer').hidden=false;document.body.style.overflow='hidden'}
-function updateViewer(){$('#vsave').textContent=favs.includes(current.id)?'♥ saved':'♡ save'}
-function closeViewer(){$('#viewer').hidden=true;current=null;document.body.style.overflow=''}
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');filter=b.dataset.filter;favoritesOnly=false;render()});
-$('.logo').onclick=e=>{e.preventDefault();filter='all';favoritesOnly=false;$('#search').value='';document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.filter==='all'));render()};
-$('#search').oninput=render;$('#fav').onclick=()=>{favoritesOnly=!favoritesOnly;render()};$('#close').onclick=closeViewer;$('#viewer').onclick=e=>{if(e.target.id==='viewer')closeViewer()};$('#vsave').onclick=()=>current&&toggle(current.id);
-$('#add').onclick=()=>{$('#addModal').hidden=false;document.body.style.overflow='hidden'};$('#closeAdd').onclick=closeAdd;
-function closeAdd(){$('#addModal').hidden=true;if($('#viewer').hidden&&$('#profileModal').hidden)document.body.style.overflow=''}
-$('#photo').onchange=e=>{$('.upload').firstChild.textContent=e.target.files[0]?' '+e.target.files[0].name:'＋ choose a photo'};
-$('#form').onsubmit=e=>{e.preventDefault();let file=$('#photo').files[0];if(!file)return;let r=new FileReader();r.onload=()=>{added.unshift({id:'local-'+Date.now(),src:r.result,title:$('#title').value.trim()||'untitled',tags:($('#tags').value||'personal').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)});$('#form').reset();$('.upload').firstChild.textContent='＋ choose a photo';closeAdd();render()};r.readAsDataURL(file)};
-function openProfile(){
- $('#profileName').value=profile.name||'';$('#profileUsername').value=profile.username||'';$('#profileBio').value=profile.bio||'';updateProfilePreview();$('#profileModal').hidden=false;document.body.style.overflow='hidden'
-}
-function updateProfilePreview(){
- $('#previewName').textContent=profile.name||'kioku user';$('#previewUsername').textContent=profile.username?('@'+profile.username.replace(/^@/,'')):'@you';
- $('#previewAvatar').textContent=(profile.name||'k').trim().charAt(0).toLowerCase()||'k';
- if(profile.avatar){$('#previewAvatar').style.backgroundImage=`url(${profile.avatar})`;$('#previewAvatar').textContent=''}else $('#previewAvatar').style.backgroundImage='';
- if(profile.background)$('#profileModal .modal-card').style.backgroundImage=`linear-gradient(#17171ae8,#17171ae8),url(${profile.background})`;else $('#profileModal .modal-card').style.backgroundImage='';
-}
-$('#profileBtn').onclick=openProfile;$('#closeProfile').onclick=()=>{$('#profileModal').hidden=true;if($('#viewer').hidden&&$('#addModal').hidden)document.body.style.overflow=''};
-$('#profileName').oninput=()=>{profile.name=$('#profileName').value;updateProfilePreview()};$('#profileUsername').oninput=()=>{profile.username=$('#profileUsername').value;updateProfilePreview()};
-$('#profileBg').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{profile.background=r.result;updateProfilePreview()};r.readAsDataURL(f)};
-$('#profileAvatar').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{profile.avatar=r.result;updateProfilePreview()};r.readAsDataURL(f)};
-$('#profileForm').onsubmit=e=>{e.preventDefault();profile.name=$('#profileName').value.trim();profile.username=$('#profileUsername').value.trim().replace(/^@/,'');profile.bio=$('#profileBio').value.trim();persist();$('#profileModal').hidden=true;document.body.style.overflow=''};
-render();
-async function checkAuth() {
-  if (!supabaseClient) return;
-  const { data: { session } } = await supabaseClient.auth.getSession();
 
-  const profileButton = $('#profileBtn');
+
+/* =========================================
+   DEFAULT PHOTOS
+   These stay as backup photos so the gallery
+   never looks empty while real posts are added.
+========================================= */
+
+const defaults = [
+  {
+    id: "001",
+    src: "assets/clouds.jpg",
+    title: "between weather",
+    tags: ["sky", "clouds", "quiet"]
+  },
+  {
+    id: "002",
+    src: "assets/purple-glow.jpg",
+    title: "violet static",
+    tags: ["purple", "liminal", "light"]
+  },
+  {
+    id: "003",
+    src: "assets/purple-architecture.jpg",
+    title: "afterimage",
+    tags: ["purple", "night", "liminal"]
+  },
+  {
+    id: "004",
+    src: "assets/night-trails.jpg",
+    title: "somewhere above",
+    tags: ["night", "sky", "light"]
+  },
+  {
+    id: "005",
+    src: "assets/night-sky.jpg",
+    title: "02:17",
+    tags: ["night", "sky", "stars"]
+  },
+  {
+    id: "006",
+    src: "assets/night-blue.jpg",
+    title: "blue hour",
+    tags: ["night", "sky", "blue"]
+  }
+];
+
+
+let posts = [...defaults];
+let filteredPosts = [...posts];
+
+
+/* =========================================
+   HELPERS
+========================================= */
+
+const $ = (selector) =>
+  document.querySelector(selector);
+
+const escapeHTML = (value = "") =>
+  String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+
+/* =========================================
+   LOAD REAL POSTS
+========================================= */
+
+async function loadRealPosts() {
+  if (!supabaseClient) return;
+
+  try {
+    const { data, error } =
+      await supabaseClient
+        .from("posts")
+        .select("*")
+        .order("created_at", {
+          ascending: false
+        });
+
+    if (error) {
+      console.error("Could not load posts:", error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      posts = [...defaults];
+    } else {
+      const realPosts = data.map((post) => ({
+        id: post.id,
+        src: post.image_url,
+        title: post.title || "",
+        description: post.description || "",
+        tags: post.tags || [],
+        userId: post.user_id,
+        real: true
+      }));
+
+      posts = [
+        ...realPosts,
+        ...defaults
+      ];
+    }
+
+    filteredPosts = [...posts];
+
+    renderGallery();
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+/* =========================================
+   GALLERY
+========================================= */
+
+function renderGallery() {
+  const gallery = $("#gallery");
+  const empty = $("#empty");
+
+  if (!gallery) return;
+
+  gallery.innerHTML = "";
+
+  if (filteredPosts.length === 0) {
+    if (empty) empty.style.display = "block";
+    return;
+  }
+
+  if (empty) empty.style.display = "none";
+
+  filteredPosts.forEach((post) => {
+
+    const card = document.createElement("article");
+
+    card.className = "photo-card";
+
+    card.innerHTML = `
+      <img
+        src="${escapeHTML(post.src)}"
+        alt="${escapeHTML(post.title || "kioku photo")}"
+        loading="lazy"
+      >
+
+      <div class="photo-info">
+        ${
+          post.title
+            ? `<div class="photo-title">${escapeHTML(post.title)}</div>`
+            : ""
+        }
+
+        ${
+          post.tags && post.tags.length
+            ? `
+              <div class="photo-tags">
+                ${post.tags
+                  .map(
+                    tag =>
+                      `<span>#${escapeHTML(tag)}</span>`
+                  )
+                  .join("")}
+              </div>
+            `
+            : ""
+        }
+      </div>
+    `;
+
+    card.addEventListener("click", () => {
+      openViewer(post);
+    });
+
+    gallery.appendChild(card);
+  });
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+function setupSearch() {
+  const search = $("#search");
+
+  if (!search) return;
+
+  search.addEventListener("input", () => {
+
+    const query =
+      search.value
+        .trim()
+        .toLowerCase();
+
+    if (!query) {
+      filteredPosts = [...posts];
+      renderGallery();
+      return;
+    }
+
+    filteredPosts = posts.filter((post) => {
+
+      const title =
+        (post.title || "")
+          .toLowerCase();
+
+      const description =
+        (post.description || "")
+          .toLowerCase();
+
+      const tags =
+        (post.tags || [])
+          .join(" ")
+          .toLowerCase();
+
+      return (
+        title.includes(query) ||
+        description.includes(query) ||
+        tags.includes(query)
+      );
+    });
+
+    renderGallery();
+  });
+}
+
+
+/* =========================================
+   FAVORITES
+========================================= */
+
+function setupFavorites() {
+
+  const fav = $("#fav");
+
+  if (!fav) return;
+
+  fav.addEventListener("click", () => {
+
+    fav.classList.toggle("active");
+
+    if (fav.classList.contains("active")) {
+      filteredPosts = posts.filter(
+        post => post.favorite
+      );
+    } else {
+      filteredPosts = [...posts];
+    }
+
+    renderGallery();
+  });
+}
+
+
+/* =========================================
+   VIEWER
+========================================= */
+
+function openViewer(post) {
+
+  const viewer =
+    $("#viewer");
+
+  if (!viewer) return;
+
+  const viewerImage =
+    viewer.querySelector("img");
+
+  if (viewerImage) {
+    viewerImage.src = post.src;
+    viewerImage.alt =
+      post.title || "kioku photo";
+  }
+
+  const title =
+    viewer.querySelector(".viewer-title");
+
+  if (title) {
+    title.textContent =
+      post.title || "";
+  }
+
+  viewer.classList.add("open");
+  viewer.style.display = "flex";
+}
+
+
+function closeViewer() {
+
+  const viewer =
+    $("#viewer");
+
+  if (!viewer) return;
+
+  viewer.classList.remove("open");
+  viewer.style.display = "none";
+}
+
+
+function setupViewer() {
+
+  const viewer =
+    $("#viewer");
+
+  if (!viewer) return;
+
+  const close =
+    viewer.querySelector(
+      "[data-close]"
+    );
+
+  if (close) {
+    close.addEventListener(
+      "click",
+      closeViewer
+    );
+  }
+
+  viewer.addEventListener(
+    "click",
+    (event) => {
+
+      if (event.target === viewer) {
+        closeViewer();
+      }
+
+    }
+  );
+}
+
+
+/* =========================================
+   AUTH / PROFILE BUTTON
+========================================= */
+
+async function checkAuth() {
+
+  const profileButton =
+    $("#profileBtn");
 
   if (!profileButton) return;
 
-  if (session) {
-    profileButton.textContent = 'profile';
+  if (!supabaseClient) {
+
+    profileButton.textContent =
+      "log in";
+
     profileButton.onclick = () => {
-      window.location.href = 'profile.html';
+      window.location.href =
+        "auth.html";
     };
-  } else {
-    profileButton.textContent = 'log in';
+
+    return;
+  }
+
+  const {
+    data: { session }
+  } =
+    await supabaseClient.auth.getSession();
+
+  if (session) {
+
+    profileButton.textContent =
+      "profile";
+
     profileButton.onclick = () => {
-      window.location.href = 'auth.html';
+      window.location.href =
+        "profile.html";
+    };
+
+  } else {
+
+    profileButton.textContent =
+      "log in";
+
+    profileButton.onclick = () => {
+      window.location.href =
+        "auth.html";
     };
   }
 }
 
+
+/* =========================================
+   ADD PHOTO MODAL
+========================================= */
+
+function setupAddButton() {
+
+  const add =
+    $("#add");
+
+  if (!add) return;
+
+  add.addEventListener(
+    "click",
+    async () => {
+
+      if (!supabaseClient) {
+        window.location.href =
+          "auth.html";
+        return;
+      }
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient.auth.getSession();
+
+      if (!session) {
+        window.location.href =
+          "auth.html";
+        return;
+      }
+
+      openAddModal();
+    }
+  );
+}
+
+
+/* =========================================
+   ADD MODAL
+========================================= */
+
+function openAddModal() {
+
+  const modal =
+    $("#addModal");
+
+  if (!modal) {
+    createAddModal();
+  }
+
+  const realModal =
+    $("#addModal");
+
+  if (realModal) {
+    realModal.style.display =
+      "flex";
+  }
+}
+
+
+function closeAddModal() {
+
+  const modal =
+    $("#addModal");
+
+  if (modal) {
+    modal.style.display =
+      "none";
+  }
+}
+
+
+/* =========================================
+   CREATE ADD MODAL
+========================================= */
+
+function createAddModal() {
+
+  if ($("#addModal")) return;
+
+  const modal =
+    document.createElement("div");
+
+  modal.id =
+    "addModal";
+
+  modal.innerHTML = `
+    <div class="add-box">
+
+      <button
+        class="add-close"
+        id="addClose"
+      >
+        ×
+      </button>
+
+      <h2>new memory</h2>
+
+      <input
+        id="postImage"
+        type="file"
+        accept="image/*"
+      >
+
+      <div
+        id="imagePreview"
+        class="image-preview"
+      ></div>
+
+      <input
+        id="postTitle"
+        type="text"
+        placeholder="title"
+        maxlength="100"
+      >
+
+      <textarea
+        id="postDescription"
+        placeholder="description"
+        maxlength="500"
+      ></textarea>
+
+      <input
+        id="postTags"
+        type="text"
+        placeholder="tags, separated by commas"
+      >
+
+      <button
+        id="publishPost"
+        class="publish-button"
+      >
+        publish
+      </button>
+
+      <div
+        id="uploadStatus"
+        class="upload-status"
+      ></div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  addModalStyles();
+
+  $("#addClose")
+    .addEventListener(
+      "click",
+      closeAddModal
+    );
+
+  modal.addEventListener(
+    "click",
+    (event) => {
+
+      if (event.target === modal) {
+        closeAddModal();
+      }
+
+    }
+  );
+
+  $("#postImage")
+    .addEventListener(
+      "change",
+      previewPostImage
+    );
+
+  $("#publishPost")
+    .addEventListener(
+      "click",
+      publishPost
+    );
+}
+
+
+/* =========================================
+   PHOTO PREVIEW
+========================================= */
+
+function previewPostImage(event) {
+
+  const file =
+    event.target.files[0];
+
+  const preview =
+    $("#imagePreview");
+
+  if (!file || !preview) return;
+
+  const url =
+    URL.createObjectURL(file);
+
+  preview.innerHTML = `
+    <img src="${url}">
+  `;
+}
+
+
+/* =========================================
+   PUBLISH POST
+========================================= */
+
+async function publishPost() {
+
+  const status =
+    $("#uploadStatus");
+
+  const publishButton =
+    $("#publishPost");
+
+  const fileInput =
+    $("#postImage");
+
+  const titleInput =
+    $("#postTitle");
+
+  const descriptionInput =
+    $("#postDescription");
+
+  const tagsInput =
+    $("#postTags");
+
+  if (!supabaseClient) {
+    if (status)
+      status.textContent =
+        "Supabase is not connected.";
+
+    return;
+  }
+
+  const {
+    data: { session }
+  } =
+    await supabaseClient.auth.getSession();
+
+  if (!session) {
+
+    window.location.href =
+      "auth.html";
+
+    return;
+  }
+
+  const file =
+    fileInput.files[0];
+
+  if (!file) {
+
+    status.textContent =
+      "choose a photo first.";
+
+    return;
+  }
+
+  publishButton.disabled = true;
+
+  status.textContent =
+    "uploading...";
+
+  try {
+
+    const extension =
+      file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+    const filePath =
+      `photos/${session.user.id}-${Date.now()}.${extension}`;
+
+
+    /* Upload image */
+
+    const {
+      error: uploadError
+    } =
+      await supabaseClient
+        .storage
+        .from("avatars")
+        .upload(
+          filePath,
+          file,
+          {
+            contentType:
+              file.type,
+            upsert: false
+          }
+        );
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+
+    /* Get public URL */
+
+    const {
+      data: publicData
+    } =
+      supabaseClient
+        .storage
+        .from("avatars")
+        .getPublicUrl(
+          filePath
+        );
+
+    const imageUrl =
+      publicData.publicUrl;
+
+
+    /* Tags */
+
+    const tags =
+      tagsInput.value
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(Boolean);
+
+
+    /* Create post */
+
+    const {
+      error: postError
+    } =
+      await supabaseClient
+        .from("posts")
+        .insert({
+          user_id:
+            session.user.id,
+
+          image_url:
+            imageUrl,
+
+          title:
+            titleInput.value.trim(),
+
+          description:
+            descriptionInput.value.trim(),
+
+          tags
+        });
+
+    if (postError) {
+      throw postError;
+    }
+
+
+    status.textContent =
+      "published.";
+
+    fileInput.value = "";
+
+    titleInput.value = "";
+
+    descriptionInput.value = "";
+
+    tagsInput.value = "";
+
+    $("#imagePreview").innerHTML = "";
+
+
+    await loadRealPosts();
+
+
+    setTimeout(
+      closeAddModal,
+      700
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Publish error:",
+      error
+    );
+
+    status.textContent =
+      "upload failed: " +
+      (
+        error.message ||
+        "unknown error"
+      );
+
+  } finally {
+
+    publishButton.disabled =
+      false;
+  }
+}
+
+
+/* =========================================
+   MODAL STYLES
+========================================= */
+
+function addModalStyles() {
+
+  if ($("#kiokuAddStyles"))
+    return;
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "kiokuAddStyles";
+
+  style.textContent = `
+
+    #addModal {
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.45);
+      padding:20px;
+      box-sizing:border-box;
+    }
+
+    .add-box {
+      width:min(480px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:#fff;
+      border:1px solid #222;
+      padding:24px;
+      box-sizing:border-box;
+      position:relative;
+      box-shadow:0 15px 50px rgba(0,0,0,.2);
+    }
+
+    .add-box h2 {
+      margin:0 0 20px;
+      font-weight:400;
+    }
+
+    .add-box input,
+    .add-box textarea {
+      width:100%;
+      box-sizing:border-box;
+      border:1px solid #ccc;
+      padding:12px;
+      margin-bottom:12px;
+      font:inherit;
+      background:#fff;
+    }
+
+    .add-box textarea {
+      min-height:100px;
+      resize:vertical;
+    }
+
+    .add-close {
+      position:absolute;
+      right:14px;
+      top:10px;
+      border:0;
+      background:none;
+      font-size:28px;
+      cursor:pointer;
+    }
+
+    .image-preview {
+      width:100%;
+      margin-bottom:12px;
+    }
+
+    .image-preview img {
+      display:block;
+      width:100%;
+      max-height:280px;
+      object-fit:contain;
+      background:#f3f3f3;
+    }
+
+    .publish-button {
+      width:100%;
+      padding:13px;
+      border:1px solid #222;
+      background:#222;
+      color:#fff;
+      cursor:pointer;
+      font:inherit;
+    }
+
+    .publish-button:disabled {
+      opacity:.5;
+      cursor:wait;
+    }
+
+    .upload-status {
+      min-height:20px;
+      margin-top:12px;
+      font-size:13px;
+      text-align:center;
+    }
+
+  `;
+
+  document.head.appendChild(style);
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+setupSearch();
+
+setupFavorites();
+
+setupViewer();
+
+setupAddButton();
+
 checkAuth();
+
+loadRealPosts();
