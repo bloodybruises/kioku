@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>kioku — profile</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #efedef;
+      color: #171517;
+      font-family: Manrope, sans-serif;
+      transition: background .3s;
+    }
+
+    .top {
+      padding: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: #171517;
+      text-decoration: none;
+      font-size: 24px;
+    }
+
+    .logo small {
+      font-family: "DM Mono", monospace;
+      font-size: 12px;
+      opacity: .5;
+    }
+
+    .back {
+      color: #777;
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .profile {
+      max-width: 850px;
+      margin: 30px auto;
+      padding: 0 20px 60px;
+    }
+
+    .profile-card {
+      min-height: 430px;
+      border-radius: 20px;
+      padding: 45px 30px;
+      background: #efedef;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all .3s;
+    }
+
+    .avatar {
+      width: 105px;
+      height: 105px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: #e8b8cb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .name {
+      font-size: 30px;
+      font-weight: 500;
+    }
+
+    .username {
+      margin-top: 6px;
+      color: #777;
+      font-family: "DM Mono", monospace;
+      font-size: 13px;
+    }
+
+    .bio {
+      max-width: 500px;
+      margin: 22px auto 0;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .archive {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(0,0,0,.12);
+      font-family: "DM Mono", monospace;
+      font-size: 11px;
+      color: #777;
+    }
+
+    .error {
+      text-align: center;
+      padding: 80px 20px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="top">
+
+  <a class="logo" href="index.html">
+    kioku <small>記憶</small>
+  </a>
+
+  <a class="back" href="index.html">
+    ← archives
+  </a>
+
+</header>
+
+<main class="profile">
+
+  <section class="profile-card" id="profileCard">
+
+    <div class="avatar" id="avatar">k</div>
+
+    <div class="name" id="name">kioku user</div>
+
+    <div class="username" id="username">@user</div>
+
+    <div class="bio" id="bio"></div>
+
+    <div class="archive">
+      archive / 0 photographs
+    </div>
+
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+
+let supabaseClient = null;
+
+if (window.supabase) {
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+}
+
+const params = new URLSearchParams(window.location.search);
+const username = params.get("username");
+
+async function loadProfile() {
+
+  if (!username) {
+    document.querySelector(".profile").innerHTML =
+      '<div class="error">no profile specified.</div>';
+    return;
+  }
+
+  if (!supabaseClient) {
+    document.querySelector(".profile").innerHTML =
+      '<div class="error">unable to connect to kioku.</div>';
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq("username", username.replace(/^@/, ""))
+    .maybeSingle();
+
+  if (error) {
+    document.querySelector(".profile").innerHTML =
+      '<div class="error">something went wrong loading this profile.</div>';
+    return;
+  }
+
+  if (!data) {
+    document.querySelector(".profile").innerHTML =
+      '<div class="error">this profile does not exist.</div>';
+    return;
+  }
+
+  document.title =
+    "kioku — @" + data.username;
+
+  document.body.style.background =
+    data.page_color || "#efedef";
+
+  const card = document.getElementById("profileCard");
+
+  card.style.background =
+    data.page_color || "#efedef";
+
+  document.getElementById("name").textContent =
+    data.display_name || "kioku user";
+
+  document.getElementById("username").textContent =
+    "@" + data.username;
+
+  document.getElementById("bio").textContent =
+    data.bio || "";
+
+  const avatar =
+    document.getElementById("avatar");
+
+  avatar.style.background =
+    data.accent_color || "#e8b8cb";
+
+  avatar.textContent =
+    (data.display_name || "k")
+      .trim()
+      .charAt(0)
+      .toLowerCase() || "k";
+
+  const fonts = {
+    sans: "Manrope, sans-serif",
+    serif: "Georgia, serif",
+    mono: '"DM Mono", monospace'
+  };
+
+  card.style.fontFamily =
+    fonts[data.font] || fonts.sans;
+
+  if (data.layout === "minimal") {
+    card.style.borderRadius = "4px";
+  }
+
+  if (data.layout === "boxed") {
+    card.style.borderRadius = "0";
+    card.style.border = "1px solid #aaa";
+  }
+
+}
+
+loadProfile();
+
+</script>
+
+</body>
+</html>
