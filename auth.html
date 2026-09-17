@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kioku 記憶 — account</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #efedef;
+      color: #171517;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .auth {
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      text-align: center;
+      color: #777177;
+      font-size: 13px;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #dedade;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 7px;
+      color: #5f595f;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #d7d2d7;
+      border-radius: 10px;
+      background: #fafafa;
+      color: #171517;
+      font-size: 15px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #d9a8bd;
+      background: #fff;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 13px;
+      background: #171517;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .switch {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 13px;
+      color: #777177;
+    }
+
+    .switch button {
+      width: auto;
+      padding: 0;
+      margin: 0;
+      background: none;
+      color: #a35c7c;
+      font-size: 13px;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 11px;
+      border-radius: 9px;
+      background: #f5edf1;
+      font-size: 13px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .back {
+      display: block;
+      text-align: center;
+      margin-top: 22px;
+      color: #777177;
+      text-decoration: none;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="auth">
+
+    <div class="logo">kioku 記憶</div>
+    <div class="tagline">for everything swirling within.</div>
+
+    <section class="card">
+
+      <h1 id="formTitle">create an account</h1>
+
+      <form id="authForm">
+
+        <div id="usernameField">
+          <label for="username">username</label>
+          <input
+            id="username"
+            type="text"
+            placeholder="your username"
+            autocomplete="username"
+          >
+        </div>
+
+        <div id="displayNameField">
+          <label for="displayName">display name</label>
+          <input
+            id="displayName"
+            type="text"
+            placeholder="your display name"
+          >
+        </div>
+
+        <label for="email">email</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        >
+
+        <label for="password">password</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="at least 6 characters"
+          autocomplete="new-password"
+          required
+        >
+
+        <button type="submit" id="submitButton">
+          create account
+        </button>
+
+      </form>
+
+      <div class="message" id="message"></div>
+
+      <div class="switch">
+        <span id="switchText">already have an account?</span>
+        <button type="button" id="switchButton">log in</button>
+      </div>
+
+    </section>
+
+    <a class="back" href="index.html">← back to archives</a>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    let isLogin = false;
+
+    const form = document.getElementById("authForm");
+    const formTitle = document.getElementById("formTitle");
+    const submitButton = document.getElementById("submitButton");
+    const switchText = document.getElementById("switchText");
+    const switchButton = document.getElementById("switchButton");
+    const usernameField = document.getElementById("usernameField");
+    const displayNameField = document.getElementById("displayNameField");
+    const username = document.getElementById("username");
+    const displayName = document.getElementById("displayName");
+    const message = document.getElementById("message");
+
+    function showMessage(text) {
+      message.textContent = text;
+      message.style.display = "block";
+    }
+
+    function updateForm() {
+      if (isLogin) {
+        formTitle.textContent = "welcome back";
+        submitButton.textContent = "log in";
+        switchText.textContent = "don't have an account?";
+        switchButton.textContent = "sign up";
+
+        usernameField.style.display = "none";
+        displayNameField.style.display = "none";
+
+        username.required = false;
+        displayName.required = false;
+        document.getElementById("password").autocomplete = "current-password";
+      } else {
+        formTitle.textContent = "create an account";
+        submitButton.textContent = "create account";
+        switchText.textContent = "already have an account?";
+        switchButton.textContent = "log in";
+
+        usernameField.style.display = "block";
+        displayNameField.style.display = "block";
+
+        username.required = true;
+        displayName.required = true;
+        document.getElementById("password").autocomplete = "new-password";
+      }
+
+      message.style.display = "none";
+    }
+
+    switchButton.addEventListener("click", () => {
+      isLogin = !isLogin;
+      form.reset();
+      updateForm();
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      submitButton.disabled = true;
+      submitButton.textContent = isLogin ? "logging in..." : "creating...";
+
+      try {
+
+        if (isLogin) {
+
+          const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+              email,
+              password
+            });
+
+          if (error) throw error;
+
+          showMessage("logged in. taking you to your profile...");
+
+          setTimeout(() => {
+            window.location.href = "profile.html";
+          }, 700);
+
+        } else {
+
+          const usernameValue = username.value.trim();
+          const displayNameValue = displayName.value.trim();
+
+          const { data, error } =
+            await supabaseClient.auth.signUp({
+              email,
+              password,
+              options: {
+                data: {
+                  username: usernameValue,
+                  display_name: displayNameValue
+                },
+                emailRedirectTo:
+                  "https://bloodybruises.github.io/kioku/profile.html"
+              }
+            });
+
+          if (error) throw error;
+
+          if (data.session) {
+            showMessage("account created. taking you to your profile...");
+
+            setTimeout(() => {
+              window.location.href = "profile.html";
+            }, 700);
+          } else {
+            showMessage(
+              "account created. check your email to confirm your account, then log in."
+            );
+            form.reset();
+          }
+        }
+
+      } catch (error) {
+        showMessage(error.message);
+      }
+
+      submitButton.disabled = false;
+      updateForm();
+    });
+
+    updateForm();
+  </script>
+
+</body>
+</html>
