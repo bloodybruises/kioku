@@ -51,3 +51,4 @@ $('#profileName').oninput=()=>{profile.name=$('#profileName').value;updateProfil
 $('#profileBg').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{profile.background=r.result;updateProfilePreview()};r.readAsDataURL(f)};
 $('#profileAvatar').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{profile.avatar=r.result;updateProfilePreview()};r.readAsDataURL(f)};
 $('#profileForm').onsubmit=e=>{e.preventDefault();profile.name=$('#profileName').value.trim();profile.username=$('#profileUsername').value.trim().replace(/^@/,'');profile.bio=$('#profileBio').value.trim();persist();$('#profileModal').hidden=true;document.body.style.overflow=''};
+render();
