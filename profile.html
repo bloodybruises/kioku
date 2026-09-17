@@ -1,13 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>kioku — profile</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+  <title>kioku 記憶 — profile</title>
 
   <style>
     * {
@@ -16,184 +13,210 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
       background: #efedef;
-      color: #171517;
-      font-family: Manrope, sans-serif;
-      padding: 30px 18px;
+      color: #222;
+      font-family: Arial, sans-serif;
+      transition: background .3s ease;
     }
 
-    .page {
-      max-width: 850px;
-      margin: auto;
-    }
-
-    .top {
+    .topbar {
+      height: 64px;
+      padding: 0 22px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 28px;
+      justify-content: space-between;
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
     .logo {
-      color: #171517;
+      color: #222;
       text-decoration: none;
-      font-size: 24px;
-      font-weight: 500;
+      font-size: 20px;
+      letter-spacing: .04em;
     }
 
-    .logo small {
-      font-family: "DM Mono", monospace;
-      font-size: 12px;
-      opacity: .55;
+    .topbar button {
+      border: 0;
+      background: none;
+      font-size: 13px;
+      cursor: pointer;
     }
 
-    .back {
-      color: #777;
-      text-decoration: none;
-      font-size: 12px;
+    .page {
+      width: min(900px, calc(100% - 28px));
+      margin: 28px auto 60px;
     }
 
-    .profile {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 22px;
+    .editor {
+      background: rgba(255,255,255,.75);
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,.07);
     }
 
-    .card {
-      background: white;
-      border: 1px solid #ddd9dd;
-      border-radius: 18px;
-      padding: 24px;
+    .previewBanner {
+      height: 240px;
+      background: #ded9dd;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .bannerButton {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(255,255,255,.88);
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .profileSection {
+      padding: 0 30px 30px;
+      position: relative;
+    }
+
+    .avatarWrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin-top: -60px;
+      margin-bottom: 18px;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #ddd7db;
+      border: 5px solid rgba(255,255,255,.95);
+      display: block;
+    }
+
+    .avatarButton {
+      position: absolute;
+      right: -4px;
+      bottom: 2px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid white;
+      background: #222;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
     }
 
     h1 {
-      margin: 0 0 6px;
-      font-size: 25px;
+      margin: 0;
+      font-size: 26px;
       font-weight: 500;
     }
 
-    .subtitle {
-      color: #777;
-      font-size: 13px;
-      margin-bottom: 25px;
+    .handle {
+      color: #888;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .form {
+      padding: 30px;
+      border-top: 1px solid rgba(0,0,0,.07);
     }
 
     label {
       display: block;
-      font-size: 12px;
-      color: #696369;
-      margin-bottom: 15px;
+      margin: 18px 0 7px;
+      font-size: 13px;
+      color: #555;
     }
 
     input,
     textarea,
     select {
-      display: block;
       width: 100%;
-      margin-top: 7px;
-      border: 1px solid #d8d3d8;
-      border-radius: 10px;
-      padding: 12px;
-      background: #fafafa;
-      color: #171517;
-      font-family: inherit;
+      border: 1px solid #d8d3d7;
+      border-radius: 12px;
+      padding: 12px 13px;
+      background: white;
       font-size: 14px;
+      outline: none;
     }
 
     textarea {
-      min-height: 100px;
+      min-height: 90px;
       resize: vertical;
     }
 
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #d49ab3;
+    }
+
+    .colors {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
     input[type="color"] {
-      height: 44px;
+      height: 48px;
       padding: 4px;
     }
 
-    button {
-      border: 0;
-      border-radius: 10px;
-      padding: 12px 16px;
-      background: #171517;
-      color: white;
-      font-family: inherit;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: .5;
-    }
-
-    .secondary {
-      background: #eee9ed;
-      color: #171517;
-      margin-left: 8px;
-    }
-
-    .preview {
-      min-height: 430px;
-      border-radius: 16px;
-      padding: 28px;
-      background: #efedef;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .preview-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .avatar {
-      width: 78px;
-      height: 78px;
-      border-radius: 50%;
-      background: #e8b8cb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 30px;
-      margin-bottom: 18px;
-      overflow: hidden;
-    }
-
-    .avatar img {
+    .save {
+      margin-top: 28px;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      padding: 14px;
+      border: 0;
+      border-radius: 12px;
+      background: #e8b8cb;
+      cursor: pointer;
+      font-size: 15px;
     }
 
-    .preview-name {
-      font-size: 24px;
+    .save:disabled {
+      opacity: .6;
+    }
+
+    #message {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f4e1e8;
+      font-size: 13px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .sectionTitle {
+      margin-top: 28px;
+      font-size: 15px;
       font-weight: 500;
     }
 
-    .preview-username {
-      color: #777;
-      font-family: "DM Mono", monospace;
-      font-size: 12px;
-      margin-top: 5px;
-    }
+    @media (max-width: 600px) {
+      .previewBanner {
+        height: 180px;
+      }
 
-    .preview-bio {
-      margin-top: 20px;
-      font-size: 14px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
+      .profileSection,
+      .form {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
 
-    .message {
-      display: none;
-      margin-top: 15px;
-      padding: 11px;
-      border-radius: 9px;
-      background: #f5edf1;
-      font-size: 13px;
-    }
-
-    @media (max-width: 700px) {
-      .profile {
+      .colors {
         grid-template-columns: 1fr;
       }
     }
@@ -202,307 +225,594 @@
 
 <body>
 
-<div class="page">
+  <header class="topbar">
+    <a class="logo" href="index.html">kioku 記憶</a>
+    <button id="logout">log out</button>
+  </header>
 
-  <div class="top">
-    <a class="logo" href="index.html">
-      kioku <small>記憶</small>
-    </a>
+  <main class="page">
 
-    <a class="back" href="index.html">
-      ← archives
-    </a>
-  </div>
+    <div class="editor">
 
-  <div class="profile">
+      <div id="previewBanner" class="previewBanner">
 
-    <section class="card">
+        <button
+          class="bannerButton"
+          type="button"
+          id="bannerUploadButton"
+        >
+          change banner
+        </button>
 
-      <h1>your space.</h1>
-      <div class="subtitle">
-        shape the little corner of kioku that belongs to you.
       </div>
 
-      <form id="profileForm">
+      <div class="profileSection">
 
-        <label>
+        <div class="avatarWrap">
+
+          <img
+            id="avatar"
+            class="avatar"
+            src=""
+            alt="profile picture"
+          >
+
+          <button
+            class="avatarButton"
+            type="button"
+            id="avatarUploadButton"
+          >
+            +
+          </button>
+
+        </div>
+
+        <h1 id="previewName">your name</h1>
+        <div class="handle" id="previewUsername">@username</div>
+
+      </div>
+
+      <div class="form">
+
+        <div class="sectionTitle">
+          profile
+        </div>
+
+        <label for="displayName">
           display name
-          <input
-            id="displayName"
-            maxlength="40"
-            placeholder="your name"
-            required
-          >
         </label>
 
-        <label>
+        <input
+          id="displayName"
+          type="text"
+          placeholder="your name"
+        >
+
+        <label for="username">
           username
-          <input
-            id="username"
-            maxlength="24"
-            placeholder="username"
-            required
-          >
         </label>
 
-        <label>
+        <input
+          id="username"
+          type="text"
+          placeholder="username"
+        >
+
+        <label for="bio">
           bio
-          <textarea
-            id="bio"
-            maxlength="180"
-            placeholder="a few words about you..."
-          ></textarea>
         </label>
 
-        <label>
-          page color
-          <input id="pageColor" type="color" value="#efedef">
-        </label>
+        <textarea
+          id="bio"
+          placeholder="tell people a little about yourself..."
+        ></textarea>
+
+
+        <div class="sectionTitle">
+          appearance
+        </div>
 
         <label>
-          accent color
-          <input id="accentColor" type="color" value="#e8b8cb">
+          colors
         </label>
 
-        <label>
+        <div class="colors">
+
+          <div>
+            <small>page color</small>
+            <input id="pageColor" type="color" value="#efedef">
+          </div>
+
+          <div>
+            <small>accent color</small>
+            <input id="accentColor" type="color" value="#e8b8cb">
+          </div>
+
+        </div>
+
+
+        <label for="font">
           font
-          <select id="font">
-            <option value="sans">sans</option>
-            <option value="serif">serif</option>
-            <option value="mono">mono</option>
-          </select>
         </label>
 
-        <label>
-          layout
-          <select id="layout">
-            <option value="soft">soft</option>
-            <option value="minimal">minimal</option>
-            <option value="boxed">boxed</option>
-          </select>
+        <select id="font">
+          <option value="sans">sans</option>
+          <option value="serif">serif</option>
+          <option value="mono">mono</option>
+        </select>
+
+
+        <label for="layout">
+          profile layout
         </label>
 
-        <button type="submit" id="saveButton">
+        <select id="layout">
+          <option value="soft">soft</option>
+          <option value="minimal">minimal</option>
+          <option value="boxed">boxed</option>
+        </select>
+
+
+        <button class="save" id="save">
           save profile
         </button>
 
-        <button type="button" class="secondary" id="logoutButton">
-          log out
-        </button>
-
-        <div class="message" id="message"></div>
-
-      </form>
-
-    </section>
-
-    <section class="preview" id="preview">
-
-      <div class="preview-inner">
-
-        <div class="avatar" id="avatar">
-          k
-        </div>
-
-        <div class="preview-name" id="previewName">
-          kioku user
-        </div>
-
-        <div class="preview-username" id="previewUsername">
-          @you
-        </div>
-
-        <div class="preview-bio" id="previewBio">
-          your little corner of the archive.
-        </div>
+        <div id="message"></div>
 
       </div>
 
-    </section>
+    </div>
 
-  </div>
+  </main>
 
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <input
+    id="avatarFile"
+    type="file"
+    accept="image/*"
+    hidden
+  >
 
-<script>
+  <input
+    id="bannerFile"
+    type="file"
+    accept="image/*"
+    hidden
+  >
 
-const SUPABASE_URL =
-  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
 
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-let supabaseClient = null;
+  <script>
 
-if (window.supabase) {
-  supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
-}
+    const SUPABASE_URL =
+      "https://qadbabbfhrqcbmjrkuvw.supabase.co";
 
-const $ = id => document.getElementById(id);
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-let user = null;
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+      );
 
-function message(text) {
-  $("message").textContent = text;
-  $("message").style.display = "block";
-}
 
-function updatePreview() {
+    const $ = id =>
+      document.getElementById(id);
 
-  const name = $("displayName").value.trim() || "kioku user";
-  const username = $("username").value.trim() || "you";
-  const bio = $("bio").value.trim() ||
-    "your little corner of the archive.";
 
-  $("previewName").textContent = name;
-  $("previewUsername").textContent =
-    "@" + username.replace(/^@/, "");
-  $("previewBio").textContent = bio;
+    let user = null;
+    let avatarUrl = null;
+    let bannerUrl = null;
 
-  $("preview").style.background =
-    $("pageColor").value;
 
-  $("avatar").style.background =
-    $("accentColor").value;
+    function showMessage(text) {
+      $("message").textContent = text;
+      $("message").style.display = "block";
+    }
 
-  const fonts = {
-    sans: "Manrope, sans-serif",
-    serif: "Georgia, serif",
-    mono: '"DM Mono", monospace'
-  };
 
-  $("preview").style.fontFamily =
-    fonts[$("font").value];
+    function hideMessage() {
+      $("message").style.display = "none";
+    }
 
-  if ($("layout").value === "minimal") {
-    $("preview").style.borderRadius = "4px";
-  } else if ($("layout").value === "boxed") {
-    $("preview").style.borderRadius = "0";
-    $("preview").style.border = "1px solid #aaa";
-  } else {
-    $("preview").style.borderRadius = "16px";
-    $("preview").style.border = "0";
-  }
-}
 
-[
-  "displayName",
-  "username",
-  "bio",
-  "pageColor",
-  "accentColor",
-  "font",
-  "layout"
-].forEach(id => {
-  $(id).addEventListener("input", updatePreview);
-  $(id).addEventListener("change", updatePreview);
-});
+    function updatePreview() {
 
-async function loadProfile() {
+      $("previewName").textContent =
+        $("displayName").value.trim() || "your name";
 
-  if (!supabaseClient) {
-    message("Supabase could not load.");
-    return;
-  }
+      $("previewUsername").textContent =
+        "@" + (
+          $("username").value
+            .trim()
+            .replace(/^@/, "") ||
+          "username"
+        );
 
-  const {
-    data: { session }
-  } = await supabaseClient.auth.getSession();
+      document.body.style.background =
+        $("pageColor").value;
 
-  if (!session) {
-    window.location.href = "auth.html";
-    return;
-  }
+      $("previewBanner").style.backgroundColor =
+        $("accentColor").value;
 
-  user = session.user;
+      const font = $("font").value;
 
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
+      if (font === "serif") {
+        document.body.style.fontFamily =
+          "Georgia, serif";
+      }
 
-  if (error) {
-    message(error.message);
-    return;
-  }
+      else if (font === "mono") {
+        document.body.style.fontFamily =
+          "monospace";
+      }
 
-  if (data) {
+      else {
+        document.body.style.fontFamily =
+          "Arial, sans-serif";
+      }
+    }
 
-    $("displayName").value = data.display_name || "";
-    $("username").value = data.username || "";
-    $("bio").value = data.bio || "";
-    $("pageColor").value = data.page_color || "#efedef";
-    $("accentColor").value = data.accent_color || "#e8b8cb";
-    $("font").value = data.font || "sans";
-    $("layout").value = data.layout || "soft";
 
-  } else {
+    async function loadProfile() {
 
-    const metadata = user.user_metadata || {};
+      const {
+        data: { session }
+      } = await supabaseClient.auth.getSession();
 
-    $("displayName").value =
-      metadata.display_name || "";
+      if (!session) {
+        window.location.href = "auth.html";
+        return;
+      }
 
-    $("username").value =
-      metadata.username || "";
+      user = session.user;
 
-  }
+      const { data, error } =
+        await supabaseClient
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .maybeSingle();
 
-  updatePreview();
-}
+      if (error) {
+        showMessage(
+          "Couldn't load profile: " +
+          error.message
+        );
+        return;
+      }
 
-$("profileForm").addEventListener("submit", async e => {
 
-  e.preventDefault();
+      if (data) {
 
-  if (!user) return;
+        $("displayName").value =
+          data.display_name || "";
 
-  $("saveButton").disabled = true;
-  $("saveButton").textContent = "saving...";
+        $("username").value =
+          data.username || "";
 
-  const profileData = {
-    id: user.id,
-    username: $("username").value.trim().replace(/^@/, ""),
-    display_name: $("displayName").value.trim(),
-    bio: $("bio").value.trim(),
-    page_color: $("pageColor").value,
-    accent_color: $("accentColor").value,
-    font: $("font").value,
-    layout: $("layout").value
-  };
+        $("bio").value =
+          data.bio || "";
 
-  const { error } = await supabaseClient
-    .from("profiles")
-    .upsert(profileData, {
-      onConflict: "id"
+        $("pageColor").value =
+          data.page_color || "#efedef";
+
+        $("accentColor").value =
+          data.accent_color || "#e8b8cb";
+
+        $("font").value =
+          data.font || "sans";
+
+        $("layout").value =
+          data.layout || "soft";
+
+        avatarUrl =
+          data.avatar_url || null;
+
+        bannerUrl =
+          data.background_url || null;
+
+        if (avatarUrl) {
+          $("avatar").src = avatarUrl;
+        }
+
+        if (bannerUrl) {
+          $("previewBanner").style.backgroundImage =
+            `url("${bannerUrl}")`;
+        }
+
+      } else {
+
+        const metadata =
+          user.user_metadata || {};
+
+        $("username").value =
+          metadata.username || "";
+
+        $("displayName").value =
+          metadata.display_name || "";
+
+      }
+
+      updatePreview();
+    }
+
+
+    async function uploadImage(file, folder) {
+
+      if (!file) return null;
+
+      if (!file.type.startsWith("image/")) {
+        throw new Error(
+          "Please choose an image file."
+        );
+      }
+
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error(
+          "That image is too large. Please use an image under 10 MB."
+        );
+      }
+
+      const extension =
+        file.name.split(".").pop().toLowerCase();
+
+      const path =
+        `${folder}/${user.id}-${Date.now()}.${extension}`;
+
+      const { error } =
+        await supabaseClient.storage
+          .from("avatars")
+          .upload(path, file, {
+            upsert: true
+          });
+
+      if (error) {
+        throw error;
+      }
+
+      const { data } =
+        supabaseClient.storage
+          .from("avatars")
+          .getPublicUrl(path);
+
+      return data.publicUrl;
+    }
+
+
+    $("avatarUploadButton").addEventListener(
+      "click",
+      () => $("avatarFile").click()
+    );
+
+
+    $("bannerUploadButton").addEventListener(
+      "click",
+      () => $("bannerFile").click()
+    );
+
+
+    $("avatarFile").addEventListener(
+      "change",
+      async event => {
+
+        const file =
+          event.target.files[0];
+
+        if (!file) return;
+
+        try {
+
+          showMessage("uploading profile picture...");
+
+          const url =
+            await uploadImage(
+              file,
+              "profile"
+            );
+
+          avatarUrl = url;
+
+          $("avatar").src = url;
+
+          showMessage(
+            "profile picture uploaded. save your profile to keep it."
+          );
+
+        } catch (error) {
+
+          showMessage(
+            "Upload error: " +
+            error.message
+          );
+        }
+      }
+    );
+
+
+    $("bannerFile").addEventListener(
+      "change",
+      async event => {
+
+        const file =
+          event.target.files[0];
+
+        if (!file) return;
+
+        try {
+
+          showMessage("uploading banner...");
+
+          const url =
+            await uploadImage(
+              file,
+              "banners"
+            );
+
+          bannerUrl = url;
+
+          $("previewBanner").style.backgroundImage =
+            `url("${url}")`;
+
+          showMessage(
+            "banner uploaded. save your profile to keep it."
+          );
+
+        } catch (error) {
+
+          showMessage(
+            "Upload error: " +
+            error.message
+          );
+        }
+      }
+    );
+
+
+    [
+      "displayName",
+      "username",
+      "bio",
+      "pageColor",
+      "accentColor",
+      "font",
+      "layout"
+    ].forEach(id => {
+
+      $(id).addEventListener(
+        "input",
+        updatePreview
+      );
+
+      $(id).addEventListener(
+        "change",
+        updatePreview
+      );
+
     });
 
-  if (error) {
-    message(error.message);
-  } else {
-    message("profile saved.");
-  }
 
-  $("saveButton").disabled = false;
-  $("saveButton").textContent = "save profile";
-});
+    $("save").addEventListener(
+      "click",
+      async () => {
 
-$("logoutButton").addEventListener("click", async () => {
+        hideMessage();
 
-  await supabaseClient.auth.signOut();
+        const username =
+          $("username").value
+            .trim()
+            .replace(/^@/, "");
 
-  window.location.href = "auth.html";
-});
+        const displayName =
+          $("displayName").value.trim();
 
-loadProfile();
+        if (!username) {
+          showMessage(
+            "Please choose a username."
+          );
+          return;
+        }
 
-</script>
+        if (!displayName) {
+          showMessage(
+            "Please enter a display name."
+          );
+          return;
+        }
+
+        $("save").disabled = true;
+        $("save").textContent =
+          "saving...";
+
+        try {
+
+          const profileData = {
+
+            id: user.id,
+
+            username,
+
+            display_name:
+              displayName,
+
+            bio:
+              $("bio").value.trim(),
+
+            avatar_url:
+              avatarUrl,
+
+            background_url:
+              bannerUrl,
+
+            page_color:
+              $("pageColor").value,
+
+            accent_color:
+              $("accentColor").value,
+
+            font:
+              $("font").value,
+
+            layout:
+              $("layout").value
+
+          };
+
+
+          const { error } =
+            await supabaseClient
+              .from("profiles")
+              .upsert(
+                profileData,
+                { onConflict: "id" }
+              );
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          showMessage(
+            "profile saved."
+          );
+
+        } catch (error) {
+
+          showMessage(
+            "Save error: " +
+            error.message
+          );
+
+        } finally {
+
+          $("save").disabled = false;
+          $("save").textContent =
+            "save profile";
+
+        }
+
+      }
+    );
+
+
+    $("logout").addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+          "auth.html";
+      }
+    );
+
+
+    loadProfile();
+
+  </script>
 
 </body>
 </html>
