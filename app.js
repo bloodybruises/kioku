@@ -56,3 +56,25 @@ $('#profileBg').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new File
 $('#profileAvatar').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{profile.avatar=r.result;updateProfilePreview()};r.readAsDataURL(f)};
 $('#profileForm').onsubmit=e=>{e.preventDefault();profile.name=$('#profileName').value.trim();profile.username=$('#profileUsername').value.trim().replace(/^@/,'');profile.bio=$('#profileBio').value.trim();persist();$('#profileModal').hidden=true;document.body.style.overflow=''};
 render();
+async function checkAuth() {
+  if (!supabaseClient) return;
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  const profileButton = $('#profileBtn');
+
+  if (!profileButton) return;
+
+  if (session) {
+    profileButton.textContent = 'profile';
+    profileButton.onclick = () => {
+      window.location.href = 'profile.html';
+    };
+  } else {
+    profileButton.textContent = 'log in';
+    profileButton.onclick = () => {
+      window.location.href = 'auth.html';
+    };
+  }
+}
+
+checkAuth();
