@@ -51,6 +51,7 @@ $('#profileName').oninput=()=>{profile.name=$('#profileName').value;updateProfil
 $('#profileBg').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{profile.background=r.result;updateProfilePreview()};r.readAsDataURL(f)};
 $('#profileAvatar').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{profile.avatar=r.result;updateProfilePreview()};r.readAsDataURL(f)};
 $('#profileForm').onsubmit=e=>{e.preventDefault();profile.name=$('#profileName').value.trim();profile.username=$('#profileUsername').value.trim().replace(/^@/,'');profile.bio=$('#profileBio').value.trim();persist();$('#profileModal').hidden=true;document.body.style.overflow=''};
-document.onkeydown=e=>{if(e.key==='Escape'){closeViewer();closeAdd();$('#profileModal').hidden=true}};
-persist();render();
-console.log("KIoku → Supabase connection loaded:", supabaseClient);
+document.body.insertAdjacentHTML(
+  "beforeend",
+  '<div id="supabase-test" style="position:fixed;bottom:10px;left:10px;right:10px;padding:12px;background:#111;color:#fff;z-index:99999;font:14px sans-serif;border-radius:8px;">Supabase script loaded. app.js loaded.</div>'
+);
