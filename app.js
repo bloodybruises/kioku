@@ -1,10 +1,14 @@
 const SUPABASE_URL = "https://qadbabbfhrqcbmjrkuvw.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+let supabaseClient = null;
+
+if (window.supabase) {
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+}
 const defaults=[
 {id:'001',src:'assets/clouds.jpg',title:'between weather',tags:['sky','clouds','quiet']},
 {id:'002',src:'assets/purple-glow.jpg',title:'violet static',tags:['purple','liminal','light']},
