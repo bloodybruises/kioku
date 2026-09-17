@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>kioku 記憶 — account</title>
 
   <style>
@@ -14,7 +15,7 @@
       margin: 0;
       min-height: 100vh;
       background: #efedef;
-      color: #171517;
+      color: #222;
       font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
@@ -22,321 +23,386 @@
       padding: 24px;
     }
 
-    .auth {
+    .box {
       width: 100%;
       max-width: 430px;
-    }
-
-    .logo {
-      text-align: center;
-      font-size: 30px;
-      font-weight: 700;
-      letter-spacing: -1px;
-      margin-bottom: 8px;
-    }
-
-    .tagline {
-      text-align: center;
-      color: #777177;
-      font-size: 13px;
-      margin-bottom: 32px;
-    }
-
-    .card {
-      background: #ffffff;
-      border: 1px solid #dedade;
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(0,0,0,.08);
+      padding: 32px;
+      border-radius: 22px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.06);
     }
 
     h1 {
-      font-size: 22px;
-      margin: 0 0 20px;
+      margin: 0 0 6px;
+      font-size: 28px;
+      font-weight: 500;
+    }
+
+    .sub {
+      margin: 0 0 28px;
+      color: #777;
+      font-size: 14px;
     }
 
     label {
       display: block;
-      font-size: 12px;
-      margin-bottom: 7px;
-      color: #5f595f;
+      margin: 15px 0 7px;
+      font-size: 13px;
+      color: #555;
     }
 
     input {
       width: 100%;
       padding: 13px 14px;
-      border: 1px solid #d7d2d7;
-      border-radius: 10px;
-      background: #fafafa;
-      color: #171517;
+      border: 1px solid #d8d3d7;
+      border-radius: 12px;
+      background: #fff;
       font-size: 15px;
-      margin-bottom: 16px;
       outline: none;
     }
 
     input:focus {
-      border-color: #d9a8bd;
-      background: #fff;
+      border-color: #d49ab3;
     }
 
     button {
       width: 100%;
+      margin-top: 22px;
+      padding: 14px;
       border: 0;
-      border-radius: 10px;
-      padding: 13px;
-      background: #171517;
-      color: white;
-      font-size: 14px;
+      border-radius: 12px;
+      background: #e8b8cb;
+      color: #222;
+      font-size: 15px;
       cursor: pointer;
-      margin-top: 4px;
     }
 
-    button:hover {
-      opacity: 0.9;
+    button:disabled {
+      opacity: .6;
     }
 
     .switch {
       text-align: center;
       margin-top: 18px;
       font-size: 13px;
-      color: #777177;
+      color: #777;
     }
 
     .switch button {
       width: auto;
-      padding: 0;
       margin: 0;
+      padding: 0;
       background: none;
-      color: #a35c7c;
-      font-size: 13px;
+      color: #a85f7e;
     }
 
-    .message {
+    #message {
+      display: none;
       margin-top: 16px;
-      padding: 11px;
-      border-radius: 9px;
-      background: #f5edf1;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f4e1e8;
       font-size: 13px;
       line-height: 1.5;
-      display: none;
-    }
-
-    .back {
-      display: block;
-      text-align: center;
-      margin-top: 22px;
-      color: #777177;
-      text-decoration: none;
-      font-size: 12px;
     }
   </style>
 </head>
 
 <body>
 
-  <main class="auth">
+  <div class="box">
 
-    <div class="logo">kioku 記憶</div>
-    <div class="tagline">for everything swirling within.</div>
+    <h1 id="title">create account</h1>
 
-    <section class="card">
+    <p class="sub">
+      make a little space for everything swirling within.
+    </p>
 
-      <h1 id="formTitle">create an account</h1>
+    <form id="authForm">
 
-      <form id="authForm">
+      <div id="signupFields">
 
-        <div id="usernameField">
-          <label for="username">username</label>
-          <input
-            id="username"
-            type="text"
-            placeholder="your username"
-            autocomplete="username"
-          >
-        </div>
-
-        <div id="displayNameField">
-          <label for="displayName">display name</label>
-          <input
-            id="displayName"
-            type="text"
-            placeholder="your display name"
-          >
-        </div>
-
-        <label for="email">email</label>
+        <label for="username">username</label>
         <input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          autocomplete="email"
-          required
+          id="username"
+          type="text"
+          placeholder="username"
+          autocomplete="username"
         >
 
-        <label for="password">password</label>
+        <label for="displayName">display name</label>
         <input
-          id="password"
-          type="password"
-          placeholder="at least 6 characters"
-          autocomplete="new-password"
-          required
+          id="displayName"
+          type="text"
+          placeholder="your name"
         >
 
-        <button type="submit" id="submitButton">
-          create account
-        </button>
-
-      </form>
-
-      <div class="message" id="message"></div>
-
-      <div class="switch">
-        <span id="switchText">already have an account?</span>
-        <button type="button" id="switchButton">log in</button>
       </div>
 
-    </section>
+      <label for="email">email</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      >
 
-    <a class="back" href="index.html">← back to archives</a>
+      <label for="password">password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="at least 6 characters"
+        autocomplete="new-password"
+        required
+      >
 
-  </main>
+      <button id="submitButton" type="submit">
+        create account
+      </button>
+
+    </form>
+
+    <div id="message"></div>
+
+    <div class="switch">
+      <span id="switchText">already have an account?</span>
+      <button id="switchButton" type="button">log in</button>
+    </div>
+
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    const SUPABASE_URL = "https://qadbabbfhrqcbmjrkuvw.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+    const SUPABASE_URL =
+      "https://qadbabbfhrqcbmjrkuvw.supabase.co";
 
-    let isLogin = false;
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-    const form = document.getElementById("authForm");
-    const formTitle = document.getElementById("formTitle");
-    const submitButton = document.getElementById("submitButton");
-    const switchText = document.getElementById("switchText");
-    const switchButton = document.getElementById("switchButton");
-    const usernameField = document.getElementById("usernameField");
-    const displayNameField = document.getElementById("displayNameField");
-    const username = document.getElementById("username");
-    const displayName = document.getElementById("displayName");
+    let supabaseClient = null;
+
     const message = document.getElementById("message");
+    const form = document.getElementById("authForm");
+    const submitButton = document.getElementById("submitButton");
+    const switchButton = document.getElementById("switchButton");
+
+    const title = document.getElementById("title");
+    const signupFields = document.getElementById("signupFields");
+    const switchText = document.getElementById("switchText");
+
+    let loginMode = false;
 
     function showMessage(text) {
       message.textContent = text;
       message.style.display = "block";
     }
 
-    function updateForm() {
-      if (isLogin) {
-        formTitle.textContent = "welcome back";
-        submitButton.textContent = "log in";
-        switchText.textContent = "don't have an account?";
-        switchButton.textContent = "sign up";
-
-        usernameField.style.display = "none";
-        displayNameField.style.display = "none";
-
-        username.required = false;
-        displayName.required = false;
-        document.getElementById("password").autocomplete = "current-password";
-      } else {
-        formTitle.textContent = "create an account";
-        submitButton.textContent = "create account";
-        switchText.textContent = "already have an account?";
-        switchButton.textContent = "log in";
-
-        usernameField.style.display = "block";
-        displayNameField.style.display = "block";
-
-        username.required = true;
-        displayName.required = true;
-        document.getElementById("password").autocomplete = "new-password";
-      }
-
+    function hideMessage() {
       message.style.display = "none";
     }
 
-    switchButton.addEventListener("click", () => {
-      isLogin = !isLogin;
-      form.reset();
-      updateForm();
+    function setMode(login) {
+
+      loginMode = login;
+      hideMessage();
+
+      if (loginMode) {
+
+        title.textContent = "log in";
+        signupFields.style.display = "none";
+        submitButton.textContent = "log in";
+
+        switchText.textContent = "don't have an account?";
+        switchButton.textContent = "create one";
+
+        document.getElementById("password").autocomplete = "current-password";
+
+      } else {
+
+        title.textContent = "create account";
+        signupFields.style.display = "block";
+        submitButton.textContent = "create account";
+
+        switchText.textContent = "already have an account?";
+        switchButton.textContent = "log in";
+
+        document.getElementById("password").autocomplete = "new-password";
+      }
+    }
+
+    switchButton.addEventListener("click", function() {
+      setMode(!loginMode);
     });
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      submitButton.disabled = true;
-      submitButton.textContent = isLogin ? "logging in..." : "creating...";
+    async function init() {
 
       try {
 
-        if (isLogin) {
+        if (!window.supabase) {
+          showMessage(
+            "Supabase failed to load. Check your internet connection and reload the page."
+          );
+          return;
+        }
+
+        supabaseClient = window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_PUBLISHABLE_KEY
+        );
+
+        console.log("Supabase initialized");
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          "Supabase setup error: " + error.message
+        );
+      }
+    }
+
+
+    form.addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+      hideMessage();
+
+      if (!supabaseClient) {
+
+        showMessage(
+          "The account system hasn't loaded yet. Please reload the page."
+        );
+
+        return;
+      }
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      submitButton.disabled = true;
+      submitButton.textContent =
+        loginMode ? "logging in..." : "creating account...";
+
+      try {
+
+        if (loginMode) {
 
           const { data, error } =
             await supabaseClient.auth.signInWithPassword({
-              email,
-              password
+              email: email,
+              password: password
             });
 
-          if (error) throw error;
+          if (error) {
+            throw error;
+          }
 
-          showMessage("logged in. taking you to your profile...");
+          if (data.session) {
 
-          setTimeout(() => {
             window.location.href = "profile.html";
-          }, 700);
+
+          } else {
+
+            showMessage(
+              "You logged in, but no session was created."
+            );
+          }
 
         } else {
 
-          const usernameValue = username.value.trim();
-          const displayNameValue = displayName.value.trim();
+          const username =
+            document.getElementById("username").value
+              .trim()
+              .replace(/^@/, "");
+
+          const displayName =
+            document.getElementById("displayName").value.trim();
+
+          if (!username) {
+            showMessage("Please choose a username.");
+            return;
+          }
+
+          if (!displayName) {
+            showMessage("Please enter a display name.");
+            return;
+          }
+
+          if (password.length < 6) {
+            showMessage("Your password needs to be at least 6 characters.");
+            return;
+          }
+
+          console.log("Attempting signup...");
 
           const { data, error } =
             await supabaseClient.auth.signUp({
-              email,
-              password,
+
+              email: email,
+
+              password: password,
+
               options: {
-                data: {
-                  username: usernameValue,
-                  display_name: displayNameValue
-                },
                 emailRedirectTo:
-                  "https://bloodybruises.github.io/kioku/profile.html"
+                  "https://bloodybruises.github.io/kioku/profile.html",
+
+                data: {
+                  username: username,
+                  display_name: displayName
+                }
               }
+
             });
 
-          if (error) throw error;
+          console.log("Signup response:", data);
+
+          if (error) {
+            throw error;
+          }
 
           if (data.session) {
-            showMessage("account created. taking you to your profile...");
 
-            setTimeout(() => {
-              window.location.href = "profile.html";
-            }, 700);
+            window.location.href = "profile.html";
+
           } else {
+
             showMessage(
-              "account created. check your email to confirm your account, then log in."
+              "Account created! Check your email for the confirmation link, then come back and log in."
             );
-            form.reset();
+
           }
         }
 
       } catch (error) {
-        showMessage(error.message);
+
+        console.error("AUTH ERROR:", error);
+
+        showMessage(
+          "Account error: " + (error.message || "Something went wrong.")
+        );
+
+      } finally {
+
+        submitButton.disabled = false;
+        submitButton.textContent =
+          loginMode ? "log in" : "create account";
       }
 
-      submitButton.disabled = false;
-      updateForm();
     });
 
-    updateForm();
+
+    init();
+
   </script>
 
 </body>
