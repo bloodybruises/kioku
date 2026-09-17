@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>kioku — profile</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #efedef;
+      color: #171517;
+      font-family: Manrope, sans-serif;
+      padding: 30px 18px;
+    }
+
+    .page {
+      max-width: 850px;
+      margin: auto;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .logo {
+      color: #171517;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    .logo small {
+      font-family: "DM Mono", monospace;
+      font-size: 12px;
+      opacity: .55;
+    }
+
+    .back {
+      color: #777;
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .profile {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #ddd9dd;
+      border-radius: 18px;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 25px;
+      font-weight: 500;
+    }
+
+    .subtitle {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #696369;
+      margin-bottom: 15px;
+    }
+
+    input,
+    textarea,
+    select {
+      display: block;
+      width: 100%;
+      margin-top: 7px;
+      border: 1px solid #d8d3d8;
+      border-radius: 10px;
+      padding: 12px;
+      background: #fafafa;
+      color: #171517;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    input[type="color"] {
+      height: 44px;
+      padding: 4px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      background: #171517;
+      color: white;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .5;
+    }
+
+    .secondary {
+      background: #eee9ed;
+      color: #171517;
+      margin-left: 8px;
+    }
+
+    .preview {
+      min-height: 430px;
+      border-radius: 16px;
+      padding: 28px;
+      background: #efedef;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .avatar {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: #e8b8cb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-name {
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    .preview-username {
+      color: #777;
+      font-family: "DM Mono", monospace;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .preview-bio {
+      margin-top: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 11px;
+      border-radius: 9px;
+      background: #f5edf1;
+      font-size: 13px;
+    }
+
+    @media (max-width: 700px) {
+      .profile {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="top">
+    <a class="logo" href="index.html">
+      kioku <small>記憶</small>
+    </a>
+
+    <a class="back" href="index.html">
+      ← archives
+    </a>
+  </div>
+
+  <div class="profile">
+
+    <section class="card">
+
+      <h1>your space.</h1>
+      <div class="subtitle">
+        shape the little corner of kioku that belongs to you.
+      </div>
+
+      <form id="profileForm">
+
+        <label>
+          display name
+          <input
+            id="displayName"
+            maxlength="40"
+            placeholder="your name"
+            required
+          >
+        </label>
+
+        <label>
+          username
+          <input
+            id="username"
+            maxlength="24"
+            placeholder="username"
+            required
+          >
+        </label>
+
+        <label>
+          bio
+          <textarea
+            id="bio"
+            maxlength="180"
+            placeholder="a few words about you..."
+          ></textarea>
+        </label>
+
+        <label>
+          page color
+          <input id="pageColor" type="color" value="#efedef">
+        </label>
+
+        <label>
+          accent color
+          <input id="accentColor" type="color" value="#e8b8cb">
+        </label>
+
+        <label>
+          font
+          <select id="font">
+            <option value="sans">sans</option>
+            <option value="serif">serif</option>
+            <option value="mono">mono</option>
+          </select>
+        </label>
+
+        <label>
+          layout
+          <select id="layout">
+            <option value="soft">soft</option>
+            <option value="minimal">minimal</option>
+            <option value="boxed">boxed</option>
+          </select>
+        </label>
+
+        <button type="submit" id="saveButton">
+          save profile
+        </button>
+
+        <button type="button" class="secondary" id="logoutButton">
+          log out
+        </button>
+
+        <div class="message" id="message"></div>
+
+      </form>
+
+    </section>
+
+    <section class="preview" id="preview">
+
+      <div class="preview-inner">
+
+        <div class="avatar" id="avatar">
+          k
+        </div>
+
+        <div class="preview-name" id="previewName">
+          kioku user
+        </div>
+
+        <div class="preview-username" id="previewUsername">
+          @you
+        </div>
+
+        <div class="preview-bio" id="previewBio">
+          your little corner of the archive.
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+
+let supabaseClient = null;
+
+if (window.supabase) {
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+}
+
+const $ = id => document.getElementById(id);
+
+let user = null;
+
+function message(text) {
+  $("message").textContent = text;
+  $("message").style.display = "block";
+}
+
+function updatePreview() {
+
+  const name = $("displayName").value.trim() || "kioku user";
+  const username = $("username").value.trim() || "you";
+  const bio = $("bio").value.trim() ||
+    "your little corner of the archive.";
+
+  $("previewName").textContent = name;
+  $("previewUsername").textContent =
+    "@" + username.replace(/^@/, "");
+  $("previewBio").textContent = bio;
+
+  $("preview").style.background =
+    $("pageColor").value;
+
+  $("avatar").style.background =
+    $("accentColor").value;
+
+  const fonts = {
+    sans: "Manrope, sans-serif",
+    serif: "Georgia, serif",
+    mono: '"DM Mono", monospace'
+  };
+
+  $("preview").style.fontFamily =
+    fonts[$("font").value];
+
+  if ($("layout").value === "minimal") {
+    $("preview").style.borderRadius = "4px";
+  } else if ($("layout").value === "boxed") {
+    $("preview").style.borderRadius = "0";
+    $("preview").style.border = "1px solid #aaa";
+  } else {
+    $("preview").style.borderRadius = "16px";
+    $("preview").style.border = "0";
+  }
+}
+
+[
+  "displayName",
+  "username",
+  "bio",
+  "pageColor",
+  "accentColor",
+  "font",
+  "layout"
+].forEach(id => {
+  $(id).addEventListener("input", updatePreview);
+  $(id).addEventListener("change", updatePreview);
+});
+
+async function loadProfile() {
+
+  if (!supabaseClient) {
+    message("Supabase could not load.");
+    return;
+  }
+
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    window.location.href = "auth.html";
+    return;
+  }
+
+  user = session.user;
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    message(error.message);
+    return;
+  }
+
+  if (data) {
+
+    $("displayName").value = data.display_name || "";
+    $("username").value = data.username || "";
+    $("bio").value = data.bio || "";
+    $("pageColor").value = data.page_color || "#efedef";
+    $("accentColor").value = data.accent_color || "#e8b8cb";
+    $("font").value = data.font || "sans";
+    $("layout").value = data.layout || "soft";
+
+  } else {
+
+    const metadata = user.user_metadata || {};
+
+    $("displayName").value =
+      metadata.display_name || "";
+
+    $("username").value =
+      metadata.username || "";
+
+  }
+
+  updatePreview();
+}
+
+$("profileForm").addEventListener("submit", async e => {
+
+  e.preventDefault();
+
+  if (!user) return;
+
+  $("saveButton").disabled = true;
+  $("saveButton").textContent = "saving...";
+
+  const profileData = {
+    id: user.id,
+    username: $("username").value.trim().replace(/^@/, ""),
+    display_name: $("displayName").value.trim(),
+    bio: $("bio").value.trim(),
+    page_color: $("pageColor").value,
+    accent_color: $("accentColor").value,
+    font: $("font").value,
+    layout: $("layout").value
+  };
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .upsert(profileData, {
+      onConflict: "id"
+    });
+
+  if (error) {
+    message(error.message);
+  } else {
+    message("profile saved.");
+  }
+
+  $("saveButton").disabled = false;
+  $("saveButton").textContent = "save profile";
+});
+
+$("logoutButton").addEventListener("click", async () => {
+
+  await supabaseClient.auth.signOut();
+
+  window.location.href = "auth.html";
+});
+
+loadProfile();
+
+</script>
+
+</body>
+</html>
