@@ -53,3 +53,4 @@ $('#profileAvatar').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new 
 $('#profileForm').onsubmit=e=>{e.preventDefault();profile.name=$('#profileName').value.trim();profile.username=$('#profileUsername').value.trim().replace(/^@/,'');profile.bio=$('#profileBio').value.trim();persist();$('#profileModal').hidden=true;document.body.style.overflow=''};
 document.onkeydown=e=>{if(e.key==='Escape'){closeViewer();closeAdd();$('#profileModal').hidden=true}};
 persist();render();
+console.log("KIoku → Supabase connection loaded:", supabaseClient);
