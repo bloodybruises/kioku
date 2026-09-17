@@ -1,1 +1,96 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>kioku — visual archive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"></head><body><div class="noise"></div><header><a class="logo" href="#">kioku <small>記憶</small></a><nav><button class="active" data-filter="all">all</button><button data-filter="sky">sky</button><button data-filter="night">night</button><button data-filter="purple">purple</button><button data-filter="liminal">liminal</button></nav><div class="actions"><button id="fav">♡ <span>0</span></button><button id="add">＋ add</button></div></header><main><section class="hero"><p>visual archive / 001</p><h1>photographs for<br><i>feelings without names.</i></h1><div>a small collection of skies, shadows, strange light, and moments worth keeping.</div></section><section class="bar"><span id="count">all photographs</span><input id="search" placeholder="search the archive..."></section><section id="gallery"></section><p id="empty" hidden>nothing here yet.</p></main><footer>kioku / 記憶 <span>things worth remembering</span></footer><div id="viewer" class="overlay" hidden><button class="close" id="close">×</button><div class="view"><img id="vimg"><div class="vinfo"><div><p id="vnum"></p><h2 id="vtitle"></h2><small id="vmeta"></small></div><button id="vsave">♡ save</button></div></div></div><div id="addModal" class="overlay" hidden><button class="close" id="closeAdd">×</button><form id="form"><p>add to the archive</p><h2>leave something behind.</h2><label class="upload">＋ choose a photo<input id="photo" type="file" accept="image/*" required></label><input id="title" placeholder="title (optional)"><input id="tags" placeholder="tags: sky, night, blue"><button class="primary">add photograph</button><small>This version stores added photos only in this browser.</small></form></div><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="kioku — archives of salience">
+  <title>kioku — archives of salience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="noise"></div>
+<header>
+  <a class="logo" href="#">kioku <small>記憶</small></a>
+  <nav>
+    <button class="active" data-filter="all">all</button>
+    <button data-filter="sky">sky</button>
+    <button data-filter="night">night</button>
+    <button data-filter="purple">purple</button>
+    <button data-filter="liminal">liminal</button>
+  </nav>
+  <div class="actions">
+    <button id="fav">♡ <span>0</span></button>
+    <button id="profileBtn">profile</button>
+    <button id="add">＋ add</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <p>visual archive / 001</p>
+    <h1>for everything<br><i>swirling within.</i></h1>
+    <div class="hero-sub">archives of salience</div>
+  </section>
+
+  <section class="bar">
+    <span id="count">all photographs</span>
+    <input id="search" placeholder="search the archive..." autocomplete="off">
+  </section>
+
+  <section id="gallery"></section>
+  <p id="empty" hidden>nothing here yet.</p>
+</main>
+
+<footer>kioku / 記憶 <span>things worth remembering</span></footer>
+
+<!-- image viewer -->
+<div id="viewer" class="overlay" hidden>
+  <button class="close" id="close">×</button>
+  <div class="view">
+    <img id="vimg" alt="">
+    <div class="vinfo">
+      <div><p id="vnum"></p><h2 id="vtitle"></h2><small id="vmeta"></small></div>
+      <button id="vsave">♡ save</button>
+    </div>
+  </div>
+</div>
+
+<!-- add photograph -->
+<div id="addModal" class="overlay" hidden>
+  <button class="close" id="closeAdd">×</button>
+  <form id="form" class="modal-card">
+    <p>add to the archive</p>
+    <h2>leave something behind.</h2>
+    <label class="upload">＋ choose a photo<input id="photo" type="file" accept="image/*" required></label>
+    <input id="title" placeholder="title (optional)">
+    <input id="tags" placeholder="tags: sky, night, blue">
+    <button class="primary">add photograph</button>
+    <small>This browser-only version saves additions locally. Public uploads can be connected after profiles are enabled.</small>
+  </form>
+</div>
+
+<!-- local profile customizer -->
+<div id="profileModal" class="overlay" hidden>
+  <button class="close" id="closeProfile">×</button>
+  <form id="profileForm" class="modal-card profile-card">
+    <p>your space</p>
+    <h2>make it yours.</h2>
+    <label>display name<input id="profileName" maxlength="40" placeholder="your name"></label>
+    <label>username<input id="profileUsername" maxlength="24" placeholder="@username"></label>
+    <label>bio<textarea id="profileBio" maxlength="180" placeholder="a few words about you..."></textarea></label>
+    <label>profile background<input id="profileBg" type="file" accept="image/*"></label>
+    <label>avatar<input id="profileAvatar" type="file" accept="image/*"></label>
+    <div class="profile-preview" id="profilePreview">
+      <div class="avatar" id="previewAvatar">k</div>
+      <div><strong id="previewName">kioku user</strong><small id="previewUsername">@you</small></div>
+    </div>
+    <button class="primary">save profile</button>
+    <small>For now this profile is saved only on this device. The next backend step can make profiles public and persistent across devices.</small>
+  </form>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
