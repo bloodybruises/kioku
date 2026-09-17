@@ -51,14 +51,3 @@ $('#profileName').oninput=()=>{profile.name=$('#profileName').value;updateProfil
 $('#profileBg').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{profile.background=r.result;updateProfilePreview()};r.readAsDataURL(f)};
 $('#profileAvatar').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{profile.avatar=r.result;updateProfilePreview()};r.readAsDataURL(f)};
 $('#profileForm').onsubmit=e=>{e.preventDefault();profile.name=$('#profileName').value.trim();profile.username=$('#profileUsername').value.trim().replace(/^@/,'');profile.bio=$('#profileBio').value.trim();persist();$('#profileModal').hidden=true;document.body.style.overflow=''};
-if (window.supabase && supabaseClient) {
-  document.body.insertAdjacentHTML(
-    "beforeend",
-    '<div style="position:fixed;bottom:10px;left:10px;right:10px;padding:12px;background:#111;color:#fff;z-index:99999;font:14px sans-serif;border-radius:8px;">✓ Supabase + app.js loaded in the correct order</div>'
-  );
-} else {
-  document.body.insertAdjacentHTML(
-    "beforeend",
-    '<div style="position:fixed;bottom:10px;left:10px;right:10px;padding:12px;background:#800;color:#fff;z-index:99999;font:14px sans-serif;border-radius:8px;">✗ Supabase did not load before app.js</div>'
-  );
-}
