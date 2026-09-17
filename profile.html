@@ -1,818 +1,1453 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>kioku 記憶 — profile</title>
+<title>kioku 記憶 — profile</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    body {
-      margin: 0;
-      background: #efedef;
-      color: #222;
-      font-family: Arial, sans-serif;
-      transition: background .3s ease;
-    }
+<style>
+*{
+  box-sizing:border-box;
+}
 
-    .topbar {
-      height: 64px;
-      padding: 0 22px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255,255,255,.72);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(0,0,0,.06);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
+body{
+  margin:0;
+  min-height:100vh;
+  background:#efedef;
+  color:#222;
+  font-family:Arial,sans-serif;
+  transition:.2s;
+}
 
-    .logo {
-      color: #222;
-      text-decoration: none;
-      font-size: 20px;
-      letter-spacing: .04em;
-    }
+.top{
+  padding:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 
-    .topbar button {
-      border: 0;
-      background: none;
-      font-size: 13px;
-      cursor: pointer;
-    }
+.logo{
+  font-size:20px;
+  letter-spacing:1px;
+}
 
-    .page {
-      width: min(900px, calc(100% - 28px));
-      margin: 28px auto 60px;
-    }
+.back{
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  color:#222;
+  font-size:14px;
+}
 
-    .editor {
-      background: rgba(255,255,255,.75);
-      border-radius: 24px;
-      overflow: hidden;
-      border: 1px solid rgba(0,0,0,.07);
-    }
+.wrap{
+  width:min(850px,94%);
+  margin:20px auto 80px;
+}
 
-    .previewBanner {
-      height: 240px;
-      background: #ded9dd;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-    }
+h1{
+  font-size:28px;
+  font-weight:400;
+  margin:20px 0 5px;
+}
 
-   .bannerButton {
-      position: absolute;
-      right: 18px;
-      bottom: 18px;
-      background: rgba(255,255,255,.88);
-      border: 0;
-      padding: 10px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 13px;
-    }
+.sub{
+  color:#777;
+  font-size:13px;
+  margin-bottom:25px;
+}
 
-    .profileSection {
-      padding: 0 30px 30px;
-      position: relative;
-    }
+.card{
+  background:rgba(255,255,255,.65);
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:22px;
+  padding:22px;
+  margin-bottom:18px;
+}
 
-    .avatarWrap {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      margin-top: -60px;
-      margin-bottom: 18px;
-    }
+label{
+  display:block;
+  font-size:13px;
+  margin-bottom:7px;
+  color:#555;
+}
 
-    .avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #ddd7db;
-      border: 5px solid rgba(255,255,255,.95);
-      display: block;
-    }
+input[type="text"],
+textarea,
+select{
+  width:100%;
+  border:1px solid #ddd;
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  font:inherit;
+  outline:none;
+}
 
-    .avatarButton {
-      position: absolute;
-      right: -4px;
-      bottom: 2px;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 2px solid white;
-      background: #222;
-      color: white;
-      cursor: pointer;
-      font-size: 15px;
-    }
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
 
-    h1 {
-      margin: 0;
-      font-size: 26px;
-      font-weight: 500;
-    }
+.field{
+  margin-bottom:18px;
+}
 
-    .handle {
-      color: #888;
-      margin-top: 4px;
-      font-size: 14px;
-    }
+.colors{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
 
-    .form {
-      padding: 30px;
-      border-top: 1px solid rgba(0,0,0,.07);
-    }
+.colorbox{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
-    label {
-      display: block;
-      margin: 18px 0 7px;
-      font-size: 13px;
-      color: #555;
-    }
+input[type="color"]{
+  width:45px;
+  height:38px;
+  border:0;
+  padding:0;
+  background:transparent;
+}
 
-    input,
-    textarea,
-    select {
-      width: 100%;
-      border: 1px solid #d8d3d7;
-      border-radius: 12px;
-      padding: 12px 13px;
-      background: white;
-      font-size: 14px;
-      outline: none;
-    }
+.upload-section{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
 
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
+.upload-box{
+  text-align:center;
+}
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: #d49ab3;
-    }
+.image-preview{
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  margin:0 auto 14px;
+  background:#ddd;
+  border:3px solid white;
+  box-shadow:0 4px 18px rgba(0,0,0,.1);
+}
 
-    .colors {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+.banner-preview{
+  width:100%;
+  height:150px;
+  border-radius:15px;
+  object-fit:cover;
+  display:block;
+  margin-bottom:14px;
+  background:#ddd;
+}
 
-    input[type="color"] {
-      height: 48px;
-      padding: 4px;
-    }
+.upload-button{
+  display:inline-block;
+  border:1px solid #222 !important;
+  background:#fff !important;
+  color:#222 !important;
+  padding:10px 16px;
+  border-radius:999px;
+  cursor:pointer;
+  font:inherit;
+  font-size:13px;
+  appearance:none;
+  -webkit-appearance:none;
+}
 
-    .save {
-      margin-top: 28px;
-      width: 100%;
-      padding: 14px;
-      border: 0;
-      border-radius: 12px;
-      background: #e8b8cb;
-      cursor: pointer;
-      font-size: 15px;
-    }
+.upload-button:hover{
+  background:#f2f2f2 !important;
+}
 
-    .save:disabled {
-      opacity: .6;
-    }
+input[type="file"]{
+  display:none;
+}
 
-    #message {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #f4e1e8;
-      font-size: 13px;
-      line-height: 1.5;
-      display: none;
-    }
+.save{
+  width:100%;
+  border:0;
+  border-radius:999px;
+  padding:14px;
+  background:#222;
+  color:white;
+  cursor:pointer;
+  font:inherit;
+}
 
-    .sectionTitle {
-      margin-top: 28px;
-      font-size: 15px;
-      font-weight: 500;
-    }
+.logout{
+  width:100%;
+  border:1px solid #bbb;
+  border-radius:999px;
+  padding:12px;
+  background:white;
+  color:#222;
+  cursor:pointer;
+  margin-top:10px;
+  font:inherit;
+}
 
-    @media (max-width: 600px) {
-      .previewBanner {
-        height: 180px;
-      }
+.status{
+  text-align:center;
+  font-size:13px;
+  margin-top:12px;
+  min-height:18px;
+}
 
-      .profileSection,
-      .form {
-        padding-left: 20px;
-        padding-right: 20px;
-      }
+/* LIVE PREVIEW */
 
-      .colors {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+.preview-title{
+  font-size:13px;
+  color:#777;
+  margin-bottom:10px;
+}
+
+.profile-preview{
+  border-radius:22px;
+  overflow:hidden;
+  background:#efedef;
+  transition:.2s;
+}
+
+.preview-banner{
+  height:150px;
+  background:#ddd center/cover no-repeat;
+}
+
+.preview-content{
+  padding:0 22px 25px;
+  position:relative;
+}
+
+.preview-avatar{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid #efedef;
+  margin-top:-45px;
+  background:#ddd;
+  display:block;
+}
+
+.preview-name{
+  font-size:24px;
+  margin-top:12px;
+}
+
+.preview-username{
+  font-size:13px;
+  opacity:.55;
+  margin-top:3px;
+}
+
+.preview-bio{
+  margin-top:14px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.preview-layout-box{
+  margin-top:20px;
+  padding:15px;
+  border:1px solid rgba(0,0,0,.1);
+  border-radius:15px;
+}
+
+/* CROP MODAL */
+
+.crop-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.78);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  padding:15px;
+}
+
+.crop-overlay.active{
+  display:flex;
+}
+
+.crop-modal{
+  width:min(700px,100%);
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  max-height:95vh;
+  overflow:auto;
+}
+
+.crop-title{
+  font-size:18px;
+  margin-bottom:12px;
+}
+
+.crop-area{
+  width:100%;
+  max-height:65vh;
+  overflow:hidden;
+  background:#111;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:14px;
+  touch-action:none;
+  position:relative;
+}
+
+#cropImage{
+  max-width:100%;
+  max-height:65vh;
+  display:block;
+  transform-origin:center center;
+  user-select:none;
+  -webkit-user-drag:none;
+  touch-action:none;
+}
+
+.crop-controls{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:15px;
+}
+
+.crop-controls input{
+  flex:1;
+}
+
+.crop-buttons{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.crop-buttons button{
+  flex:1;
+  border-radius:999px;
+  padding:12px;
+  border:1px solid #ccc;
+  background:#fff;
+  cursor:pointer;
+  font:inherit;
+}
+
+.crop-buttons .apply{
+  background:#222;
+  color:#fff;
+  border-color:#222;
+}
+
+@media(max-width:600px){
+  .upload-section{
+    grid-template-columns:1fr;
+  }
+
+  .colors{
+    grid-template-columns:1fr;
+  }
+
+  .crop-modal{
+    border-radius:18px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <header class="topbar">
-    <a class="logo" href="index.html">kioku 記憶</a>
-    <button id="logout">log out</button>
-  </header>
+<div class="top">
+  <div class="logo">kioku 記憶</div>
+  <button class="back" id="backBtn">← back</button>
+</div>
 
-  <main class="page">
+<div class="wrap">
 
-    <div class="editor">
+<h1>your profile</h1>
+<div class="sub">shape the little corner of kioku that belongs to you.</div>
 
-      <div id="previewBanner" class="previewBanner">
+<div class="card">
 
-        <button
-          class="bannerButton"
-          type="button"
-          id="bannerUploadButton"
-        >
-          change banner
-        </button>
+  <div class="upload-section">
 
+    <div class="upload-box">
+
+      <img id="avatarPreview"
+           class="image-preview"
+           src=""
+           alt="profile picture">
+
+      <button
+        type="button"
+        class="upload-button"
+        id="avatarButton">
+        change profile picture
+      </button>
+
+      <input
+        type="file"
+        id="avatarInput"
+        accept="image/*">
+
+    </div>
+
+    <div class="upload-box">
+
+      <img id="bannerPreview"
+           class="banner-preview"
+           src=""
+           alt="profile banner">
+
+      <button
+        type="button"
+        class="upload-button"
+        id="bannerButton">
+        change banner
+      </button>
+
+      <input
+        type="file"
+        id="bannerInput"
+        accept="image/*">
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="card">
+
+  <div class="field">
+    <label>display name</label>
+    <input id="displayName" type="text" maxlength="50">
+  </div>
+
+  <div class="field">
+    <label>username</label>
+    <input id="username" type="text" maxlength="30" placeholder="yourname">
+  </div>
+
+  <div class="field">
+    <label>bio</label>
+    <textarea id="bio" maxlength="300"></textarea>
+  </div>
+
+  <div class="colors">
+
+    <div class="field">
+      <label>page color</label>
+      <div class="colorbox">
+        <input id="pageColor" type="color" value="#efedef">
+        <span id="pageColorText">#efedef</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>accent color</label>
+      <div class="colorbox">
+        <input id="accentColor" type="color" value="#e8b8cb">
+        <span id="accentColorText">#e8b8cb</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="field">
+    <label>font</label>
+    <select id="font">
+      <option value="sans">sans</option>
+      <option value="serif">serif</option>
+      <option value="mono">mono</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>profile layout</label>
+    <select id="layout">
+      <option value="soft">soft</option>
+      <option value="minimal">minimal</option>
+      <option value="boxed">boxed</option>
+    </select>
+  </div>
+
+</div>
+
+<div class="card">
+
+  <div class="preview-title">live preview</div>
+
+  <div class="profile-preview" id="profilePreview">
+
+    <div class="preview-banner" id="previewBanner"></div>
+
+    <div class="preview-content">
+
+      <img
+        id="previewAvatar"
+        class="preview-avatar"
+        src=""
+        alt="">
+
+      <div class="preview-name" id="previewName">your name</div>
+
+      <div class="preview-username" id="previewUsername">
+        @username
       </div>
 
-      <div class="profileSection">
-
-        <div class="avatarWrap">
-
-          <img
-            id="avatar"
-            class="avatar"
-            src=""
-            alt="profile picture"
-          >
-
-          <button
-            class="avatarButton"
-            type="button"
-            id="avatarUploadButton"
-          >
-            +
-          </button>
-
-        </div>
-
-        <h1 id="previewName">your name</h1>
-        <div class="handle" id="previewUsername">@username</div>
-
+      <div class="preview-bio" id="previewBio">
+        your bio will appear here.
       </div>
 
-      <div class="form">
-
-        <div class="sectionTitle">
-          profile
-        </div>
-
-        <label for="displayName">
-          display name
-        </label>
-
-        <input
-          id="displayName"
-          type="text"
-          placeholder="your name"
-        >
-
-        <label for="username">
-          username
-        </label>
-
-        <input
-          id="username"
-          type="text"
-          placeholder="username"
-        >
-
-        <label for="bio">
-          bio
-        </label>
-
-        <textarea
-          id="bio"
-          placeholder="tell people a little about yourself..."
-        ></textarea>
-
-
-        <div class="sectionTitle">
-          appearance
-        </div>
-
-        <label>
-          colors
-        </label>
-
-        <div class="colors">
-
-          <div>
-            <small>page color</small>
-            <input id="pageColor" type="color" value="#efedef">
-          </div>
-
-          <div>
-            <small>accent color</small>
-            <input id="accentColor" type="color" value="#e8b8cb">
-          </div>
-
-        </div>
-
-
-        <label for="font">
-          font
-        </label>
-
-        <select id="font">
-          <option value="sans">sans</option>
-          <option value="serif">serif</option>
-          <option value="mono">mono</option>
-        </select>
-
-
-        <label for="layout">
-          profile layout
-        </label>
-
-        <select id="layout">
-          <option value="soft">soft</option>
-          <option value="minimal">minimal</option>
-          <option value="boxed">boxed</option>
-        </select>
-
-
-        <button class="save" id="save">
-          save profile
-        </button>
-
-        <div id="message"></div>
-
+      <div class="preview-layout-box">
+        posts will appear here
       </div>
 
     </div>
 
-  </main>
+  </div>
+
+</div>
+
+<div class="card">
+
+  <button class="save" id="saveBtn">
+    save profile
+  </button>
+
+  <div class="status" id="status"></div>
+
+  <button class="logout" id="logoutBtn">
+    log out
+  </button>
+
+</div>
+
+</div>
 
 
-  <input
-    id="avatarFile"
-    type="file"
-    accept="image/*"
-    hidden
-  >
+<!-- CROP MODAL -->
 
-  <input
-    id="bannerFile"
-    type="file"
-    accept="image/*"
-    hidden
-  >
+<div class="crop-overlay" id="cropOverlay">
 
+  <div class="crop-modal">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div class="crop-title" id="cropTitle">
+      crop image
+    </div>
 
-  <script>
+    <div class="crop-area" id="cropArea">
 
-    const SUPABASE_URL =
-      "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+      <img id="cropImage" src="" alt="">
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+    </div>
 
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
+    <div class="crop-controls">
 
+      <span>zoom</span>
 
-    const $ = id =>
-      document.getElementById(id);
+      <input
+        id="zoomSlider"
+        type="range"
+        min="1"
+        max="3"
+        step=".01"
+        value="1">
 
+    </div>
 
-    let user = null;
-    let avatarUrl = null;
-    let bannerUrl = null;
+    <div class="crop-buttons">
 
+      <button type="button" id="cancelCrop">
+        cancel
+      </button>
 
-    function showMessage(text) {
-      $("message").textContent = text;
-      $("message").style.display = "block";
-    }
+      <button type="button" class="apply" id="applyCrop">
+        crop & use
+      </button>
 
+    </div>
 
-    function hideMessage() {
-      $("message").style.display = "none";
-    }
+  </div>
+
+</div>
 
 
-    function updatePreview() {
+<script>
 
-      $("previewName").textContent =
-        $("displayName").value.trim() || "your name";
+const SUPABASE_URL =
+"https://qadbabbfhrqcbmjrkuvw.supabase.co";
 
-      $("previewUsername").textContent =
-        "@" + (
-          $("username").value
-            .trim()
-            .replace(/^@/, "") ||
-          "username"
-        );
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-      document.body.style.background =
-        $("pageColor").value;
-
-      $("previewBanner").style.backgroundColor =
-        $("accentColor").value;
-
-      const font = $("font").value;
-
-      if (font === "serif") {
-        document.body.style.fontFamily =
-          "Georgia, serif";
-      }
-
-      else if (font === "mono") {
-        document.body.style.fontFamily =
-          "monospace";
-      }
-
-      else {
-        document.body.style.fontFamily =
-          "Arial, sans-serif";
-      }
-    }
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 
 
-    async function loadProfile() {
+// --------------------------------------------------
+// ELEMENTS
+// --------------------------------------------------
 
-      const {
-        data: { session }
-      } = await supabaseClient.auth.getSession();
+const $ = id => document.getElementById(id);
 
-      if (!session) {
-        window.location.href = "auth.html";
-        return;
-      }
+let user = null;
 
-      user = session.user;
+let avatarUrl = null;
+let bannerUrl = null;
 
-      const { data, error } =
-        await supabaseClient
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .maybeSingle();
+let cropType = null;
+let cropFile = null;
+let cropObjectUrl = null;
 
-      if (error) {
-        showMessage(
-          "Couldn't load profile: " +
-          error.message
-        );
-        return;
-      }
+let zoom = 1;
+let dragX = 0;
+let dragY = 0;
+
+let dragging = false;
+let startX = 0;
+let startY = 0;
+let startDragX = 0;
+let startDragY = 0;
 
 
-      if (data) {
+// --------------------------------------------------
+// DEFAULT IMAGE
+// --------------------------------------------------
 
-        $("displayName").value =
-          data.display_name || "";
+const DEFAULT_AVATAR =
+"data:image/svg+xml;charset=UTF-8," +
+encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<rect width="100%" height="100%" fill="#ddd"/>
+<text x="50%" y="50%" dominant-baseline="middle"
+text-anchor="middle" fill="#888" font-size="90">?</text>
+</svg>
+`);
 
-        $("username").value =
-          data.username || "";
-
-        $("bio").value =
-          data.bio || "";
-
-        $("pageColor").value =
-          data.page_color || "#efedef";
-
-        $("accentColor").value =
-          data.accent_color || "#e8b8cb";
-
-        $("font").value =
-          data.font || "sans";
-
-        $("layout").value =
-          data.layout || "soft";
-
-        avatarUrl =
-          data.avatar_url || null;
-
-        bannerUrl =
-          data.background_url || null;
-
-        if (avatarUrl) {
-          $("avatar").src = avatarUrl;
-        }
-
-        if (bannerUrl) {
-          $("previewBanner").style.backgroundImage =
-            `url("${bannerUrl}")`;
-        }
-
-      } else {
-
-        const metadata =
-          user.user_metadata || {};
-
-        $("username").value =
-          metadata.username || "";
-
-        $("displayName").value =
-          metadata.display_name || "";
-
-      }
-
-      updatePreview();
-    }
+const DEFAULT_BANNER =
+"data:image/svg+xml;charset=UTF-8," +
+encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400">
+<rect width="100%" height="100%" fill="#ddd"/>
+</svg>
+`);
 
 
-    async function uploadImage(file, folder) {
+// --------------------------------------------------
+// AUTH
+// --------------------------------------------------
 
-      if (!file) return null;
+async function loadProfile(){
 
-      if (!file.type.startsWith("image/")) {
-        throw new Error(
-          "Please choose an image file."
-        );
-      }
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
 
-      if (file.size > 10 * 1024 * 1024) {
-        throw new Error(
-          "That image is too large. Please use an image under 10 MB."
-        );
-      }
+  if(!session){
+    window.location.href = "auth.html";
+    return;
+  }
+
+  user = session.user;
+
+  const { data, error } =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+  if(error){
+    console.error(error);
+    setStatus("couldn't load profile: " + error.message);
+    return;
+  }
+
+  if(data){
+
+    $("displayName").value =
+      data.display_name || "";
+
+    $("username").value =
+      data.username || "";
+
+    $("bio").value =
+      data.bio || "";
+
+    $("pageColor").value =
+      data.page_color || "#efedef";
+
+    $("accentColor").value =
+      data.accent_color || "#e8b8cb";
+
+    $("font").value =
+      data.font || "sans";
+
+    $("layout").value =
+      data.layout || "soft";
+
+    avatarUrl =
+      data.avatar_url || null;
+
+    bannerUrl =
+      data.background_url || null;
+
+  }else{
+
+    $("username").value =
+      user.user_metadata?.username || "";
+
+    $("displayName").value =
+      user.user_metadata?.display_name || "";
+
+  }
+
+  updateImages();
+  updatePreview();
+}
+
+
+// --------------------------------------------------
+// IMAGE DISPLAY
+// --------------------------------------------------
+
+function updateImages(){
+
+  $("avatarPreview").src =
+    avatarUrl || DEFAULT_AVATAR;
+
+  $("bannerPreview").src =
+    bannerUrl || DEFAULT_BANNER;
+
+  $("previewAvatar").src =
+    avatarUrl || DEFAULT_AVATAR;
+
+  $("previewBanner").style.backgroundImage =
+    bannerUrl
+      ? `url("${bannerUrl}")`
+      : `url("${DEFAULT_BANNER}")`;
+}
+
+
+// --------------------------------------------------
+// LIVE PREVIEW
+// --------------------------------------------------
+
+function updatePreview(){
+
+  const name =
+    $("displayName").value.trim();
+
+  const username =
+    $("username").value.trim();
+
+  const bio =
+    $("bio").value.trim();
+
+  const pageColor =
+    $("pageColor").value;
+
+  const accentColor =
+    $("accentColor").value;
+
+  const font =
+    $("font").value;
+
+  const layout =
+    $("layout").value;
+
+  $("previewName").textContent =
+    name || "your name";
+
+  $("previewUsername").textContent =
+    username
+      ? "@" + username.replace(/^@/,"")
+      : "@username";
+
+  $("previewBio").textContent =
+    bio || "your bio will appear here.";
+
+  $("profilePreview").style.background =
+    pageColor;
+
+  $("previewAvatar").style.borderColor =
+    pageColor;
+
+  $("previewBanner").style.backgroundColor =
+    accentColor;
+
+  $("previewLayoutBox").style.borderColor =
+    accentColor;
+
+  if(font === "serif"){
+    $("profilePreview").style.fontFamily =
+      "Georgia, serif";
+  }
+
+  else if(font === "mono"){
+    $("profilePreview").style.fontFamily =
+      "monospace";
+  }
+
+  else{
+    $("profilePreview").style.fontFamily =
+      "Arial, sans-serif";
+  }
+
+  if(layout === "minimal"){
+
+    $("profilePreview").style.borderRadius =
+      "5px";
+
+    $("previewLayoutBox").style.borderRadius =
+      "3px";
+
+  }
+
+  else if(layout === "boxed"){
+
+    $("profilePreview").style.borderRadius =
+      "8px";
+
+    $("previewLayoutBox").style.borderRadius =
+      "5px";
+
+    $("previewLayoutBox").style.borderWidth =
+      "2px";
+
+  }
+
+  else{
+
+    $("profilePreview").style.borderRadius =
+      "22px";
+
+    $("previewLayoutBox").style.borderRadius =
+      "15px";
+
+    $("previewLayoutBox").style.borderWidth =
+      "1px";
+  }
+
+  $("pageColorText").textContent =
+    pageColor;
+
+  $("accentColorText").textContent =
+    accentColor;
+}
+
+
+// --------------------------------------------------
+// OPEN FILE PICKERS
+// --------------------------------------------------
+
+$("avatarButton").addEventListener("click", () => {
+  $("avatarInput").click();
+});
+
+$("bannerButton").addEventListener("click", () => {
+  $("bannerInput").click();
+});
+
+$("avatarInput").addEventListener("change", e => {
+
+  const file = e.target.files[0];
+
+  if(!file) return;
+
+  openCropper(file, "avatar");
+
+});
+
+$("bannerInput").addEventListener("change", e => {
+
+  const file = e.target.files[0];
+
+  if(!file) return;
+
+  openCropper(file, "banner");
+
+});
+
+
+// --------------------------------------------------
+// CROPPER
+// --------------------------------------------------
+
+function openCropper(file, type){
+
+  if(!file.type.startsWith("image/")){
+    setStatus("please choose an image.");
+    return;
+  }
+
+  if(file.size > 10 * 1024 * 1024){
+    setStatus("image must be smaller than 10 MB.");
+    return;
+  }
+
+  cropType = type;
+  cropFile = file;
+
+  zoom = 1;
+  dragX = 0;
+  dragY = 0;
+
+  $("zoomSlider").value = 1;
+
+  $("cropTitle").textContent =
+    type === "avatar"
+      ? "crop profile picture"
+      : "crop banner";
+
+  if(cropObjectUrl){
+    URL.revokeObjectURL(cropObjectUrl);
+  }
+
+  cropObjectUrl =
+    URL.createObjectURL(file);
+
+  $("cropImage").src =
+    cropObjectUrl;
+
+  $("cropOverlay").classList.add("active");
+
+  $("cropImage").onload = () => {
+    updateCropTransform();
+  };
+}
+
+
+function updateCropTransform(){
+
+  $("cropImage").style.transform =
+    `translate(${dragX}px, ${dragY}px) scale(${zoom})`;
+}
+
+
+$("zoomSlider").addEventListener("input", e => {
+
+  zoom =
+    parseFloat(e.target.value);
+
+  updateCropTransform();
+
+});
+
+
+// --------------------------------------------------
+// DRAG CROP
+// --------------------------------------------------
+
+$("cropImage").addEventListener(
+  "pointerdown",
+  e => {
+
+    e.preventDefault();
+
+    dragging = true;
+
+    startX = e.clientX;
+    startY = e.clientY;
+
+    startDragX = dragX;
+    startDragY = dragY;
+
+    $("cropImage").setPointerCapture(
+      e.pointerId
+    );
+  }
+);
+
+
+$("cropImage").addEventListener(
+  "pointermove",
+  e => {
+
+    if(!dragging) return;
+
+    dragX =
+      startDragX +
+      (e.clientX - startX);
+
+    dragY =
+      startDragY +
+      (e.clientY - startY);
+
+    updateCropTransform();
+  }
+);
+
+
+$("cropImage").addEventListener(
+  "pointerup",
+  () => {
+
+    dragging = false;
+
+  }
+);
+
+
+// --------------------------------------------------
+// CANCEL
+// --------------------------------------------------
+
+$("cancelCrop").addEventListener("click", closeCropper);
+
+
+function closeCropper(){
+
+  $("cropOverlay").classList.remove("active");
+
+  if(cropObjectUrl){
+
+    URL.revokeObjectURL(cropObjectUrl);
+
+    cropObjectUrl = null;
+  }
+
+  $("avatarInput").value = "";
+  $("bannerInput").value = "";
+
+  cropFile = null;
+  cropType = null;
+}
+
+
+// --------------------------------------------------
+// APPLY CROP
+// --------------------------------------------------
+
+$("applyCrop").addEventListener(
+  "click",
+  async () => {
+
+    if(!cropFile) return;
+
+    setStatus("cropping image...");
+
+    try{
+
+      const croppedBlob =
+        await createCroppedImage();
 
       const extension =
-        file.name.split(".").pop().toLowerCase();
+        cropType === "avatar"
+          ? "jpg"
+          : "jpg";
+
+      const folder =
+        cropType === "avatar"
+          ? "profile"
+          : "banners";
 
       const path =
         `${folder}/${user.id}-${Date.now()}.${extension}`;
 
-      const { error } =
-        await supabaseClient.storage
+      const {
+        error: uploadError
+      } =
+        await supabaseClient
+          .storage
           .from("avatars")
-          .upload(path, file, {
-            upsert: true
-          });
+          .upload(
+            path,
+            croppedBlob,
+            {
+              contentType:"image/jpeg",
+              upsert:true
+            }
+          );
 
-      if (error) {
-        throw error;
+      if(uploadError){
+        throw uploadError;
       }
 
-      const { data } =
-        supabaseClient.storage
+      const {
+        data: publicData
+      } =
+        supabaseClient
+          .storage
           .from("avatars")
           .getPublicUrl(path);
 
-      return data.publicUrl;
+      if(!publicData?.publicUrl){
+        throw new Error(
+          "Supabase did not return an image URL."
+        );
+      }
+
+      const url =
+        publicData.publicUrl +
+        "?v=" + Date.now();
+
+      if(cropType === "avatar"){
+
+        avatarUrl = url;
+
+      }else{
+
+        bannerUrl = url;
+
+      }
+
+      updateImages();
+      updatePreview();
+
+      closeCropper();
+
+      setStatus(
+        cropType === "avatar"
+          ? "profile picture uploaded. save your profile."
+          : "banner uploaded. save your profile."
+      );
+
+    }catch(error){
+
+      console.error(error);
+
+      setStatus(
+        "Upload error: " +
+        error.message
+      );
     }
 
-
-    $("avatarUploadButton").addEventListener(
-      "click",
-      () => $("avatarFile").click()
-    );
+  }
+);
 
 
-    $("bannerUploadButton").addEventListener(
-      "click",
-      () => $("bannerFile").click()
-    );
+// --------------------------------------------------
+// CREATE CROPPED IMAGE
+// --------------------------------------------------
 
+function createCroppedImage(){
 
-    $("avatarFile").addEventListener(
-      "change",
-      async event => {
+  return new Promise((resolve, reject) => {
 
-        const file =
-          event.target.files[0];
+    const image =
+      new Image();
 
-        if (!file) return;
+    image.onload = () => {
 
-        try {
+      const canvas =
+        document.createElement("canvas");
 
-          showMessage("uploading profile picture...");
+      let width;
+      let height;
 
-          const url =
-            await uploadImage(
-              file,
-              "profile"
-            );
+      if(cropType === "avatar"){
 
-          avatarUrl = url;
+        width = 800;
+        height = 800;
 
-          $("avatar").src = url;
+      }else{
 
-          showMessage(
-            "profile picture uploaded. save your profile to keep it."
-          );
+        width = 1600;
+        height = 600;
 
-        } catch (error) {
-
-          showMessage(
-            "Upload error: " +
-            error.message
-          );
-        }
       }
-    );
 
+      canvas.width = width;
+      canvas.height = height;
 
-    $("bannerFile").addEventListener(
-      "change",
-      async event => {
+      const ctx =
+        canvas.getContext("2d");
 
-        const file =
-          event.target.files[0];
+      ctx.fillStyle = "#111";
 
-        if (!file) return;
-
-        try {
-
-          showMessage("uploading banner...");
-
-          const url =
-            await uploadImage(
-              file,
-              "banners"
-            );
-
-          bannerUrl = url;
-
-          $("previewBanner").style.backgroundImage =
-            `url("${url}")`;
-
-          showMessage(
-            "banner uploaded. save your profile to keep it."
-          );
-
-        } catch (error) {
-
-          showMessage(
-            "Upload error: " +
-            error.message
-          );
-        }
-      }
-    );
-
-
-    [
-      "displayName",
-      "username",
-      "bio",
-      "pageColor",
-      "accentColor",
-      "font",
-      "layout"
-    ].forEach(id => {
-
-      $(id).addEventListener(
-        "input",
-        updatePreview
+      ctx.fillRect(
+        0,
+        0,
+        width,
+        height
       );
 
-      $(id).addEventListener(
-        "change",
-        updatePreview
+      const area =
+        $("cropArea");
+
+      const areaWidth =
+        area.clientWidth;
+
+      const areaHeight =
+        area.clientHeight;
+
+      const imageRatio =
+        image.naturalWidth /
+        image.naturalHeight;
+
+      const targetRatio =
+        width / height;
+
+      let drawWidth;
+      let drawHeight;
+
+      if(imageRatio > targetRatio){
+
+        drawHeight =
+          height;
+
+        drawWidth =
+          height * imageRatio;
+
+      }else{
+
+        drawWidth =
+          width;
+
+        drawHeight =
+          width / imageRatio;
+
+      }
+
+      const scale =
+        (areaWidth / drawWidth) *
+        zoom;
+
+      const finalWidth =
+        drawWidth * scale;
+
+      const finalHeight =
+        drawHeight * scale;
+
+      const offsetX =
+        (width - finalWidth) / 2 +
+        dragX *
+        (width / areaWidth);
+
+      const offsetY =
+        (height - finalHeight) / 2 +
+        dragY *
+        (height / areaHeight);
+
+      ctx.drawImage(
+        image,
+        offsetX,
+        offsetY,
+        finalWidth,
+        finalHeight
       );
 
-    });
+      canvas.toBlob(
+        blob => {
 
-
-    $("save").addEventListener(
-      "click",
-      async () => {
-
-        hideMessage();
-
-        const username =
-          $("username").value
-            .trim()
-            .replace(/^@/, "");
-
-        const displayName =
-          $("displayName").value.trim();
-
-        if (!username) {
-          showMessage(
-            "Please choose a username."
-          );
-          return;
-        }
-
-        if (!displayName) {
-          showMessage(
-            "Please enter a display name."
-          );
-          return;
-        }
-
-        $("save").disabled = true;
-        $("save").textContent =
-          "saving...";
-
-        try {
-
-          const profileData = {
-
-            id: user.id,
-
-            username,
-
-            display_name:
-              displayName,
-
-            bio:
-              $("bio").value.trim(),
-
-            avatar_url:
-              avatarUrl,
-
-            background_url:
-              bannerUrl,
-
-            page_color:
-              $("pageColor").value,
-
-            accent_color:
-              $("accentColor").value,
-
-            font:
-              $("font").value,
-
-            layout:
-              $("layout").value
-
-          };
-
-
-          const { error } =
-            await supabaseClient
-              .from("profiles")
-              .upsert(
-                profileData,
-                { onConflict: "id" }
-              );
-
-
-          if (error) {
-            throw error;
+          if(blob){
+            resolve(blob);
+          }else{
+            reject(
+              new Error(
+                "couldn't create cropped image."
+              )
+            );
           }
 
+        },
+        "image/jpeg",
+        .90
+      );
 
-          showMessage(
-            "profile saved."
-          );
+    };
 
-        } catch (error) {
+    image.onerror = () => {
 
-          showMessage(
-            "Save error: " +
-            error.message
-          );
+      reject(
+        new Error(
+          "couldn't read image."
+        )
+      );
 
-        } finally {
+    };
 
-          $("save").disabled = false;
-          $("save").textContent =
-            "save profile";
+    image.src =
+      cropObjectUrl;
+  });
+}
 
-        }
 
-      }
+// --------------------------------------------------
+// SAVE PROFILE
+// --------------------------------------------------
+
+$("saveBtn").addEventListener(
+  "click",
+  async () => {
+
+    if(!user) return;
+
+    const username =
+      $("username")
+        .value
+        .trim()
+        .replace(/^@/, "");
+
+    const displayName =
+      $("displayName")
+        .value
+        .trim();
+
+    if(!username){
+
+      setStatus(
+        "username is required."
+      );
+
+      return;
+    }
+
+    $("saveBtn").disabled = true;
+
+    setStatus("saving...");
+
+    const profileData = {
+
+      id:user.id,
+
+      username,
+
+      display_name:
+        displayName,
+
+      bio:
+        $("bio").value.trim(),
+
+      avatar_url:
+        avatarUrl,
+
+      background_url:
+        bannerUrl,
+
+      page_color:
+        $("pageColor").value,
+
+      accent_color:
+        $("accentColor").value,
+
+      font:
+        $("font").value,
+
+      layout:
+        $("layout").value,
+
+      updated_at:
+        new Date().toISOString()
+    };
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("profiles")
+        .upsert(
+          profileData,
+          {
+            onConflict:"id"
+          }
+        );
+
+    $("saveBtn").disabled = false;
+
+    if(error){
+
+      console.error(error);
+
+      setStatus(
+        "Save error: " +
+        error.message
+      );
+
+      return;
+    }
+
+    setStatus(
+      "profile saved ✓"
     );
+  }
+);
 
 
-    $("logout").addEventListener(
-      "click",
-      async () => {
+// --------------------------------------------------
+// LIVE INPUTS
+// --------------------------------------------------
 
-        await supabaseClient.auth.signOut();
+[
+  "displayName",
+  "username",
+  "bio",
+  "pageColor",
+  "accentColor",
+  "font",
+  "layout"
+].forEach(id => {
 
-        window.location.href =
-          "auth.html";
-      }
-    );
+  $(id).addEventListener(
+    "input",
+    updatePreview
+  );
+
+  $(id).addEventListener(
+    "change",
+    updatePreview
+  );
+
+});
 
 
-    loadProfile();
+// --------------------------------------------------
+// LOGOUT / BACK
+// --------------------------------------------------
 
-  </script>
+$("logoutBtn").addEventListener(
+  "click",
+  async () => {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+      "auth.html";
+  }
+);
+
+
+$("backBtn").addEventListener(
+  "click",
+  () => {
+
+    window.location.href =
+      "index.html";
+  }
+);
+
+
+// --------------------------------------------------
+// STATUS
+// --------------------------------------------------
+
+function setStatus(message){
+
+  $("status").textContent =
+    message;
+}
+
+
+// --------------------------------------------------
+// START
+// --------------------------------------------------
+
+loadProfile();
+
+</script>
 
 </body>
 </html>
