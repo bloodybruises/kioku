@@ -165,6 +165,11 @@ input[type="color"]{
   background:#f2f2f2 !important;
 }
 
+.upload-button:active{
+  background:#eee !important;
+  color:#222 !important;
+}
+
 input[type="file"]{
   display:none;
 }
@@ -178,6 +183,11 @@ input[type="file"]{
   color:white;
   cursor:pointer;
   font:inherit;
+}
+
+.save:disabled{
+  opacity:.6;
+  cursor:default;
 }
 
 .logout{
@@ -198,8 +208,6 @@ input[type="file"]{
   margin-top:12px;
   min-height:18px;
 }
-
-/* LIVE PREVIEW */
 
 .preview-title{
   font-size:13px;
@@ -259,7 +267,7 @@ input[type="file"]{
   border-radius:15px;
 }
 
-/* CROP MODAL */
+/* cropper */
 
 .crop-overlay{
   position:fixed;
@@ -292,25 +300,60 @@ input[type="file"]{
 
 .crop-area{
   width:100%;
-  max-height:65vh;
+  height:420px;
   overflow:hidden;
   background:#111;
   display:flex;
   align-items:center;
   justify-content:center;
   border-radius:14px;
-  touch-action:none;
   position:relative;
+  touch-action:none;
+}
+
+.crop-area.banner-mode{
+  height:300px;
+}
+
+.crop-image-wrap{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 #cropImage{
-  max-width:100%;
-  max-height:65vh;
-  display:block;
-  transform-origin:center center;
+  position:absolute;
+  max-width:none;
+  max-height:none;
   user-select:none;
   -webkit-user-drag:none;
   touch-action:none;
+  transform-origin:center center;
+}
+
+.crop-mask{
+  position:absolute;
+  pointer-events:none;
+  border:2px solid rgba(255,255,255,.9);
+  box-shadow:0 0 0 9999px rgba(0,0,0,.35);
+}
+
+.crop-mask.avatar-mask{
+  width:min(82vw,360px);
+  height:min(82vw,360px);
+  max-width:82%;
+  max-height:82%;
+  border-radius:50%;
+}
+
+.crop-mask.banner-mask{
+  width:88%;
+  height:58%;
+  border-radius:8px;
 }
 
 .crop-controls{
@@ -318,6 +361,10 @@ input[type="file"]{
   gap:10px;
   align-items:center;
   margin-top:15px;
+}
+
+.crop-controls span{
+  font-size:13px;
 }
 
 .crop-controls input{
@@ -336,6 +383,7 @@ input[type="file"]{
   padding:12px;
   border:1px solid #ccc;
   background:#fff;
+  color:#222;
   cursor:pointer;
   font:inherit;
 }
@@ -347,6 +395,7 @@ input[type="file"]{
 }
 
 @media(max-width:600px){
+
   .upload-section{
     grid-template-columns:1fr;
   }
@@ -358,6 +407,14 @@ input[type="file"]{
   .crop-modal{
     border-radius:18px;
   }
+
+  .crop-area{
+    height:330px;
+  }
+
+  .crop-area.banner-mode{
+    height:240px;
+  }
 }
 </style>
 </head>
@@ -366,24 +423,37 @@ input[type="file"]{
 
 <div class="top">
   <div class="logo">kioku 記憶</div>
-  <button class="back" id="backBtn">← back</button>
+
+  <button
+    class="back"
+    id="backBtn"
+    type="button">
+    ← back
+  </button>
 </div>
+
 
 <div class="wrap">
 
 <h1>your profile</h1>
-<div class="sub">shape the little corner of kioku that belongs to you.</div>
+
+<div class="sub">
+  shape the little corner of kioku that belongs to you.
+</div>
+
 
 <div class="card">
 
   <div class="upload-section">
 
+    <!-- PROFILE PICTURE -->
+
     <div class="upload-box">
 
-      <img id="avatarPreview"
-           class="image-preview"
-           src=""
-           alt="profile picture">
+      <img
+        id="avatarPreview"
+        class="image-preview"
+        alt="profile picture">
 
       <button
         type="button"
@@ -399,12 +469,15 @@ input[type="file"]{
 
     </div>
 
+
+    <!-- BANNER -->
+
     <div class="upload-box">
 
-      <img id="bannerPreview"
-           class="banner-preview"
-           src=""
-           alt="profile banner">
+      <img
+        id="bannerPreview"
+        class="banner-preview"
+        alt="profile banner">
 
       <button
         type="button"
@@ -424,90 +497,172 @@ input[type="file"]{
 
 </div>
 
+
 <div class="card">
 
   <div class="field">
+
     <label>display name</label>
-    <input id="displayName" type="text" maxlength="50">
+
+    <input
+      id="displayName"
+      type="text"
+      maxlength="50">
+
   </div>
 
+
   <div class="field">
+
     <label>username</label>
-    <input id="username" type="text" maxlength="30" placeholder="yourname">
+
+    <input
+      id="username"
+      type="text"
+      maxlength="30"
+      placeholder="yourname">
+
   </div>
 
+
   <div class="field">
+
     <label>bio</label>
-    <textarea id="bio" maxlength="300"></textarea>
+
+    <textarea
+      id="bio"
+      maxlength="300"></textarea>
+
   </div>
+
 
   <div class="colors">
 
     <div class="field">
+
       <label>page color</label>
+
       <div class="colorbox">
-        <input id="pageColor" type="color" value="#efedef">
-        <span id="pageColorText">#efedef</span>
+
+        <input
+          id="pageColor"
+          type="color"
+          value="#efedef">
+
+        <span id="pageColorText">
+          #efedef
+        </span>
+
       </div>
+
     </div>
 
+
     <div class="field">
+
       <label>accent color</label>
+
       <div class="colorbox">
-        <input id="accentColor" type="color" value="#e8b8cb">
-        <span id="accentColorText">#e8b8cb</span>
+
+        <input
+          id="accentColor"
+          type="color"
+          value="#e8b8cb">
+
+        <span id="accentColorText">
+          #e8b8cb
+        </span>
+
       </div>
+
     </div>
 
   </div>
 
+
   <div class="field">
+
     <label>font</label>
+
     <select id="font">
+
       <option value="sans">sans</option>
       <option value="serif">serif</option>
       <option value="mono">mono</option>
+
     </select>
+
   </div>
 
+
   <div class="field">
+
     <label>profile layout</label>
+
     <select id="layout">
+
       <option value="soft">soft</option>
       <option value="minimal">minimal</option>
       <option value="boxed">boxed</option>
+
     </select>
+
   </div>
 
 </div>
 
+
+<!-- LIVE PREVIEW -->
+
 <div class="card">
 
-  <div class="preview-title">live preview</div>
+  <div class="preview-title">
+    live preview
+  </div>
 
-  <div class="profile-preview" id="profilePreview">
 
-    <div class="preview-banner" id="previewBanner"></div>
+  <div
+    class="profile-preview"
+    id="profilePreview">
+
+    <div
+      class="preview-banner"
+      id="previewBanner">
+    </div>
+
 
     <div class="preview-content">
 
       <img
         id="previewAvatar"
         class="preview-avatar"
-        src=""
         alt="">
 
-      <div class="preview-name" id="previewName">your name</div>
 
-      <div class="preview-username" id="previewUsername">
+      <div
+        class="preview-name"
+        id="previewName">
+        your name
+      </div>
+
+
+      <div
+        class="preview-username"
+        id="previewUsername">
         @username
       </div>
 
-      <div class="preview-bio" id="previewBio">
+
+      <div
+        class="preview-bio"
+        id="previewBio">
         your bio will appear here.
       </div>
 
-      <div class="preview-layout-box">
+
+      <div
+        class="preview-layout-box"
+        id="previewLayoutBox">
         posts will appear here
       </div>
 
@@ -517,15 +672,27 @@ input[type="file"]{
 
 </div>
 
+
 <div class="card">
 
-  <button class="save" id="saveBtn">
+  <button
+    class="save"
+    id="saveBtn"
+    type="button">
     save profile
   </button>
 
-  <div class="status" id="status"></div>
 
-  <button class="logout" id="logoutBtn">
+  <div
+    class="status"
+    id="status">
+  </div>
+
+
+  <button
+    class="logout"
+    id="logoutBtn"
+    type="button">
     log out
   </button>
 
@@ -536,19 +703,38 @@ input[type="file"]{
 
 <!-- CROP MODAL -->
 
-<div class="crop-overlay" id="cropOverlay">
+<div
+  class="crop-overlay"
+  id="cropOverlay">
 
   <div class="crop-modal">
 
-    <div class="crop-title" id="cropTitle">
+    <div
+      class="crop-title"
+      id="cropTitle">
       crop image
     </div>
 
-    <div class="crop-area" id="cropArea">
 
-      <img id="cropImage" src="" alt="">
+    <div
+      class="crop-area"
+      id="cropArea">
+
+      <div class="crop-image-wrap">
+
+        <img
+          id="cropImage"
+          alt="crop">
+
+        <div
+          class="crop-mask"
+          id="cropMask">
+        </div>
+
+      </div>
 
     </div>
+
 
     <div class="crop-controls">
 
@@ -558,19 +744,26 @@ input[type="file"]{
         id="zoomSlider"
         type="range"
         min="1"
-        max="3"
-        step=".01"
+        max="4"
+        step="0.01"
         value="1">
 
     </div>
 
+
     <div class="crop-buttons">
 
-      <button type="button" id="cancelCrop">
+      <button
+        type="button"
+        id="cancelCrop">
         cancel
       </button>
 
-      <button type="button" class="apply" id="applyCrop">
+
+      <button
+        type="button"
+        class="apply"
+        id="applyCrop">
         crop & use
       </button>
 
@@ -584,225 +777,348 @@ input[type="file"]{
 <script>
 
 const SUPABASE_URL =
-"https://qadbabbfhrqcbmjrkuvw.supabase.co";
+  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+
 
 const supabaseClient =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
 
 
-// --------------------------------------------------
-// ELEMENTS
-// --------------------------------------------------
+const $ = id =>
+  document.getElementById(id);
 
-const $ = id => document.getElementById(id);
 
 let user = null;
 
 let avatarUrl = null;
+
 let bannerUrl = null;
 
 let cropType = null;
+
 let cropFile = null;
+
 let cropObjectUrl = null;
 
 let zoom = 1;
+
 let dragX = 0;
+
 let dragY = 0;
 
 let dragging = false;
+
 let startX = 0;
+
 let startY = 0;
+
 let startDragX = 0;
+
 let startDragY = 0;
 
 
-// --------------------------------------------------
-// DEFAULT IMAGE
-// --------------------------------------------------
+/* --------------------------------------------------
+   DEFAULT PLACEHOLDERS
+-------------------------------------------------- */
 
 const DEFAULT_AVATAR =
-"data:image/svg+xml;charset=UTF-8," +
-encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
-<rect width="100%" height="100%" fill="#ddd"/>
-<text x="50%" y="50%" dominant-baseline="middle"
-text-anchor="middle" fill="#888" font-size="90">?</text>
-</svg>
-`);
+  "data:image/svg+xml;charset=UTF-8," +
+  encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="300"
+         height="300">
+      <rect width="100%" height="100%" fill="#ddd"/>
+      <text x="50%"
+            y="50%"
+            dominant-baseline="middle"
+            text-anchor="middle"
+            fill="#888"
+            font-size="90">?</text>
+    </svg>
+  `);
+
 
 const DEFAULT_BANNER =
-"data:image/svg+xml;charset=UTF-8," +
-encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400">
-<rect width="100%" height="100%" fill="#ddd"/>
-</svg>
-`);
+  "data:image/svg+xml;charset=UTF-8," +
+  encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="1200"
+         height="400">
+      <rect width="100%"
+            height="100%"
+            fill="#ddd"/>
+    </svg>
+  `);
 
 
-// --------------------------------------------------
-// AUTH
-// --------------------------------------------------
+/* --------------------------------------------------
+   STATUS
+-------------------------------------------------- */
+
+function setStatus(message){
+
+  $("status").textContent = message;
+
+}
+
+
+/* --------------------------------------------------
+   LOAD PROFILE
+-------------------------------------------------- */
 
 async function loadProfile(){
 
   const {
-    data: { session }
-  } = await supabaseClient.auth.getSession();
+    data: { session },
+    error: sessionError
+  } =
+    await supabaseClient.auth.getSession();
 
-  if(!session){
-    window.location.href = "auth.html";
+
+  if(sessionError){
+
+    console.error(sessionError);
+
+    setStatus(
+      "couldn't check login: " +
+      sessionError.message
+    );
+
     return;
   }
 
+
+  if(!session){
+
+    window.location.href =
+      "auth.html";
+
+    return;
+  }
+
+
   user = session.user;
 
-  const { data, error } =
+
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("profiles")
       .select("*")
       .eq("id", user.id)
       .maybeSingle();
 
+
   if(error){
+
     console.error(error);
-    setStatus("couldn't load profile: " + error.message);
+
+    setStatus(
+      "couldn't load profile: " +
+      error.message
+    );
+
     return;
   }
+
 
   if(data){
 
     $("displayName").value =
       data.display_name || "";
 
+
     $("username").value =
       data.username || "";
+
 
     $("bio").value =
       data.bio || "";
 
+
     $("pageColor").value =
-      data.page_color || "#efedef";
+      data.page_color ||
+      "#efedef";
+
 
     $("accentColor").value =
-      data.accent_color || "#e8b8cb";
+      data.accent_color ||
+      "#e8b8cb";
+
 
     $("font").value =
-      data.font || "sans";
+      data.font ||
+      "sans";
+
 
     $("layout").value =
-      data.layout || "soft";
+      data.layout ||
+      "soft";
+
 
     avatarUrl =
-      data.avatar_url || null;
+      data.avatar_url ||
+      null;
+
 
     bannerUrl =
-      data.background_url || null;
+      data.background_url ||
+      null;
 
   }else{
 
     $("username").value =
-      user.user_metadata?.username || "";
+      user.user_metadata?.username ||
+      "";
+
 
     $("displayName").value =
-      user.user_metadata?.display_name || "";
+      user.user_metadata?.display_name ||
+      "";
 
   }
 
+
   updateImages();
+
   updatePreview();
+
 }
 
 
-// --------------------------------------------------
-// IMAGE DISPLAY
-// --------------------------------------------------
+/* --------------------------------------------------
+   UPDATE IMAGES
+-------------------------------------------------- */
 
 function updateImages(){
 
   $("avatarPreview").src =
-    avatarUrl || DEFAULT_AVATAR;
+    avatarUrl ||
+    DEFAULT_AVATAR;
 
-  $("bannerPreview").src =
-    bannerUrl || DEFAULT_BANNER;
 
   $("previewAvatar").src =
-    avatarUrl || DEFAULT_AVATAR;
+    avatarUrl ||
+    DEFAULT_AVATAR;
 
-  $("previewBanner").style.backgroundImage =
-    bannerUrl
-      ? `url("${bannerUrl}")`
-      : `url("${DEFAULT_BANNER}")`;
+
+  $("bannerPreview").src =
+    bannerUrl ||
+    DEFAULT_BANNER;
+
+
+  if(bannerUrl){
+
+    $("previewBanner").style.backgroundImage =
+      `url("${bannerUrl}")`;
+
+  }else{
+
+    $("previewBanner").style.backgroundImage =
+      `url("${DEFAULT_BANNER}")`;
+
+  }
+
 }
 
 
-// --------------------------------------------------
-// LIVE PREVIEW
-// --------------------------------------------------
+/* --------------------------------------------------
+   LIVE PREVIEW
+-------------------------------------------------- */
 
 function updatePreview(){
 
   const name =
     $("displayName").value.trim();
 
+
   const username =
-    $("username").value.trim();
+    $("username")
+      .value
+      .trim()
+      .replace(/^@/, "");
+
 
   const bio =
     $("bio").value.trim();
 
+
   const pageColor =
     $("pageColor").value;
+
 
   const accentColor =
     $("accentColor").value;
 
+
   const font =
     $("font").value;
+
 
   const layout =
     $("layout").value;
 
+
   $("previewName").textContent =
     name || "your name";
 
+
   $("previewUsername").textContent =
     username
-      ? "@" + username.replace(/^@/,"")
+      ? "@" + username
       : "@username";
 
+
   $("previewBio").textContent =
-    bio || "your bio will appear here.";
+    bio ||
+    "your bio will appear here.";
+
 
   $("profilePreview").style.background =
     pageColor;
 
+
   $("previewAvatar").style.borderColor =
     pageColor;
+
 
   $("previewBanner").style.backgroundColor =
     accentColor;
 
 
+  $("pageColorText").textContent =
+    pageColor;
+
+
+  $("accentColorText").textContent =
+    accentColor;
+
+
   if(font === "serif"){
+
     $("profilePreview").style.fontFamily =
       "Georgia, serif";
-  }
 
-  else if(font === "mono"){
+  }else if(font === "mono"){
+
     $("profilePreview").style.fontFamily =
       "monospace";
-  }
 
-  else{
+  }else{
+
     $("profilePreview").style.fontFamily =
       "Arial, sans-serif";
+
   }
+
 
   if(layout === "minimal"){
 
@@ -812,9 +1128,10 @@ function updatePreview(){
     $("previewLayoutBox").style.borderRadius =
       "3px";
 
-  }
+    $("previewLayoutBox").style.borderWidth =
+      "1px";
 
-  else if(layout === "boxed"){
+  }else if(layout === "boxed"){
 
     $("profilePreview").style.borderRadius =
       "8px";
@@ -825,9 +1142,7 @@ function updatePreview(){
     $("previewLayoutBox").style.borderWidth =
       "2px";
 
-  }
-
-  else{
+  }else{
 
     $("profilePreview").style.borderRadius =
       "22px";
@@ -837,161 +1152,431 @@ function updatePreview(){
 
     $("previewLayoutBox").style.borderWidth =
       "1px";
+
   }
 
-  $("pageColorText").textContent =
-    pageColor;
-
-  $("accentColorText").textContent =
-    accentColor;
 }
 
 
-// --------------------------------------------------
-// OPEN FILE PICKERS
-// --------------------------------------------------
+/* --------------------------------------------------
+   FILE PICKERS
+-------------------------------------------------- */
 
-$("avatarButton").addEventListener("click", () => {
-  $("avatarInput").click();
-});
+$("avatarButton").addEventListener(
+  "click",
+  function(){
 
-$("bannerButton").addEventListener("click", () => {
-  $("bannerInput").click();
-});
+    $("avatarInput").click();
 
-$("avatarInput").addEventListener("change", e => {
-
-  const file = e.target.files[0];
-
-  if(!file) return;
-
-  openCropper(file, "avatar");
-
-});
-
-$("bannerInput").addEventListener("change", e => {
-
-  const file = e.target.files[0];
-
-  if(!file) return;
-
-  openCropper(file, "banner");
-
-});
+  }
+);
 
 
-// --------------------------------------------------
-// CROPPER
-// --------------------------------------------------
+$("bannerButton").addEventListener(
+  "click",
+  function(){
 
-function openCropper(file, type){
+    $("bannerInput").click();
+
+  }
+);
+
+
+$("avatarInput").addEventListener(
+  "change",
+  function(event){
+
+    const file =
+      event.target.files &&
+      event.target.files[0];
+
+
+    if(!file){
+
+      return;
+    }
+
+
+    openCropper(
+      file,
+      "avatar"
+    );
+
+  }
+);
+
+
+$("bannerInput").addEventListener(
+  "change",
+  function(event){
+
+    const file =
+      event.target.files &&
+      event.target.files[0];
+
+
+    if(!file){
+
+      return;
+    }
+
+
+    openCropper(
+      file,
+      "banner"
+    );
+
+  }
+);
+
+
+/* --------------------------------------------------
+   OPEN CROPPER
+-------------------------------------------------- */
+
+function openCropper(
+  file,
+  type
+){
 
   if(!file.type.startsWith("image/")){
-    setStatus("please choose an image.");
+
+    setStatus(
+      "please choose an image."
+    );
+
     return;
   }
+
 
   if(file.size > 10 * 1024 * 1024){
-    setStatus("image must be smaller than 10 MB.");
+
+    setStatus(
+      "image must be smaller than 10 MB."
+    );
+
     return;
   }
 
+
   cropType = type;
+
   cropFile = file;
 
   zoom = 1;
+
   dragX = 0;
+
   dragY = 0;
 
-  $("zoomSlider").value = 1;
 
-  $("cropTitle").textContent =
-    type === "avatar"
-      ? "crop profile picture"
-      : "crop banner";
+  $("zoomSlider").value =
+    "1";
+
+
+  if(type === "avatar"){
+
+    $("cropTitle").textContent =
+      "crop profile picture";
+
+
+    $("cropArea")
+      .classList
+      .remove("banner-mode");
+
+
+    $("cropMask")
+      .className =
+      "crop-mask avatar-mask";
+
+  }else{
+
+    $("cropTitle").textContent =
+      "crop banner";
+
+
+    $("cropArea")
+      .classList
+      .add("banner-mode");
+
+
+    $("cropMask")
+      .className =
+      "crop-mask banner-mask";
+
+  }
+
 
   if(cropObjectUrl){
-    URL.revokeObjectURL(cropObjectUrl);
+
+    URL.revokeObjectURL(
+      cropObjectUrl
+    );
+
   }
+
 
   cropObjectUrl =
     URL.createObjectURL(file);
 
+
   $("cropImage").src =
     cropObjectUrl;
 
-  $("cropOverlay").classList.add("active");
 
-  $("cropImage").onload = () => {
-    updateCropTransform();
-  };
+  $("cropOverlay")
+    .classList
+    .add("active");
+
+
+  $("cropImage").onload =
+    function(){
+
+      setupCropImage();
+
+    };
+
 }
 
 
-function updateCropTransform(){
+/* --------------------------------------------------
+   CROP IMAGE SETUP
+-------------------------------------------------- */
 
-  $("cropImage").style.transform =
-    `translate(${dragX}px, ${dragY}px) scale(${zoom})`;
-}
+function setupCropImage(){
+
+  const image =
+    $("cropImage");
 
 
-$("zoomSlider").addEventListener("input", e => {
+  const area =
+    $("cropArea");
 
-  zoom =
-    parseFloat(e.target.value);
+
+  const mask =
+    $("cropMask");
+
+
+  const maskWidth =
+    mask.getBoundingClientRect().width;
+
+
+  const maskHeight =
+    mask.getBoundingClientRect().height;
+
+
+  const imageWidth =
+    image.naturalWidth;
+
+
+  const imageHeight =
+    image.naturalHeight;
+
+
+  const imageRatio =
+    imageWidth /
+    imageHeight;
+
+
+  const cropRatio =
+    maskWidth /
+    maskHeight;
+
+
+  let displayWidth;
+
+  let displayHeight;
+
+
+  /*
+    Make the image cover the crop frame.
+  */
+
+  if(imageRatio > cropRatio){
+
+    displayHeight =
+      maskHeight;
+
+    displayWidth =
+      displayHeight *
+      imageRatio;
+
+  }else{
+
+    displayWidth =
+      maskWidth;
+
+    displayHeight =
+      displayWidth /
+      imageRatio;
+
+  }
+
+
+  image.style.width =
+    displayWidth + "px";
+
+
+  image.style.height =
+    displayHeight + "px";
+
+
+  image.style.left =
+    "50%";
+
+
+  image.style.top =
+    "50%";
+
+
+  image.style.transform =
+    "translate(-50%, -50%)";
+
+
+  image.dataset.baseWidth =
+    displayWidth;
+
+
+  image.dataset.baseHeight =
+    displayHeight;
+
 
   updateCropTransform();
 
-});
+}
 
 
-// --------------------------------------------------
-// DRAG CROP
-// --------------------------------------------------
+/* --------------------------------------------------
+   CROP TRANSFORM
+-------------------------------------------------- */
+
+function updateCropTransform(){
+
+  const image =
+    $("cropImage");
+
+
+  const baseWidth =
+    parseFloat(
+      image.dataset.baseWidth
+    ) || 1;
+
+
+  const baseHeight =
+    parseFloat(
+      image.dataset.baseHeight
+    ) || 1;
+
+
+  image.style.width =
+    (baseWidth * zoom) +
+    "px";
+
+
+  image.style.height =
+    (baseHeight * zoom) +
+    "px";
+
+
+  image.style.left =
+    `calc(50% + ${dragX}px)`;
+
+
+  image.style.top =
+    `calc(50% + ${dragY}px)`;
+
+
+  image.style.transform =
+    "translate(-50%, -50%)";
+
+}
+
+
+/* --------------------------------------------------
+   ZOOM
+-------------------------------------------------- */
+
+$("zoomSlider").addEventListener(
+  "input",
+  function(){
+
+    zoom =
+      parseFloat(
+        this.value
+      );
+
+
+    updateCropTransform();
+
+  }
+);
+
+
+/* --------------------------------------------------
+   DRAGGING
+-------------------------------------------------- */
 
 $("cropImage").addEventListener(
   "pointerdown",
-  e => {
+  function(event){
 
-    e.preventDefault();
+    event.preventDefault();
 
     dragging = true;
 
-    startX = e.clientX;
-    startY = e.clientY;
+    startX =
+      event.clientX;
 
-    startDragX = dragX;
-    startDragY = dragY;
+    startY =
+      event.clientY;
 
-    $("cropImage").setPointerCapture(
-      e.pointerId
+    startDragX =
+      dragX;
+
+    startDragY =
+      dragY;
+
+
+    this.setPointerCapture(
+      event.pointerId
     );
+
   }
 );
 
 
 $("cropImage").addEventListener(
   "pointermove",
-  e => {
+  function(event){
 
-    if(!dragging) return;
+    if(!dragging){
+
+      return;
+    }
+
+
+    event.preventDefault();
+
 
     dragX =
       startDragX +
-      (e.clientX - startX);
+      (event.clientX - startX);
+
 
     dragY =
       startDragY +
-      (e.clientY - startY);
+      (event.clientY - startY);
+
 
     updateCropTransform();
+
   }
 );
 
 
 $("cropImage").addEventListener(
   "pointerup",
-  () => {
+  function(){
 
     dragging = false;
 
@@ -999,61 +1584,313 @@ $("cropImage").addEventListener(
 );
 
 
-// --------------------------------------------------
-// CANCEL
-// --------------------------------------------------
+$("cropImage").addEventListener(
+  "pointercancel",
+  function(){
 
-$("cancelCrop").addEventListener("click", closeCropper);
+    dragging = false;
+
+  }
+);
+
+
+/* --------------------------------------------------
+   CLOSE CROPPER
+-------------------------------------------------- */
+
+$("cancelCrop").addEventListener(
+  "click",
+  closeCropper
+);
 
 
 function closeCropper(){
 
-  $("cropOverlay").classList.remove("active");
+  $("cropOverlay")
+    .classList
+    .remove("active");
+
 
   if(cropObjectUrl){
 
-    URL.revokeObjectURL(cropObjectUrl);
+    URL.revokeObjectURL(
+      cropObjectUrl
+    );
 
     cropObjectUrl = null;
+
   }
 
+
   $("avatarInput").value = "";
+
   $("bannerInput").value = "";
 
+
   cropFile = null;
+
   cropType = null;
+
 }
 
 
-// --------------------------------------------------
-// APPLY CROP
-// --------------------------------------------------
+/* --------------------------------------------------
+   CREATE ACTUAL CROP
+-------------------------------------------------- */
+
+function createCroppedImage(){
+
+  return new Promise(
+    function(resolve, reject){
+
+      const image =
+        new Image();
+
+
+      image.onload =
+        function(){
+
+          const mask =
+            $("cropMask");
+
+
+          const maskRect =
+            mask.getBoundingClientRect();
+
+
+          const imageElement =
+            $("cropImage");
+
+
+          const imageRect =
+            imageElement.getBoundingClientRect();
+
+
+          const outputWidth =
+            cropType === "avatar"
+              ? 800
+              : 1600;
+
+
+          const outputHeight =
+            cropType === "avatar"
+              ? 800
+              : 600;
+
+
+          const canvas =
+            document.createElement(
+              "canvas"
+            );
+
+
+          canvas.width =
+            outputWidth;
+
+
+          canvas.height =
+            outputHeight;
+
+
+          const ctx =
+            canvas.getContext("2d");
+
+
+          /*
+            Determine exactly what part of the
+            source image is underneath the crop frame.
+          */
+
+          const scaleX =
+            image.naturalWidth /
+            imageRect.width;
+
+
+          const scaleY =
+            image.naturalHeight /
+            imageRect.height;
+
+
+          const sourceX =
+            (
+              maskRect.left -
+              imageRect.left
+            ) * scaleX;
+
+
+          const sourceY =
+            (
+              maskRect.top -
+              imageRect.top
+            ) * scaleY;
+
+
+          const sourceWidth =
+            maskRect.width *
+            scaleX;
+
+
+          const sourceHeight =
+            maskRect.height *
+            scaleY;
+
+
+          /*
+            Clamp the crop to the actual image.
+            This prevents black areas.
+          */
+
+          const safeX =
+            Math.max(
+              0,
+              Math.min(
+                sourceX,
+                image.naturalWidth -
+                sourceWidth
+              )
+            );
+
+
+          const safeY =
+            Math.max(
+              0,
+              Math.min(
+                sourceY,
+                image.naturalHeight -
+                sourceHeight
+              )
+            );
+
+
+          const safeWidth =
+            Math.min(
+              sourceWidth,
+              image.naturalWidth -
+              safeX
+            );
+
+
+          const safeHeight =
+            Math.min(
+              sourceHeight,
+              image.naturalHeight -
+              safeY
+            );
+
+
+          ctx.drawImage(
+            image,
+            safeX,
+            safeY,
+            safeWidth,
+            safeHeight,
+            0,
+            0,
+            outputWidth,
+            outputHeight
+          );
+
+
+          canvas.toBlob(
+            function(blob){
+
+              if(blob){
+
+                resolve(blob);
+
+              }else{
+
+                reject(
+                  new Error(
+                    "couldn't create cropped image."
+                  )
+                );
+
+              }
+
+            },
+            "image/jpeg",
+            0.92
+          );
+
+        };
+
+
+      image.onerror =
+        function(){
+
+          reject(
+            new Error(
+              "couldn't read image."
+            )
+          );
+
+        };
+
+
+      image.src =
+        cropObjectUrl;
+
+    }
+  );
+
+}
+
+
+/* --------------------------------------------------
+   APPLY CROP + UPLOAD
+-------------------------------------------------- */
 
 $("applyCrop").addEventListener(
   "click",
-  async () => {
+  async function(){
 
-    if(!cropFile) return;
+    if(!cropFile ||
+       !cropType ||
+       !user){
 
-    setStatus("cropping image...");
+      return;
+    }
+
+
+    const uploadedType =
+      cropType;
+
+
+    setStatus(
+      "cropping image..."
+    );
+
+
+    $("applyCrop").disabled =
+      true;
+
 
     try{
 
-      const croppedBlob =
+      const blob =
         await createCroppedImage();
 
-      const extension =
-        cropType === "avatar"
-          ? "jpg"
-          : "jpg";
+
+      setStatus(
+        "uploading image..."
+      );
+
 
       const folder =
-        cropType === "avatar"
+        uploadedType === "avatar"
           ? "profile"
           : "banners";
 
+
       const path =
-        `${folder}/${user.id}-${Date.now()}.${extension}`;
+        folder +
+        "/" +
+        user.id +
+        "-" +
+        Date.now() +
+        ".jpg";
+
 
       const {
         error: uploadError
@@ -1063,16 +1900,22 @@ $("applyCrop").addEventListener(
           .from("avatars")
           .upload(
             path,
-            croppedBlob,
+            blob,
             {
-              contentType:"image/jpeg",
-              upsert:true
+              contentType:
+                "image/jpeg",
+              upsert:
+                false
             }
           );
 
+
       if(uploadError){
+
         throw uploadError;
+
       }
+
 
       const {
         data: publicData
@@ -1080,334 +1923,98 @@ $("applyCrop").addEventListener(
         supabaseClient
           .storage
           .from("avatars")
-          .getPublicUrl(path);
+          .getPublicUrl(
+            path
+          );
 
-      if(!publicData?.publicUrl){
+
+      if(
+        !publicData ||
+        !publicData.publicUrl
+      ){
+
         throw new Error(
           "Supabase did not return an image URL."
         );
+
       }
 
-      const url =
+
+      const finalUrl =
         publicData.publicUrl +
-        "?v=" + Date.now();
+        "?v=" +
+        Date.now();
 
-      if(cropType === "avatar"){
 
-        avatarUrl = url;
+      if(uploadedType === "avatar"){
+
+        avatarUrl =
+          finalUrl;
 
       }else{
 
-        bannerUrl = url;
+        bannerUrl =
+          finalUrl;
 
       }
 
+
       updateImages();
+
       updatePreview();
+
 
       closeCropper();
 
+
       setStatus(
-        cropType === "avatar"
+        uploadedType === "avatar"
           ? "profile picture uploaded. save your profile."
           : "banner uploaded. save your profile."
       );
 
+
     }catch(error){
 
-      console.error(error);
+      console.error(
+        "IMAGE UPLOAD ERROR:",
+        error
+      );
+
 
       setStatus(
         "Upload error: " +
-        error.message
+        (
+          error.message ||
+          "something went wrong."
+        )
       );
+
+    }finally{
+
+      $("applyCrop").disabled =
+        false;
+
     }
 
   }
 );
 
 
-// --------------------------------------------------
-// CREATE CROPPED IMAGE
-// --------------------------------------------------
-
-function createCroppedImage(){
-
-  return new Promise((resolve, reject) => {
-
-    const image = new Image();
-
-    image.onload = () => {
-
-      const canvas = document.createElement("canvas");
-
-      let outputWidth;
-      let outputHeight;
-
-      if(cropType === "avatar"){
-        outputWidth = 800;
-        outputHeight = 800;
-      }else{
-        outputWidth = 1600;
-        outputHeight = 600;
-      }
-
-      canvas.width = outputWidth;
-      canvas.height = outputHeight;
-
-      const ctx = canvas.getContext("2d");
-
-      /*
-        Make the image COVER the entire crop area.
-        This prevents black space.
-      */
-
-      const targetRatio =
-        outputWidth / outputHeight;
-
-      const imageRatio =
-        image.naturalWidth / image.naturalHeight;
-
-      let baseWidth;
-      let baseHeight;
-
-      if(imageRatio > targetRatio){
-
-        baseHeight = outputHeight;
-        baseWidth = outputHeight * imageRatio;
-
-      }else{
-
-        baseWidth = outputWidth;
-        baseHeight = outputWidth / imageRatio;
-
-      }
-
-      /*
-        Convert the user's drag/zoom from the
-        crop preview into canvas coordinates.
-      */
-
-      const area = $("cropArea");
-
-      const previewWidth =
-        area.clientWidth;
-
-      const previewHeight =
-        area.clientHeight;
-
-      const previewImageWidth =
-        baseWidth *
-        (previewWidth / outputWidth);
-
-      const previewImageHeight =
-        baseHeight *
-        (previewWidth / outputWidth);
-
-      const scaleX =
-        outputWidth / previewWidth;
-
-      const scaleY =
-        outputHeight / previewHeight;
-
-      /*
-        Apply zoom around the center.
-      */
-
-      const zoomedWidth =
-        baseWidth * zoom;
-
-      const zoomedHeight =
-        baseHeight * zoom;
-
-      /*
-        Center the image first,
-        then apply the user's dragging.
-      */
-
-      const x =
-        (outputWidth - zoomedWidth) / 2 +
-        dragX * scaleX;
-
-      const y =
-        (outputHeight - zoomedHeight) / 2 +
-        dragY * scaleY;
-
-      /*
-        Draw the image.
-        Because the image is scaled to COVER
-        the entire canvas, there should be no
-        black areas.
-      */
-
-      ctx.drawImage(
-        image,
-        x,
-        y,
-        zoomedWidth,
-        zoomedHeight
-      );
-
-      canvas.toBlob(
-        blob => {
-
-          if(blob){
-            resolve(blob);
-          }else{
-            reject(
-              new Error(
-                "couldn't create cropped image."
-              )
-            );
-          }
-
-        },
-        "image/jpeg",
-        0.90
-      );
-
-    };
-
-    image.onerror = () => {
-
-      reject(
-        new Error(
-          "couldn't read image."
-        )
-      );
-
-    };
-
-    image.src = cropObjectUrl;
-
-  });
-}
-
-      canvas.width = width;
-      canvas.height = height;
-
-      const ctx =
-        canvas.getContext("2d");
-
-      ctx.fillStyle = "#111";
-
-      ctx.fillRect(
-        0,
-        0,
-        width,
-        height
-      );
-
-      const area =
-        $("cropArea");
-
-      const areaWidth =
-        area.clientWidth;
-
-      const areaHeight =
-        area.clientHeight;
-
-      const imageRatio =
-        image.naturalWidth /
-        image.naturalHeight;
-
-      const targetRatio =
-        width / height;
-
-      let drawWidth;
-      let drawHeight;
-
-      if(imageRatio > targetRatio){
-
-        drawHeight =
-          height;
-
-        drawWidth =
-          height * imageRatio;
-
-      }else{
-
-        drawWidth =
-          width;
-
-        drawHeight =
-          width / imageRatio;
-
-      }
-
-      const scale =
-        (areaWidth / drawWidth) *
-        zoom;
-
-      const finalWidth =
-        drawWidth * scale;
-
-      const finalHeight =
-        drawHeight * scale;
-
-      const offsetX =
-        (width - finalWidth) / 2 +
-        dragX *
-        (width / areaWidth);
-
-      const offsetY =
-        (height - finalHeight) / 2 +
-        dragY *
-        (height / areaHeight);
-
-      ctx.drawImage(
-        image,
-        offsetX,
-        offsetY,
-        finalWidth,
-        finalHeight
-      );
-
-      canvas.toBlob(
-        blob => {
-
-          if(blob){
-            resolve(blob);
-          }else{
-            reject(
-              new Error(
-                "couldn't create cropped image."
-              )
-            );
-          }
-
-        },
-        "image/jpeg",
-        .90
-      );
-
-    };
-
-    image.onerror = () => {
-
-      reject(
-        new Error(
-          "couldn't read image."
-        )
-      );
-
-    };
-
-    image.src =
-      cropObjectUrl;
-  });
-}
-
-
-// --------------------------------------------------
-// SAVE PROFILE
-// --------------------------------------------------
+/* --------------------------------------------------
+   SAVE PROFILE
+-------------------------------------------------- */
 
 $("saveBtn").addEventListener(
   "click",
-  async () => {
+  async function(){
 
-    if(!user) return;
+    if(!user){
+
+      return;
+
+    }
+
 
     const username =
       $("username")
@@ -1415,10 +2022,12 @@ $("saveBtn").addEventListener(
         .trim()
         .replace(/^@/, "");
 
+
     const displayName =
       $("displayName")
         .value
         .trim();
+
 
     if(!username){
 
@@ -1427,23 +2036,34 @@ $("saveBtn").addEventListener(
       );
 
       return;
+
     }
 
-    $("saveBtn").disabled = true;
 
-    setStatus("saving...");
+    $("saveBtn").disabled =
+      true;
+
+
+    setStatus(
+      "saving..."
+    );
+
 
     const profileData = {
 
-      id:user.id,
+      id:
+        user.id,
 
-      username,
+      username:
+        username,
 
       display_name:
         displayName,
 
       bio:
-        $("bio").value.trim(),
+        $("bio")
+          .value
+          .trim(),
 
       avatar_url:
         avatarUrl,
@@ -1452,20 +2072,27 @@ $("saveBtn").addEventListener(
         bannerUrl,
 
       page_color:
-        $("pageColor").value,
+        $("pageColor")
+          .value,
 
       accent_color:
-        $("accentColor").value,
+        $("accentColor")
+          .value,
 
       font:
-        $("font").value,
+        $("font")
+          .value,
 
       layout:
-        $("layout").value,
+        $("layout")
+          .value,
 
       updated_at:
-        new Date().toISOString()
+        new Date()
+          .toISOString()
+
     };
+
 
     const {
       error
@@ -1475,11 +2102,15 @@ $("saveBtn").addEventListener(
         .upsert(
           profileData,
           {
-            onConflict:"id"
+            onConflict:
+              "id"
           }
         );
 
-    $("saveBtn").disabled = false;
+
+    $("saveBtn").disabled =
+      false;
+
 
     if(error){
 
@@ -1491,18 +2122,21 @@ $("saveBtn").addEventListener(
       );
 
       return;
+
     }
+
 
     setStatus(
       "profile saved ✓"
     );
+
   }
 );
 
 
-// --------------------------------------------------
-// LIVE INPUTS
-// --------------------------------------------------
+/* --------------------------------------------------
+   LIVE SETTINGS
+-------------------------------------------------- */
 
 [
   "displayName",
@@ -1512,61 +2146,62 @@ $("saveBtn").addEventListener(
   "accentColor",
   "font",
   "layout"
-].forEach(id => {
+].forEach(
+  function(id){
 
-  $(id).addEventListener(
-    "input",
-    updatePreview
-  );
-
-  $(id).addEventListener(
-    "change",
-    updatePreview
-  );
-
-});
+    $(id).addEventListener(
+      "input",
+      updatePreview
+    );
 
 
-// --------------------------------------------------
-// LOGOUT / BACK
-// --------------------------------------------------
+    $(id).addEventListener(
+      "change",
+      updatePreview
+    );
 
-$("logoutBtn").addEventListener(
-  "click",
-  async () => {
-
-    await supabaseClient.auth.signOut();
-
-    window.location.href =
-      "auth.html";
   }
 );
 
+
+/* --------------------------------------------------
+   BACK
+-------------------------------------------------- */
 
 $("backBtn").addEventListener(
   "click",
-  () => {
+  function(){
 
     window.location.href =
       "index.html";
+
   }
 );
 
 
-// --------------------------------------------------
-// STATUS
-// --------------------------------------------------
+/* --------------------------------------------------
+   LOGOUT
+-------------------------------------------------- */
 
-function setStatus(message){
+$("logoutBtn").addEventListener(
+  "click",
+  async function(){
 
-  $("status").textContent =
-    message;
-}
+    await supabaseClient
+      .auth
+      .signOut();
 
 
-// --------------------------------------------------
-// START
-// --------------------------------------------------
+    window.location.href =
+      "auth.html";
+
+  }
+);
+
+
+/* --------------------------------------------------
+   START
+-------------------------------------------------- */
 
 loadProfile();
 
