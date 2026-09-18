@@ -1,1930 +1,1345 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>edit profile — kioku</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-    }
-
-    body {
-      background: #efedef;
-      color: #222;
-
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-    }
-
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-
-    /* =========================================
-       TOP BAR
-    ========================================= */
-
-    .topbar {
-      width: 100%;
-      height: 62px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 20px;
-
-      background: rgba(255,255,255,.82);
-
-      border-bottom: 1px solid rgba(0,0,0,.12);
-
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      color: #222;
-      text-decoration: none;
-
-      font-size: 20px;
-      letter-spacing: .04em;
-    }
-
-    .logo span {
-      font-size: 13px;
-      opacity: .55;
-      margin-left: 4px;
-    }
-
-    .back-button {
-      border: 1px solid #222;
-
-      background: #fff;
-      color: #222;
-
-      padding: 8px 13px;
-
-      font-size: 12px;
-
-      transition:
-        background .15s ease,
-        color .15s ease;
-    }
-
-    .back-button:hover {
-      background: #222;
-      color: #fff;
-    }
-
-
-    /* =========================================
-       PAGE
-    ========================================= */
-
-    .page {
-      width: 100%;
-      max-width: 850px;
-
-      margin: 0 auto;
-
-      padding: 35px 20px 70px;
-    }
-
-    .page-title {
-      margin: 0 0 7px;
-
-      font-size: 25px;
-      font-weight: 400;
-    }
-
-    .page-subtitle {
-      margin: 0 0 30px;
-
-      font-size: 12px;
-
-      opacity: .55;
-    }
-
-
-    /* =========================================
-       EDIT CARD
-    ========================================= */
-
-    .card {
-      background: rgba(255,255,255,.72);
-
-      border: 1px solid rgba(0,0,0,.12);
-
-      padding: 25px;
-
-      margin-bottom: 18px;
-    }
-
-    .card-title {
-      margin: 0 0 20px;
-
-      font-size: 13px;
-      font-weight: 500;
-
-      letter-spacing: .04em;
-    }
-
-
-    /* =========================================
-       IMAGE PREVIEWS
-    ========================================= */
-
-    .visuals {
-      display: grid;
-
-      grid-template-columns:
-        150px
-        1fr;
-
-      gap: 22px;
-
-      align-items: center;
-    }
-
-    .avatar-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      gap: 10px;
-    }
-
-    .avatar-preview {
-      width: 135px;
-      height: 135px;
-
-      border-radius: 50%;
-
-      object-fit: cover;
-
-      background: #ddd;
-
-      border: 5px solid #fff;
-
-      box-shadow:
-        0 4px 18px rgba(0,0,0,.13);
-    }
-
-    .banner-section {
-      min-width: 0;
-    }
-
-    .banner-preview {
-      width: 100%;
-      height: 150px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #e8b8cb,
-          #efedef
-        );
-
-      background-size: cover;
-      background-position: center;
-
-      border: 1px solid rgba(0,0,0,.12);
-    }
-
-    .upload-button {
-      border: 1px solid #222 !important;
-
-      background: #fff !important;
-
-      color: #222 !important;
-
-      padding: 8px 11px;
-
-      font-size: 10px;
-
-      white-space: nowrap;
-    }
-
-    .upload-button:hover {
-      background: #222 !important;
-      color: #fff !important;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
-
-    /* =========================================
-       FORM
-    ========================================= */
-
-    .field {
-      margin-bottom: 19px;
-    }
-
-    .field:last-child {
-      margin-bottom: 0;
-    }
-
-    .field-label {
-      display: block;
-
-      margin-bottom: 7px;
-
-      font-size: 11px;
-
-      opacity: .65;
-    }
-
-    .field input,
-    .field textarea,
-    .field select {
-      width: 100%;
-
-      border: 1px solid #ccc;
-
-      background: #fff;
-
-      color: #222;
-
-      padding: 11px 12px;
-
-      outline: none;
-
-      font-size: 13px;
-    }
-
-    .field input:focus,
-    .field textarea:focus,
-    .field select:focus {
-      border-color: #888;
-    }
-
-    .field textarea {
-      min-height: 100px;
-
-      resize: vertical;
-
-      line-height: 1.5;
-    }
-
-
-    /* =========================================
-       COLOR CONTROLS
-    ========================================= */
-
-    .color-row {
-      display: grid;
-
-      grid-template-columns:
-        1fr
-        1fr;
-
-      gap: 15px;
-    }
-
-    .color-control {
-      display: flex;
-
-      align-items: center;
-
-      gap: 10px;
-
-      border: 1px solid #ccc;
-
-      background: #fff;
-
-      padding: 8px 10px;
-    }
-
-    .color-control input[type="color"] {
-      width: 38px;
-      height: 32px;
-
-      padding: 0;
-
-      border: 0;
-
-      background: transparent;
-
-      cursor: pointer;
-    }
-
-    .color-value {
-      font-size: 11px;
-
-      opacity: .65;
-    }
-
-
-    /* =========================================
-       LAYOUT OPTIONS
-    ========================================= */
-
-    .options {
-      display: grid;
-
-      grid-template-columns:
-        repeat(3, 1fr);
-
-      gap: 10px;
-    }
-
-    .option {
-      border: 1px solid #ccc;
-
-      background: #fff;
-
-      padding: 13px 10px;
-
-      text-align: center;
-
-      cursor: pointer;
-
-      font-size: 11px;
-
-      transition:
-        border-color .15s ease,
-        background .15s ease;
-    }
-
-    .option:hover {
-      border-color: #999;
-    }
-
-    .option.active {
-      border-color: #222;
-
-      background: #f3f3f3;
-    }
-
-
-    /* =========================================
-       LIVE PREVIEW
-    ========================================= */
-
-    .preview-box {
-      border: 1px solid rgba(0,0,0,.12);
-
-      overflow: hidden;
-
-      background: #efedef;
-    }
-
-    .preview-banner {
-      height: 120px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #e8b8cb,
-          #efedef
-        );
-
-      background-size: cover;
-      background-position: center;
-    }
-
-    .preview-profile {
-      position: relative;
-
-      padding: 0 20px 20px;
-    }
-
-    .preview-avatar {
-      width: 88px;
-      height: 88px;
-
-      margin-top: -44px;
-
-      border-radius: 50%;
-
-      object-fit: cover;
-
-      border: 4px solid #efedef;
-
-      background: #ddd;
-
-      position: relative;
-    }
-
-    .preview-name {
-      margin: 9px 0 0;
-
-      font-size: 19px;
-      font-weight: 500;
-    }
-
-    .preview-username {
-      margin-top: 3px;
-
-      font-size: 10px;
-
-      opacity: .55;
-    }
-
-    .preview-bio {
-      margin-top: 10px;
-
-      font-size: 11px;
-
-      line-height: 1.5;
-
-      opacity: .8;
-
-      white-space: pre-wrap;
-    }
-
-
-    /* =========================================
-       SAVE
-    ========================================= */
-
-    .actions {
-      display: flex;
-
-      justify-content: space-between;
-
-      align-items: center;
-
-      gap: 15px;
-
-      margin-top: 25px;
-    }
-
-    .save-button {
-      border: 1px solid #222;
-
-      background: #222;
-      color: #fff;
-
-      padding: 11px 24px;
-
-      font-size: 12px;
-
-      min-width: 120px;
-    }
-
-    .save-button:hover {
-      background: #444;
-    }
-
-    .logout-button {
-      border: 1px solid #bbb;
-
-      background: #fff;
-      color: #555;
-
-      padding: 10px 17px;
-
-      font-size: 11px;
-    }
-
-    .logout-button:hover {
-      border-color: #888;
-    }
-
-    .status {
-      min-height: 18px;
-
-      font-size: 11px;
-
-      opacity: .65;
-
-      text-align: center;
-    }
-
-
-    /* =========================================
-       CROP MODAL
-    ========================================= */
-
-    .crop-modal {
-      position: fixed;
-
-      inset: 0;
-
-      z-index: 1000;
-
-      display: none;
-
-      align-items: center;
-      justify-content: center;
-
-      background: rgba(0,0,0,.65);
-
-      padding: 18px;
-    }
-
-    .crop-modal.open {
-      display: flex;
-    }
-
-    .crop-box {
-      width: min(600px, 100%);
-
-      max-height: 92vh;
-
-      overflow: auto;
-
-      background: #fff;
-
-      padding: 20px;
-
-      border: 1px solid #222;
-    }
-
-    .crop-title {
-      margin: 0 0 15px;
-
-      font-size: 15px;
-
-      font-weight: 400;
-    }
-
-    .crop-area {
-      width: 100%;
-
-      display: flex;
-
-      justify-content: center;
-
-      align-items: center;
-
-      background: #111;
-
-      overflow: hidden;
-
-      position: relative;
-
-      touch-action: none;
-    }
-
-    .crop-area.profile-crop {
-      aspect-ratio: 1 / 1;
-    }
-
-    .crop-area.banner-crop {
-      aspect-ratio: 16 / 6;
-    }
-
-    .crop-image {
-      position: absolute;
-
-      max-width: none;
-
-      user-select: none;
-
-      -webkit-user-drag: none;
-
-      transform-origin: center center;
-
-      cursor: grab;
-    }
-
-    .crop-image.dragging {
-      cursor: grabbing;
-    }
-
-    .crop-controls {
-      margin-top: 15px;
-    }
-
-    .zoom-label {
-      display: block;
-
-      margin-bottom: 6px;
-
-      font-size: 11px;
-
-      opacity: .6;
-    }
-
-    .zoom-slider {
-      width: 100%;
-    }
-
-    .crop-actions {
-      display: flex;
-
-      justify-content: flex-end;
-
-      gap: 9px;
-
-      margin-top: 16px;
-    }
-
-    .crop-cancel,
-    .crop-save {
-      border: 1px solid #222;
-
-      padding: 9px 15px;
-
-      font-size: 11px;
-    }
-
-    .crop-cancel {
-      background: #fff;
-      color: #222;
-    }
-
-    .crop-save {
-      background: #222;
-      color: #fff;
-    }
-
-
-    /* =========================================
-       MOBILE
-    ========================================= */
-
-    @media (max-width: 650px) {
-
-      .topbar {
-        height: 58px;
-
-        padding:
-          0
-          14px;
-      }
-
-      .page {
-        padding:
-          27px
-          13px
-          55px;
-      }
-
-      .page-title {
-        font-size: 22px;
-      }
-
-      .card {
-        padding: 18px;
-      }
-
-      .visuals {
-        grid-template-columns: 1fr;
-
-        gap: 20px;
-      }
-
-      .avatar-section {
-        align-items: flex-start;
-      }
-
-      .banner-preview {
-        height: 130px;
-      }
-
-      .color-row {
-        grid-template-columns: 1fr;
-      }
-
-      .options {
-        grid-template-columns: 1fr;
-      }
-
-      .actions {
-        flex-direction: column-reverse;
-
-        align-items: stretch;
-      }
-
-      .save-button,
-      .logout-button {
-        width: 100%;
-      }
-
-    }
-
-  </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>kioku 記憶 · edit profile</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#101012;
+  --panel:#17171a;
+  --text:#f4f1f3;
+  --muted:#aaa3aa;
+  --line:#ffffff1c;
+  --soft:#ffffff0a;
+  --accent:#f2a9c8;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font:300 13px Manrope,sans-serif;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+  color:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.topbar{
+  height:76px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  padding:0 4vw;
+  gap:12px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:#101012e8;
+  backdrop-filter:blur(18px);
+}
+
+.logo{
+  color:var(--text);
+  text-decoration:none;
+  font:18px 'DM Mono',monospace;
+}
+
+.logo small{
+  color:var(--accent);
+  font-size:10px;
+  margin-left:5px;
+}
+
+.back{
+  margin-left:auto;
+  border:1px solid var(--line);
+  background:var(--soft);
+  border-radius:999px;
+  padding:9px 14px;
+  font-size:11px;
+}
+
+.back:hover{
+  color:var(--accent);
+  border-color:#f2a9c84d;
+}
+
+.page{
+  width:min(1050px,92vw);
+  margin:auto;
+  padding:65px 0 90px;
+}
+
+.heading{
+  margin-bottom:35px;
+}
+
+.heading p{
+  color:var(--muted);
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  margin:0 0 12px;
+}
+
+.heading h1{
+  font-size:42px;
+  font-weight:300;
+  letter-spacing:-.05em;
+  margin:0;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  gap:30px;
+  align-items:start;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:28px;
+}
+
+.section{
+  border-bottom:1px solid var(--line);
+  padding-bottom:28px;
+  margin-bottom:28px;
+}
+
+.section:last-child{
+  border-bottom:0;
+  padding-bottom:0;
+  margin-bottom:0;
+}
+
+.section-title{
+  color:var(--muted);
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  margin-bottom:20px;
+}
+
+.field{
+  margin-bottom:20px;
+}
+
+.field:last-child{
+  margin-bottom:0;
+}
+
+.field label{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:8px;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  background:#111113;
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:12px;
+  outline:none;
+}
+
+.field textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:#f2a9c84d;
+}
+
+.media-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.media-box{
+  border:1px dashed #5a545b;
+  border-radius:12px;
+  min-height:150px;
+  overflow:hidden;
+  position:relative;
+  background:#111113;
+}
+
+.media-preview{
+  width:100%;
+  height:150px;
+  background-size:cover;
+  background-position:center;
+  display:grid;
+  place-items:center;
+  color:var(--muted);
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+}
+
+.media-button{
+  display:block;
+  width:100%;
+  margin-top:9px;
+  border:1px solid var(--line);
+  background:var(--soft);
+  border-radius:999px;
+  padding:9px;
+  font-size:10px;
+  text-align:center;
+}
+
+.media-button:hover{
+  color:var(--accent);
+  border-color:#f2a9c84d;
+}
+
+.media-input{
+  display:none;
+}
+
+.color-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.color-control{
+  border:1px solid var(--line);
+  background:#111113;
+  border-radius:10px;
+  padding:10px;
+}
+
+.color-control label{
+  display:block;
+  color:var(--muted);
+  font:9px 'DM Mono',monospace;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.color-control input{
+  width:100%;
+  height:42px;
+  border:0;
+  padding:0;
+  background:none;
+}
+
+.layout-options{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.layout-option{
+  border:1px solid var(--line);
+  background:var(--soft);
+  border-radius:10px;
+  padding:14px 8px;
+  text-align:center;
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+}
+
+.layout-option.active{
+  border-color:var(--accent);
+  color:var(--accent);
+  background:#f2a9c81c;
+}
+
+.save{
+  width:100%;
+  border:0;
+  border-radius:999px;
+  padding:14px;
+  background:var(--accent);
+  color:#171217;
+  font-weight:500;
+}
+
+.save:disabled{
+  opacity:.5;
+  cursor:default;
+}
+
+.status{
+  min-height:18px;
+  margin-top:12px;
+  text-align:center;
+  color:var(--muted);
+  font:10px 'DM Mono',monospace;
+}
+
+.preview-wrap{
+  position:sticky;
+  top:105px;
+}
+
+.preview-label{
+  color:var(--muted);
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  margin:0 0 12px;
+}
+
+.preview{
+  min-height:520px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  background:#101012;
+}
+
+.preview-banner{
+  height:145px;
+  background:
+    radial-gradient(circle at 30% 30%,#f2a9c82b,transparent 35%),
+    linear-gradient(135deg,#1d1b20,#111114);
+  background-size:cover;
+  background-position:center;
+}
+
+.preview-body{
+  padding:0 20px 25px;
+  margin-top:-30px;
+}
+
+.preview-avatar{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  border:4px solid #101012;
+  background:#252328;
+  background-size:cover;
+  background-position:center;
+  display:grid;
+  place-items:center;
+  color:var(--accent);
+  font:14px 'DM Mono',monospace;
+}
+
+.preview-name{
+  margin-top:12px;
+  font-size:21px;
+  font-weight:300;
+}
+
+.preview-username{
+  color:var(--accent);
+  font:9px 'DM Mono',monospace;
+  margin-top:4px;
+}
+
+.preview-bio{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.6;
+  margin-top:10px;
+  white-space:pre-wrap;
+}
+
+.preview-grid{
+  columns:2;
+  column-gap:7px;
+  margin-top:18px;
+}
+
+.preview-card{
+  break-inside:avoid;
+  height:100px;
+  margin-bottom:7px;
+  border-radius:5px;
+  background:linear-gradient(135deg,#252329,#17171a);
+}
+
+.preview-card:nth-child(2){
+  height:140px;
+}
+
+.preview-card:nth-child(3){
+  height:85px;
+}
+
+.preview-card:nth-child(4){
+  height:125px;
+}
+
+.crop-overlay{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:#08080bf5;
+  backdrop-filter:blur(20px);
+  display:none;
+  place-items:center;
+  padding:20px;
+}
+
+.crop-overlay.open{
+  display:grid;
+}
+
+.crop-box{
+  width:min(600px,94vw);
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+}
+
+.crop-title{
+  font:11px 'DM Mono',monospace;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:15px;
+}
+
+.crop-area{
+  position:relative;
+  height:min(55vh,420px);
+  background:#08080a;
+  border-radius:10px;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+}
+
+.crop-area img{
+  max-width:none;
+  position:absolute;
+  user-select:none;
+  touch-action:none;
+}
+
+.crop-actions{
+  display:flex;
+  gap:8px;
+  margin-top:15px;
+}
+
+.crop-actions button{
+  flex:1;
+  border:1px solid var(--line);
+  background:var(--soft);
+  border-radius:999px;
+  padding:11px;
+}
+
+.crop-actions .use{
+  background:var(--accent);
+  color:#171217;
+  border-color:var(--accent);
+}
+
+.zoom{
+  width:100%;
+  margin-top:15px;
+  accent-color:var(--accent);
+}
+
+@media(max-width:800px){
+  .layout{
+    grid-template-columns:1fr;
+  }
+
+  .preview-wrap{
+    position:static;
+  }
+
+  .preview{
+    min-height:450px;
+  }
+}
+
+@media(max-width:600px){
+  .page{
+    padding-top:45px;
+  }
+
+  .heading h1{
+    font-size:34px;
+  }
+
+  .panel{
+    padding:20px;
+  }
+
+  .media-row,
+  .color-row{
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
-
 
 <body>
 
-
-  <!-- =========================================
-       TOP BAR
-  ========================================== -->
-
-  <header class="topbar">
-
-    <a
-      href="profile.html"
-      class="logo"
-    >
-      kioku
-      <span>記憶</span>
-    </a>
-
-
-    <!-- THIS NOW GOES TO PROFILE -->
-
-    <button
-      class="back-button"
-      id="backButton"
-    >
-      back
-    </button>
-
-  </header>
-
-
-  <!-- =========================================
-       PAGE
-  ========================================== -->
-
-  <main class="page">
-
-    <h1 class="page-title">
-      edit profile
-    </h1>
-
-    <p class="page-subtitle">
-      change how your profile appears to the world.
-    </p>
-
-
-    <!-- =======================================
-         VISUALS
-    ======================================== -->
-
-    <section class="card">
-
-      <h2 class="card-title">
-        appearance
-      </h2>
-
-
-      <div class="visuals">
-
-
-        <!-- PROFILE PICTURE -->
-
-        <div class="avatar-section">
-
-          <img
-            id="avatarPreview"
-            class="avatar-preview"
-            src=""
-            alt="profile picture"
-          >
-
-          <input
-            id="avatarInput"
-            type="file"
-            accept="image/*"
-          >
-
-          <button
-            class="upload-button"
-            id="avatarButton"
-            type="button"
-          >
-            change profile picture
-          </button>
-
-        </div>
-
-
-        <!-- BANNER -->
-
-        <div class="banner-section">
-
-          <div
-            id="bannerPreview"
-            class="banner-preview"
-          ></div>
-
-          <input
-            id="bannerInput"
-            type="file"
-            accept="image/*"
-          >
-
-          <button
-            class="upload-button"
-            id="bannerButton"
-            type="button"
-            style="margin-top:10px;"
-          >
-            change banner
-          </button>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================
-         BASIC INFORMATION
-    ======================================== -->
-
-    <section class="card">
-
-      <h2 class="card-title">
-        information
-      </h2>
-
-
-      <div class="field">
-
-        <label
-          class="field-label"
-          for="displayNameInput"
-        >
-          display name
-        </label>
-
-        <input
-          id="displayNameInput"
-          type="text"
-          maxlength="60"
-          placeholder="your name"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label
-          class="field-label"
-          for="usernameInput"
-        >
-          username
-        </label>
-
-        <input
-          id="usernameInput"
-          type="text"
-          maxlength="30"
-          placeholder="username"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label
-          class="field-label"
-          for="bioInput"
-        >
-          bio
-        </label>
-
-        <textarea
-          id="bioInput"
-          maxlength="300"
-          placeholder="something about you..."
-        ></textarea>
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================
-         COLORS
-    ======================================== -->
-
-    <section class="card">
-
-      <h2 class="card-title">
-        colors
-      </h2>
-
-
-      <div class="color-row">
-
-
-        <div class="field">
-
-          <label class="field-label">
-            page color
-          </label>
-
-          <div class="color-control">
-
-            <input
-              id="pageColorInput"
-              type="color"
-              value="#efedef"
-            >
-
-            <span
-              class="color-value"
-              id="pageColorValue"
-            >
-              #efedef
-            </span>
-
+<header class="topbar">
+  <a class="logo" href="index.html">
+    kioku <small>記憶</small>
+  </a>
+
+  <button class="back" id="backBtn">profile</button>
+</header>
+
+<main class="page">
+
+  <div class="heading">
+    <p>personal archive</p>
+    <h1>edit profile</h1>
+  </div>
+
+  <div class="layout">
+
+    <section class="panel">
+
+      <div class="section">
+
+        <div class="section-title">appearance</div>
+
+        <div class="media-row">
+
+          <div>
+            <div class="media-box">
+              <div id="avatarPreview" class="media-preview">
+                profile image
+              </div>
+            </div>
+
+            <label class="media-button">
+              change profile image
+              <input
+                id="avatarInput"
+                class="media-input"
+                type="file"
+                accept="image/*"
+              >
+            </label>
           </div>
 
-        </div>
+          <div>
+            <div class="media-box">
+              <div id="bannerPreview" class="media-preview">
+                background image
+              </div>
+            </div>
 
-
-        <div class="field">
-
-          <label class="field-label">
-            accent color
-          </label>
-
-          <div class="color-control">
-
-            <input
-              id="accentColorInput"
-              type="color"
-              value="#e8b8cb"
-            >
-
-            <span
-              class="color-value"
-              id="accentColorValue"
-            >
-              #e8b8cb
-            </span>
-
+            <label class="media-button">
+              change background
+              <input
+                id="bannerInput"
+                class="media-input"
+                type="file"
+                accept="image/*"
+              >
+            </label>
           </div>
 
         </div>
 
       </div>
 
-    </section>
+      <div class="section">
 
+        <div class="section-title">information</div>
 
-    <!-- =======================================
-         FONT
-    ======================================== -->
+        <div class="field">
+          <label for="displayNameInput">display name</label>
+          <input
+            id="displayNameInput"
+            maxlength="40"
+            autocomplete="off"
+          >
+        </div>
 
-    <section class="card">
+        <div class="field">
+          <label for="usernameInput">username</label>
+          <input
+            id="usernameInput"
+            maxlength="30"
+            autocomplete="off"
+          >
+        </div>
 
-      <h2 class="card-title">
-        font
-      </h2>
-
-
-      <div class="field">
-
-        <select id="fontInput">
-
-          <option value="sans">
-            sans
-          </option>
-
-          <option value="serif">
-            serif
-          </option>
-
-          <option value="mono">
-            mono
-          </option>
-
-        </select>
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================
-         LAYOUT
-    ======================================== -->
-
-    <section class="card">
-
-      <h2 class="card-title">
-        profile layout
-      </h2>
-
-
-      <div
-        class="options"
-        id="layoutOptions"
-      >
-
-        <button
-          class="option active"
-          data-layout="soft"
-          type="button"
-        >
-          soft
-        </button>
-
-        <button
-          class="option"
-          data-layout="minimal"
-          type="button"
-        >
-          minimal
-        </button>
-
-        <button
-          class="option"
-          data-layout="boxed"
-          type="button"
-        >
-          boxed
-        </button>
+        <div class="field">
+          <label for="bioInput">bio</label>
+          <textarea
+            id="bioInput"
+            maxlength="300"
+            placeholder="write something..."
+          ></textarea>
+        </div>
 
       </div>
 
+      <div class="section">
+
+        <div class="section-title">colors</div>
+
+        <div class="color-row">
+
+          <div class="color-control">
+            <label for="pageColor">page color</label>
+            <input
+              id="pageColor"
+              type="color"
+              value="#101012"
+            >
+          </div>
+
+          <div class="color-control">
+            <label for="accentColor">accent color</label>
+            <input
+              id="accentColor"
+              type="color"
+              value="#f2a9c8"
+            >
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="section">
+
+        <div class="section-title">font</div>
+
+        <div class="field">
+          <select id="fontSelect">
+            <option value="sans">manrope</option>
+            <option value="serif">serif</option>
+            <option value="mono">dm mono</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="section">
+
+        <div class="section-title">layout</div>
+
+        <div class="layout-options">
+
+          <button
+            class="layout-option active"
+            data-layout="soft"
+          >
+            soft
+          </button>
+
+          <button
+            class="layout-option"
+            data-layout="minimal"
+          >
+            minimal
+          </button>
+
+          <button
+            class="layout-option"
+            data-layout="boxed"
+          >
+            boxed
+          </button>
+
+        </div>
+
+      </div>
+
+      <button id="saveBtn" class="save">
+        save changes
+      </button>
+
+      <div id="status" class="status"></div>
+
     </section>
 
+    <aside class="preview-wrap">
 
-    <!-- =======================================
-         LIVE PREVIEW
-    ======================================== -->
-
-    <section class="card">
-
-      <h2 class="card-title">
+      <div class="preview-label">
         live preview
-      </h2>
-
+      </div>
 
       <div
-        class="preview-box"
-        id="previewLayoutBox"
+        id="profilePreview"
+        class="preview"
       >
 
         <div
-          class="preview-banner"
           id="previewBanner"
+          class="preview-banner"
         ></div>
 
-
-        <div class="preview-profile">
-
-          <img
-            class="preview-avatar"
-            id="previewAvatar"
-            src=""
-            alt=""
-          >
-
+        <div class="preview-body">
 
           <div
-            class="preview-name"
+            id="previewAvatar"
+            class="preview-avatar"
+          >
+            k
+          </div>
+
+          <div
             id="previewName"
+            class="preview-name"
           >
             your name
           </div>
 
-
           <div
-            class="preview-username"
             id="previewUsername"
+            class="preview-username"
           >
             @username
           </div>
 
-
           <div
-            class="preview-bio"
             id="previewBio"
-          ></div>
+            class="preview-bio"
+          >
+            your bio will appear here
+          </div>
+
+          <div class="preview-grid">
+            <div class="preview-card"></div>
+            <div class="preview-card"></div>
+            <div class="preview-card"></div>
+            <div class="preview-card"></div>
+          </div>
 
         </div>
 
       </div>
 
-    </section>
+    </aside>
 
+  </div>
 
-    <!-- =======================================
-         ACTIONS
-    ======================================== -->
+</main>
 
-    <div class="actions">
+<div id="cropOverlay" class="crop-overlay">
 
-      <button
-        class="logout-button"
-        id="logoutButton"
-        type="button"
-      >
-        log out
-      </button>
+  <div class="crop-box">
 
-
-      <div
-        class="status"
-        id="status"
-      ></div>
-
-
-      <button
-        class="save-button"
-        id="saveButton"
-        type="button"
-      >
-        save changes
-      </button>
-
+    <div id="cropTitle" class="crop-title">
+      adjust image
     </div>
 
-  </main>
+    <div id="cropArea" class="crop-area">
+      <img id="cropImage" src="" alt="">
+    </div>
 
+    <input
+      id="zoom"
+      class="zoom"
+      type="range"
+      min="0.5"
+      max="3"
+      step="0.01"
+      value="1"
+    >
 
-  <!-- =========================================
-       CROP MODAL
-  ========================================== -->
-
-  <div
-    class="crop-modal"
-    id="cropModal"
-  >
-
-    <div class="crop-box">
-
-      <h2
-        class="crop-title"
-        id="cropTitle"
-      >
-        crop image
-      </h2>
-
-
-      <div
-        class="crop-area profile-crop"
-        id="cropArea"
-      >
-
-        <img
-          class="crop-image"
-          id="cropImage"
-          src=""
-          alt=""
-        >
-
-      </div>
-
-
-      <div class="crop-controls">
-
-        <label
-          class="zoom-label"
-          for="zoomSlider"
-        >
-          zoom
-        </label>
-
-        <input
-          class="zoom-slider"
-          id="zoomSlider"
-          type="range"
-          min="1"
-          max="3"
-          step="0.01"
-          value="1"
-        >
-
-      </div>
-
-
-      <div class="crop-actions">
-
-        <button
-          class="crop-cancel"
-          id="cropCancel"
-          type="button"
-        >
-          cancel
-        </button>
-
-        <button
-          class="crop-save"
-          id="cropSave"
-          type="button"
-        >
-          use image
-        </button>
-
-      </div>
-
+    <div class="crop-actions">
+      <button id="cancelCrop">cancel</button>
+      <button id="useCrop" class="use">use image</button>
     </div>
 
   </div>
 
+</div>
 
-  <!-- =========================================
-       JAVASCRIPT
-  ========================================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
+<script>
+const SUPABASE_URL =
+  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
 
-    /* =========================================
-       SUPABASE
-    ========================================== */
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-    const SUPABASE_URL =
-      "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+let currentUser = null;
+let profileData = null;
 
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
+let pendingFile = null;
+let pendingType = null;
 
+let cropScale = 1;
+let cropX = 0;
+let cropY = 0;
 
-    /* =========================================
-       STATE
-    ========================================== */
+let dragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let startX = 0;
+let startY = 0;
 
-    let currentUser = null;
+const $ = id =>
+  document.getElementById(id);
 
-    let currentProfile = null;
+async function init(){
 
-    let avatarBlob = null;
+  const { data:{ session } } =
+    await supabaseClient.auth.getSession();
 
-    let bannerBlob = null;
+  if(!session){
+    window.location.href = "auth.html";
+    return;
+  }
 
-    let cropType = null;
+  currentUser = session.user;
 
-    let cropImageElement = null;
+  await loadProfile();
+}
 
-    let cropImageNaturalWidth = 0;
+async function loadProfile(){
 
-    let cropImageNaturalHeight = 0;
+  const { data:profile, error } =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id",currentUser.id)
+      .maybeSingle();
 
-    let cropScale = 1;
+  if(error){
+    console.error(error);
+    setStatus("couldn't load profile");
+    return;
+  }
 
-    let cropX = 0;
+  if(!profile){
 
-    let cropY = 0;
+    const username =
+      currentUser.user_metadata?.username ||
+      "user" + currentUser.id.slice(0,6);
 
-    let dragging = false;
+    const displayName =
+      currentUser.user_metadata?.display_name ||
+      username;
 
-    let dragStartX = 0;
+    const { data:created,error:createError } =
+      await supabaseClient
+        .from("profiles")
+        .insert({
+          id:currentUser.id,
+          username,
+          display_name:displayName,
+          bio:""
+        })
+        .select()
+        .single();
 
-    let dragStartY = 0;
-
-    let dragOriginX = 0;
-
-    let dragOriginY = 0;
-
-
-    /* =========================================
-       DEFAULT AVATAR
-    ========================================== */
-
-    const defaultAvatar =
-      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Crect width='100%25' height='100%25' fill='%23ddd'/%3E%3Ccircle cx='250' cy='190' r='85' fill='%23aaa'/%3E%3Cellipse cx='250' cy='430' rx='145' ry='115' fill='%23aaa'/%3E%3C/svg%3E";
-
-
-    /* =========================================
-       HELPERS
-    ========================================== */
-
-    function get(id) {
-      return document.getElementById(id);
+    if(createError){
+      console.error(createError);
+      setStatus("couldn't create profile");
+      return;
     }
 
+    profileData = created;
 
-    function setStatus(message) {
+  }else{
+    profileData = profile;
+  }
 
-      get("status").textContent =
-        message;
+  fillForm();
+}
 
-    }
+function fillForm(){
 
+  const p = profileData;
 
-    /* =========================================
-       LOAD PROFILE
-    ========================================== */
+  $("displayNameInput").value =
+    p.display_name || "";
 
-    async function loadProfile() {
+  $("usernameInput").value =
+    p.username || "";
 
-      try {
+  $("bioInput").value =
+    p.bio || "";
 
-        const {
-          data: {
-            session
-          }
-        } =
-          await supabaseClient
-            .auth
-            .getSession();
+  $("pageColor").value =
+    validColor(p.page_color)
+      ? p.page_color
+      : "#101012";
 
+  $("accentColor").value =
+    validColor(p.accent_color)
+      ? p.accent_color
+      : "#f2a9c8";
 
-        if (!session) {
+  $("fontSelect").value =
+    ["sans","serif","mono"].includes(p.font)
+      ? p.font
+      : "sans";
 
-          window.location.href =
-            "auth.html";
+  setLayout(
+    ["soft","minimal","boxed"].includes(p.layout)
+      ? p.layout
+      : "soft"
+  );
 
-          return;
-        }
-
-
-        currentUser =
-          session.user;
-
-
-        const {
-          data: profile,
-          error
-        } =
-          await supabaseClient
-            .from("profiles")
-            .select("*")
-            .eq(
-              "id",
-              currentUser.id
-            )
-            .maybeSingle();
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        if (!profile) {
-
-          setStatus(
-            "profile not found."
-          );
-
-          return;
-        }
-
-
-        currentProfile =
-          profile;
-
-
-        fillForm(profile);
-
-        updatePreview();
-
-      } catch (error) {
-
-        console.error(
-          "Profile error:",
-          error
-        );
-
-        setStatus(
-          "couldn't load profile."
-        );
-
-      }
-
-    }
-
-
-    /* =========================================
-       FILL FORM
-    ========================================== */
-
-    function fillForm(profile) {
-
-      get(
-        "displayNameInput"
-      ).value =
-        profile.display_name || "";
-
-
-      get(
-        "usernameInput"
-      ).value =
-        profile.username || "";
-
-
-      get(
-        "bioInput"
-      ).value =
-        profile.bio || "";
-
-
-      get(
-        "pageColorInput"
-      ).value =
-        profile.page_color ||
-        "#efedef";
-
-
-      get(
-        "accentColorInput"
-      ).value =
-        profile.accent_color ||
-        "#e8b8cb";
-
-
-      get(
-        "fontInput"
-      ).value =
-        profile.font ||
-        "sans";
-
-
-      selectLayout(
-        profile.layout ||
-        "soft"
-      );
-
-
-      get(
-        "pageColorValue"
-      ).textContent =
-        profile.page_color ||
-        "#efedef";
-
-
-      get(
-        "accentColorValue"
-      ).textContent =
-        profile.accent_color ||
-        "#e8b8cb";
-
-
-      get(
-        "avatarPreview"
-      ).src =
-        profile.avatar_url ||
-        defaultAvatar;
-
-
-      if (
-        profile.background_url
-      ) {
-
-        get(
-          "bannerPreview"
-        ).style.backgroundImage =
-          `
-            url("${profile.background_url}")
-          `;
-
-      }
-
-    }
-
-
-    /* =========================================
-       LIVE PREVIEW
-    ========================================== */
-
-    function updatePreview() {
-
-      const displayName =
-        get(
-          "displayNameInput"
-        ).value ||
-        "your name";
-
-
-      const username =
-        get(
-          "usernameInput"
-        ).value ||
-        "username";
-
-
-      const bio =
-        get(
-          "bioInput"
-        ).value;
-
-
-      const pageColor =
-        get(
-          "pageColorInput"
-        ).value;
-
-
-      const accentColor =
-        get(
-          "accentColorInput"
-        ).value;
-
-
-      const font =
-        get(
-          "fontInput"
-        ).value;
-
-
-      get(
-        "previewName"
-      ).textContent =
-        displayName;
-
-
-      get(
-        "previewUsername"
-      ).textContent =
-        username.startsWith("@")
-          ? username
-          : "@" + username;
-
-
-      get(
-        "previewBio"
-      ).textContent =
-        bio;
-
-
-      get(
-        "previewAvatar"
-      ).src =
-        get(
-          "avatarPreview"
-        ).src;
-
-
-      get(
-        "previewLayoutBox"
-      ).style.background =
-        pageColor;
-
-
-      if (
-        font === "serif"
-      ) {
-
-        get(
-          "previewLayoutBox"
-        ).style.fontFamily =
-          "Georgia, serif";
-
-      } else if (
-        font === "mono"
-      ) {
-
-        get(
-          "previewLayoutBox"
-        ).style.fontFamily =
-          "monospace";
-
-      } else {
-
-        get(
-          "previewLayoutBox"
-        ).style.fontFamily =
-          "Arial, sans-serif";
-
-      }
-
-
-      if (
-        !bannerBlob &&
-        currentProfile &&
-        currentProfile.background_url
-      ) {
-
-        get(
-          "previewBanner"
-        ).style.backgroundImage =
-          `
-            url("${currentProfile.background_url}")
-          `;
-
-      } else if (!bannerBlob) {
-
-        get(
-          "previewBanner"
-        ).style.backgroundImage =
-          `
-            linear-gradient(
-              135deg,
-              ${accentColor},
-              ${pageColor}
-            )
-          `;
-
-      }
-
-    }
-
-
-    /* =========================================
-       INPUT LISTENERS
-    ========================================== */
-
-    [
-      "displayNameInput",
-      "usernameInput",
-      "bioInput",
-      "pageColorInput",
-      "accentColorInput",
-      "fontInput"
-    ].forEach(
-      id => {
-
-        get(id).addEventListener(
-          "input",
-          () => {
-
-            if (
-              id ===
-              "pageColorInput"
-            ) {
-
-              get(
-                "pageColorValue"
-              ).textContent =
-                get(id).value;
-
-            }
-
-
-            if (
-              id ===
-              "accentColorInput"
-            ) {
-
-              get(
-                "accentColorValue"
-              ).textContent =
-                get(id).value;
-
-            }
-
-
-            updatePreview();
-
-          }
-        );
-
-      }
+  if(p.avatar_url){
+    setPreview(
+      $("avatarPreview"),
+      p.avatar_url,
+      "profile image"
     );
 
+    setPreview(
+      $("previewAvatar"),
+      p.avatar_url,
+      ""
+    );
+  }
 
-    /* =========================================
-       LAYOUT
-    ========================================== */
+  if(p.background_url){
+    setPreview(
+      $("bannerPreview"),
+      p.background_url,
+      "background image"
+    );
 
-    function selectLayout(layout) {
+    $("previewBanner").style.backgroundImage =
+      `url("${p.background_url}")`;
+  }
 
-      document
-        .querySelectorAll(
-          ".option"
-        )
-        .forEach(
-          button => {
+  updatePreview();
+}
 
-            button.classList.toggle(
-              "active",
-              button.dataset.layout ===
-              layout
-            );
+function validColor(value){
 
-          }
-        );
+  return typeof value === "string" &&
+    /^#[0-9a-f]{6}$/i.test(value);
+}
 
-      get(
-        "previewLayoutBox"
-      ).dataset.layout =
-        layout;
+function setPreview(element,url,fallback){
 
-    }
+  element.style.backgroundImage =
+    `url("${url}")`;
 
+  element.textContent =
+    fallback || "";
 
-    document
-      .querySelectorAll(
-        ".option"
-      )
-      .forEach(
-        button => {
+  if(element === $("previewAvatar")){
+    element.style.backgroundSize = "cover";
+    element.style.backgroundPosition = "center";
+  }
+}
 
-          button.addEventListener(
-            "click",
-            () => {
+function updatePreview(){
 
-              selectLayout(
-                button.dataset.layout
-              );
+  const name =
+    $("displayNameInput").value.trim() ||
+    "your name";
 
-            }
-          );
+  const username =
+    $("usernameInput").value.trim() ||
+    "username";
 
-        }
+  const bio =
+    $("bioInput").value.trim() ||
+    "your bio will appear here";
+
+  const accent =
+    $("accentColor").value;
+
+  $("previewName").textContent =
+    name;
+
+  $("previewUsername").textContent =
+    "@" + username;
+
+  $("previewBio").textContent =
+    bio;
+
+  $("profilePreview").style.color =
+    $("pageColor").value;
+
+  $("previewAvatar").style.borderColor =
+    $("pageColor").value;
+
+  document.documentElement.style.setProperty(
+    "--accent",
+    accent
+  );
+
+  $("previewUsername").style.color =
+    accent;
+
+  $("previewAvatar").style.color =
+    accent;
+
+  const font =
+    $("fontSelect").value;
+
+  if(font === "serif"){
+    $("profilePreview").style.fontFamily =
+      "Georgia,serif";
+  }else if(font === "mono"){
+    $("profilePreview").style.fontFamily =
+      "'DM Mono',monospace";
+  }else{
+    $("profilePreview").style.fontFamily =
+      "Manrope,sans-serif";
+  }
+}
+
+function setLayout(layout){
+
+  document
+    .querySelectorAll(".layout-option")
+    .forEach(button => {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.layout === layout
       );
+    });
+}
 
+[
+  "displayNameInput",
+  "usernameInput",
+  "bioInput",
+  "pageColor",
+  "accentColor",
+  "fontSelect"
+].forEach(id => {
 
-    /* =========================================
-       FILE BUTTONS
-    ========================================== */
+  $(id).addEventListener(
+    "input",
+    updatePreview
+  );
 
-    get(
-      "avatarButton"
-    ).addEventListener(
+  $(id).addEventListener(
+    "change",
+    updatePreview
+  );
+});
+
+document
+  .querySelectorAll(".layout-option")
+  .forEach(button => {
+
+    button.addEventListener(
       "click",
       () => {
 
-        get(
-          "avatarInput"
-        ).click();
-
+        setLayout(button.dataset.layout);
       }
     );
+  });
 
+$("avatarInput").addEventListener(
+  "change",
+  e => {
 
-    get(
-      "bannerButton"
-    ).addEventListener(
-      "click",
-      () => {
+    const file =
+      e.target.files?.[0];
 
-        get(
-          "bannerInput"
-        ).click();
+    if(!file) return;
 
-      }
+    openCrop(file,"avatar");
+    e.target.value = "";
+  }
+);
+
+$("bannerInput").addEventListener(
+  "change",
+  e => {
+
+    const file =
+      e.target.files?.[0];
+
+    if(!file) return;
+
+    openCrop(file,"banner");
+    e.target.value = "";
+  }
+);
+
+function openCrop(file,type){
+
+  pendingFile = file;
+  pendingType = type;
+
+  $("cropTitle").textContent =
+    type === "avatar"
+      ? "adjust profile image"
+      : "adjust background image";
+
+  const reader =
+    new FileReader();
+
+  reader.onload = e => {
+
+    $("cropImage").src =
+      e.target.result;
+
+    cropScale = 1;
+    cropX = 0;
+    cropY = 0;
+
+    $("zoom").value = 1;
+
+    $("cropOverlay").classList.add("open");
+
+    requestAnimationFrame(
+      positionCropImage
+    );
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function positionCropImage(){
+
+  const img = $("cropImage");
+
+  if(!img.naturalWidth) return;
+
+  const area =
+    $("cropArea");
+
+  const areaWidth =
+    area.clientWidth;
+
+  const areaHeight =
+    area.clientHeight;
+
+  const baseScale =
+    Math.max(
+      areaWidth / img.naturalWidth,
+      areaHeight / img.naturalHeight
     );
 
+  const scale =
+    baseScale * cropScale;
 
-    /* =========================================
-       FILE SELECTION
-    ========================================== */
+  img.style.width =
+    img.naturalWidth * scale + "px";
 
-    get(
-      "avatarInput"
-    ).addEventListener(
-      "change",
-      event => {
+  img.style.height =
+    img.naturalHeight * scale + "px";
 
-        const file =
-          event.target.files[0];
+  img.style.left =
+    (areaWidth - img.naturalWidth * scale) / 2 +
+    cropX +
+    "px";
 
-        if (!file) return;
+  img.style.top =
+    (areaHeight - img.naturalHeight * scale) / 2 +
+    cropY +
+    "px";
+}
 
-        openCropper(
-          file,
-          "profile"
-        );
+$("zoom").addEventListener(
+  "input",
+  () => {
 
-      }
+    cropScale =
+      Number($("zoom").value);
+
+    positionCropImage();
+  }
+);
+
+$("cropImage").addEventListener(
+  "pointerdown",
+  e => {
+
+    dragging = true;
+
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+
+    startX = cropX;
+    startY = cropY;
+
+    $("cropImage").setPointerCapture(
+      e.pointerId
     );
+  }
+);
 
+$("cropImage").addEventListener(
+  "pointermove",
+  e => {
 
-    get(
-      "bannerInput"
-    ).addEventListener(
-      "change",
-      event => {
+    if(!dragging) return;
 
-        const file =
-          event.target.files[0];
+    cropX =
+      startX +
+      (e.clientX - dragStartX);
 
-        if (!file) return;
+    cropY =
+      startY +
+      (e.clientY - dragStartY);
 
-        openCropper(
-          file,
-          "banner"
-        );
+    positionCropImage();
+  }
+);
 
-      }
-    );
+$("cropImage").addEventListener(
+  "pointerup",
+  () => {
+    dragging = false;
+  }
+);
 
+$("cropImage").addEventListener(
+  "pointercancel",
+  () => {
+    dragging = false;
+  }
+);
 
-    /* =========================================
-       CROPPER
-    ========================================== */
+$("cancelCrop").addEventListener(
+  "click",
+  closeCrop
+);
 
-    function openCropper(
-      file,
-      type
-    ) {
+function closeCrop(){
 
-      cropType =
-        type;
+  $("cropOverlay").classList.remove("open");
 
+  $("cropImage").src = "";
 
-      const reader =
-        new FileReader();
+  pendingFile = null;
+  pendingType = null;
+}
 
+$("useCrop").addEventListener(
+  "click",
+  async () => {
 
-      reader.onload =
-        event => {
-
-          get(
-            "cropImage"
-          ).src =
-            event.target.result;
-
-
-          get(
-            "cropTitle"
-          ).textContent =
-            type === "profile"
-              ? "crop profile picture"
-              : "crop banner";
-
-
-          get(
-            "cropArea"
-          ).className =
-            type === "profile"
-              ? "crop-area profile-crop"
-              : "crop-area banner-crop";
-
-
-          get(
-            "zoomSlider"
-          ).value =
-            "1";
-
-
-          get(
-            "cropModal"
-          ).classList.add(
-            "open"
-          );
-
-
-          cropImageElement =
-            get(
-              "cropImage"
-            );
-
-
-          cropImageElement.onload =
-            setupCropper;
-
-        };
-
-
-      reader.readAsDataURL(file);
-
+    if(!pendingFile || !pendingType){
+      closeCrop();
+      return;
     }
 
+    const file =
+      await createCroppedFile(
+        pendingFile,
+        pendingType
+      );
 
-    function setupCropper() {
-
-      cropImageNaturalWidth =
-        cropImageElement.naturalWidth;
-
-      cropImageNaturalHeight =
-        cropImageElement.naturalHeight;
-
-
-      cropScale = 1;
-
-      cropX = 0;
-
-      cropY = 0;
-
-      positionCropImage();
-
+    if(!file){
+      setStatus("couldn't process image");
+      return;
     }
 
+    if(pendingType === "avatar"){
 
-    function positionCropImage() {
+      const localUrl =
+        URL.createObjectURL(file);
+
+      setPreview(
+        $("avatarPreview"),
+        localUrl,
+        ""
+      );
+
+      setPreview(
+        $("previewAvatar"),
+        localUrl,
+        ""
+      );
+
+    }else{
+
+      const localUrl =
+        URL.createObjectURL(file);
+
+      setPreview(
+        $("bannerPreview"),
+        localUrl,
+        ""
+      );
+
+      $("previewBanner").style.backgroundImage =
+        `url("${localUrl}")`;
+    }
+
+    pendingFile = file;
+
+    closeCrop();
+
+    if(pendingType === "avatar"){
+      window._pendingAvatar = file;
+    }else{
+      window._pendingBanner = file;
+    }
+
+    updatePreview();
+  }
+);
+
+async function createCroppedFile(file,type){
+
+  const image =
+    new Image();
+
+  const url =
+    URL.createObjectURL(file);
+
+  return new Promise(resolve => {
+
+    image.onload = () => {
+
+      const canvas =
+        document.createElement("canvas");
+
+      if(type === "avatar"){
+        canvas.width = 800;
+        canvas.height = 800;
+      }else{
+        canvas.width = 1600;
+        canvas.height = 800;
+      }
+
+      const ctx =
+        canvas.getContext("2d");
 
       const area =
-        get("cropArea");
-
-      if (
-        !cropImageNaturalWidth ||
-        !cropImageNaturalHeight
-      ) return;
-
+        $("cropArea");
 
       const areaWidth =
         area.clientWidth;
@@ -1932,756 +1347,257 @@
       const areaHeight =
         area.clientHeight;
 
-
-      const imageRatio =
-        cropImageNaturalWidth /
-        cropImageNaturalHeight;
-
-
-      const areaRatio =
-        areaWidth /
-        areaHeight;
-
-
-      let baseWidth;
-      let baseHeight;
-
-
-      if (
-        imageRatio > areaRatio
-      ) {
-
-        baseHeight =
-          areaHeight;
-
-        baseWidth =
-          baseHeight *
-          imageRatio;
-
-      } else {
-
-        baseWidth =
-          areaWidth;
-
-        baseHeight =
-          baseWidth /
-          imageRatio;
-
-      }
-
-
-      const width =
-        baseWidth *
-        cropScale;
-
-
-      const height =
-        baseHeight *
-        cropScale;
-
-
-      cropImageElement.style.width =
-        width + "px";
-
-
-      cropImageElement.style.height =
-        height + "px";
-
-
-      cropImageElement.style.left =
-        `calc(50% + ${cropX}px)`;
-
-
-      cropImageElement.style.top =
-        `calc(50% + ${cropY}px)`;
-
-
-      cropImageElement.style.transform =
-        "translate(-50%, -50%)";
-
-    }
-
-
-    get(
-      "zoomSlider"
-    ).addEventListener(
-      "input",
-      event => {
-
-        cropScale =
-          Number(
-            event.target.value
-          );
-
-        positionCropImage();
-
-      }
-    );
-
-
-    /* =========================================
-       CROP DRAGGING
-    ========================================== */
-
-    const cropArea =
-      get("cropArea");
-
-
-    cropArea.addEventListener(
-      "pointerdown",
-      event => {
-
-        dragging = true;
-
-        dragStartX =
-          event.clientX;
-
-        dragStartY =
-          event.clientY;
-
-        dragOriginX =
-          cropX;
-
-        dragOriginY =
-          cropY;
-
-        cropImageElement.classList.add(
-          "dragging"
+      const baseScale =
+        Math.max(
+          areaWidth / image.naturalWidth,
+          areaHeight / image.naturalHeight
         );
 
-        cropArea.setPointerCapture(
-          event.pointerId
-        );
+      const scale =
+        baseScale * cropScale;
 
-      }
-    );
+      const drawnWidth =
+        image.naturalWidth * scale;
 
+      const drawnHeight =
+        image.naturalHeight * scale;
 
-    cropArea.addEventListener(
-      "pointermove",
-      event => {
+      const left =
+        (areaWidth - drawnWidth) / 2 +
+        cropX;
 
-        if (!dragging) return;
+      const top =
+        (areaHeight - drawnHeight) / 2 +
+        cropY;
 
-        cropX =
-          dragOriginX +
-          (
-            event.clientX -
-            dragStartX
-          );
+      const sourceScaleX =
+        canvas.width / areaWidth;
 
-        cropY =
-          dragOriginY +
-          (
-            event.clientY -
-            dragStartY
-          );
+      const sourceScaleY =
+        canvas.height / areaHeight;
 
-        positionCropImage();
+      ctx.drawImage(
+        image,
+        -left * sourceScaleX,
+        -top * sourceScaleY,
+        drawnWidth * sourceScaleX,
+        drawnHeight * sourceScaleY
+      );
 
-      }
-    );
+      canvas.toBlob(
+        blob => {
 
+          URL.revokeObjectURL(url);
 
-    cropArea.addEventListener(
-      "pointerup",
-      () => {
-
-        dragging = false;
-
-        cropImageElement.classList.remove(
-          "dragging"
-        );
-
-      }
-    );
-
-
-    cropArea.addEventListener(
-      "pointercancel",
-      () => {
-
-        dragging = false;
-
-        cropImageElement.classList.remove(
-          "dragging"
-        );
-
-      }
-    );
-
-
-    /* =========================================
-       CLOSE CROPPER
-    ========================================== */
-
-    get(
-      "cropCancel"
-    ).addEventListener(
-      "click",
-      () => {
-
-        get(
-          "cropModal"
-        ).classList.remove(
-          "open"
-        );
-
-        get(
-          "avatarInput"
-        ).value = "";
-
-        get(
-          "bannerInput"
-        ).value = "";
-
-      }
-    );
-
-
-    /* =========================================
-       CREATE CROPPED IMAGE
-    ========================================== */
-
-    get(
-      "cropSave"
-    ).addEventListener(
-      "click",
-      async () => {
-
-        try {
-
-          const area =
-            get("cropArea");
-
-          const rect =
-            area.getBoundingClientRect();
-
-          const imageRect =
-            cropImageElement
-              .getBoundingClientRect();
-
-
-          const left =
-            Math.max(
-              0,
-              rect.left -
-              imageRect.left
-            );
-
-
-          const top =
-            Math.max(
-              0,
-              rect.top -
-              imageRect.top
-            );
-
-
-          const right =
-            Math.min(
-              imageRect.width,
-              rect.right -
-              imageRect.left
-            );
-
-
-          const bottom =
-            Math.min(
-              imageRect.height,
-              rect.bottom -
-              imageRect.top
-            );
-
-
-          const sourceScaleX =
-            cropImageNaturalWidth /
-            imageRect.width;
-
-
-          const sourceScaleY =
-            cropImageNaturalHeight /
-            imageRect.height;
-
-
-          const sx =
-            left *
-            sourceScaleX;
-
-          const sy =
-            top *
-            sourceScaleY;
-
-          const sw =
-            (
-              right -
-              left
-            ) *
-            sourceScaleX;
-
-          const sh =
-            (
-              bottom -
-              top
-            ) *
-            sourceScaleY;
-
-
-          const canvas =
-            document.createElement(
-              "canvas"
-            );
-
-
-          if (
-            cropType ===
-            "profile"
-          ) {
-
-            canvas.width =
-              800;
-
-            canvas.height =
-              800;
-
-          } else {
-
-            canvas.width =
-              1600;
-
-            canvas.height =
-              600;
-
-          }
-
-
-          const ctx =
-            canvas.getContext(
-              "2d"
-            );
-
-
-          ctx.drawImage(
-            cropImageElement,
-            sx,
-            sy,
-            sw,
-            sh,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-
-
-          const blob =
-            await new Promise(
-              resolve =>
-                canvas.toBlob(
-                  resolve,
-                  "image/jpeg",
-                  .92
-                )
-            );
-
-
-          if (
-            cropType ===
-            "profile"
-          ) {
-
-            avatarBlob =
-              blob;
-
-
-            get(
-              "avatarPreview"
-            ).src =
-              URL.createObjectURL(
-                blob
-              );
-
-          } else {
-
-            bannerBlob =
-              blob;
-
-
-            const url =
-              URL.createObjectURL(
-                blob
-              );
-
-
-            get(
-              "bannerPreview"
-            ).style.backgroundImage =
-              `url("${url}")`;
-
-
-            get(
-              "previewBanner"
-            ).style.backgroundImage =
-              `url("${url}")`;
-
-          }
-
-
-          updatePreview();
-
-
-          get(
-            "cropModal"
-          ).classList.remove(
-            "open"
-          );
-
-
-          get(
-            "avatarInput"
-          ).value = "";
-
-          get(
-            "bannerInput"
-          ).value = "";
-
-        } catch (error) {
-
-          console.error(
-            "Crop error:",
-            error
-          );
-
-        }
-
-      }
-    );
-
-
-    /* =========================================
-       UPLOAD IMAGE
-    ========================================== */
-
-    async function uploadImage(
-      blob,
-      path
-    ) {
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .storage
-          .from("avatars")
-          .upload(
-            path,
-            blob,
-            {
-              contentType:
-                "image/jpeg",
-              upsert: false
-            }
-          );
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      const {
-        data
-      } =
-        supabaseClient
-          .storage
-          .from("avatars")
-          .getPublicUrl(
-            path
-          );
-
-
-      return data.publicUrl;
-
-    }
-
-
-    /* =========================================
-       SAVE PROFILE
-    ========================================== */
-
-    get(
-      "saveButton"
-    ).addEventListener(
-      "click",
-      async () => {
-
-        if (!currentUser) return;
-
-
-        const saveButton =
-          get(
-            "saveButton"
-          );
-
-
-        saveButton.disabled =
-          true;
-
-
-        setStatus(
-          "saving..."
-        );
-
-
-        try {
-
-          let avatarUrl =
-            currentProfile.avatar_url ||
-            null;
-
-
-          let bannerUrl =
-            currentProfile.background_url ||
-            null;
-
-
-          /* Profile picture */
-
-          if (avatarBlob) {
-
-            const avatarPath =
-              `profile/${currentUser.id}-${Date.now()}.jpg`;
-
-
-            avatarUrl =
-              await uploadImage(
-                avatarBlob,
-                avatarPath
-              );
-
-          }
-
-
-          /* Banner */
-
-          if (bannerBlob) {
-
-            const bannerPath =
-              `banners/${currentUser.id}-${Date.now()}.jpg`;
-
-
-            bannerUrl =
-              await uploadImage(
-                bannerBlob,
-                bannerPath
-              );
-
-          }
-
-
-          const selectedLayout =
-            document
-              .querySelector(
-                ".option.active"
-              )
-              ?.dataset.layout ||
-            "soft";
-
-
-          const username =
-            get(
-              "usernameInput"
-            ).value
-              .trim()
-              .replace(
-                /^@/,
-                ""
-              )
-              .replace(
-                /\s+/g,
-                ""
-              );
-
-
-          if (!username) {
-
-            setStatus(
-              "username is required."
-            );
-
-            saveButton.disabled =
-              false;
-
+          if(!blob){
+            resolve(null);
             return;
-
           }
 
-
-          const updates = {
-
-            username,
-
-            display_name:
-              get(
-                "displayNameInput"
-              ).value.trim(),
-
-            bio:
-              get(
-                "bioInput"
-              ).value.trim(),
-
-            avatar_url:
-              avatarUrl,
-
-            background_url:
-              bannerUrl,
-
-            page_color:
-              get(
-                "pageColorInput"
-              ).value,
-
-            accent_color:
-              get(
-                "accentColorInput"
-              ).value,
-
-            font:
-              get(
-                "fontInput"
-              ).value,
-
-            layout:
-              selectedLayout,
-
-            updated_at:
-              new Date().toISOString()
-
-          };
-
-
-          const {
-            error
-          } =
-            await supabaseClient
-              .from("profiles")
-              .update(updates)
-              .eq(
-                "id",
-                currentUser.id
-              );
-
-
-          if (error) {
-            throw error;
-          }
-
-
-          currentProfile = {
-            ...currentProfile,
-            ...updates
-          };
-
-
-          avatarBlob =
-            null;
-
-          bannerBlob =
-            null;
-
-
-          setStatus(
-            "saved."
-          );
-
-
-          setTimeout(
-            () => {
-
-              window.location.href =
-                "profile.html";
-
-            },
-            500
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "Save error:",
-            error
-          );
-
-
-          setStatus(
-            "couldn't save: " +
-            (
-              error.message ||
-              "unknown error"
+          resolve(
+            new File(
+              [blob],
+              "kioku-image.jpg",
+              {
+                type:"image/jpeg",
+                lastModified:Date.now()
+              }
             )
           );
+        },
+        "image/jpeg",
+        .9
+      );
+    };
 
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(null);
+    };
 
-        } finally {
+    image.src = url;
+  });
+}
 
-          saveButton.disabled =
-            false;
+async function uploadImage(file,type){
 
+  if(!file) return null;
+
+  const folder =
+    type === "avatar"
+      ? "profile"
+      : "banners";
+
+  const path =
+    `${folder}/${currentUser.id}-${Date.now()}.jpg`;
+
+  const { error } =
+    await supabaseClient
+      .storage
+      .from("avatars")
+      .upload(
+        path,
+        file,
+        {
+          contentType:"image/jpeg",
+          upsert:false
         }
+      );
 
+  if(error){
+    console.error(error);
+    throw error;
+  }
+
+  const { data } =
+    supabaseClient
+      .storage
+      .from("avatars")
+      .getPublicUrl(path);
+
+  return data.publicUrl;
+}
+
+$("saveBtn").addEventListener(
+  "click",
+  saveProfile
+);
+
+async function saveProfile(){
+
+  const username =
+    $("usernameInput").value
+      .trim()
+      .toLowerCase();
+
+  const displayName =
+    $("displayNameInput").value.trim();
+
+  const bio =
+    $("bioInput").value.trim();
+
+  if(!username){
+    setStatus("username is required");
+    return;
+  }
+
+  if(!/^[a-z0-9_.-]+$/.test(username)){
+    setStatus(
+      "username can only use letters, numbers, dots, hyphens, and underscores"
+    );
+    return;
+  }
+
+  $("saveBtn").disabled = true;
+  setStatus("saving...");
+
+  try{
+
+    let avatarUrl =
+      profileData.avatar_url || null;
+
+    let bannerUrl =
+      profileData.background_url || null;
+
+    if(window._pendingAvatar){
+      avatarUrl =
+        await uploadImage(
+          window._pendingAvatar,
+          "avatar"
+        );
+    }
+
+    if(window._pendingBanner){
+      bannerUrl =
+        await uploadImage(
+          window._pendingBanner,
+          "banner"
+        );
+    }
+
+    const layout =
+      document
+        .querySelector(".layout-option.active")
+        ?.dataset.layout ||
+      "soft";
+
+    const updates = {
+      username,
+      display_name:displayName,
+      bio,
+      avatar_url:avatarUrl,
+      background_url:bannerUrl,
+      page_color:$("pageColor").value,
+      accent_color:$("accentColor").value,
+      font:$("fontSelect").value,
+      layout,
+      updated_at:new Date().toISOString()
+    };
+
+    const { data,error } =
+      await supabaseClient
+        .from("profiles")
+        .update(updates)
+        .eq("id",currentUser.id)
+        .select()
+        .single();
+
+    if(error){
+      console.error(error);
+
+      if(error.code === "23505"){
+        setStatus(
+          "that username is already taken"
+        );
+      }else{
+        setStatus(
+          error.message || "couldn't save profile"
+        );
       }
+
+      $("saveBtn").disabled = false;
+      return;
+    }
+
+    profileData = data;
+
+    window._pendingAvatar = null;
+    window._pendingBanner = null;
+
+    setStatus("saved");
+
+    setTimeout(() => {
+      window.location.href =
+        "profile.html";
+    },700);
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      "couldn't upload image"
     );
 
+    $("saveBtn").disabled = false;
+  }
+}
 
-    /* =========================================
-       BACK TO PROFILE
-    ========================================== */
+function setStatus(message){
+  $("status").textContent =
+    message;
+}
 
-    get(
-      "backButton"
-    ).addEventListener(
-      "click",
-      () => {
+$("backBtn").addEventListener(
+  "click",
+  () => {
+    window.location.href =
+      "profile.html";
+  }
+);
 
-        window.location.href =
-          "profile.html";
-
-      }
-    );
-
-
-    /* =========================================
-       LOG OUT
-    ========================================== */
-
-    get(
-      "logoutButton"
-    ).addEventListener(
-      "click",
-      async () => {
-
-        await supabaseClient
-          .auth
-          .signOut();
-
-
-        window.location.href =
-          "index.html";
-
-      }
-    );
-
-
-    /* =========================================
-       START
-    ========================================== */
-
-    loadProfile();
-
-  </script>
+init();
+</script>
 
 </body>
-
 </html>
