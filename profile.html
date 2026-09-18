@@ -1,1778 +1,793 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>profile — kioku</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-
-    /* =========================================
-       BASE
-    ========================================= */
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      background: #efedef;
-      color: #222;
-      font-family: Arial, sans-serif;
-      transition:
-        background .25s ease,
-        color .25s ease;
-    }
-
-    button {
-      font: inherit;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-
-    /* =========================================
-       TOP NAVIGATION
-    ========================================= */
-
-    .topbar {
-      width: 100%;
-      height: 64px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 22px;
-
-      border-bottom: 1px solid rgba(0,0,0,.12);
-
-      background: rgba(255,255,255,.72);
-
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      font-size: 21px;
-      letter-spacing: .04em;
-      font-weight: 500;
-    }
-
-    .logo span {
-      font-size: 14px;
-      margin-left: 5px;
-      opacity: .65;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .nav-button {
-      border: 1px solid #222;
-      background: transparent;
-      color: #222;
-
-      padding: 8px 13px;
-
-      cursor: pointer;
-
-      font-size: 12px;
-      letter-spacing: .03em;
-
-      transition:
-        background .15s ease,
-        color .15s ease;
-    }
-
-    .nav-button:hover {
-      background: #222;
-      color: #fff;
-    }
-
-
-    /* =========================================
-       PROFILE WRAPPER
-    ========================================= */
-
-    .profile-page {
-      width: 100%;
-      max-width: 1180px;
-
-      margin: 0 auto;
-      padding-bottom: 80px;
-    }
-
-
-    /* =========================================
-       BANNER
-    ========================================= */
-
-    .banner {
-      width: 100%;
-      height: 300px;
-
-      position: relative;
-
-      background:
-        linear-gradient(
-          135deg,
-          #e8b8cb,
-          #efedef
-        );
-
-      background-size: cover;
-      background-position: center;
-
-      overflow: hidden;
-    }
-
-    .banner-overlay {
-      position: absolute;
-      inset: 0;
-
-      background:
-        linear-gradient(
-          to bottom,
-          rgba(0,0,0,.03),
-          rgba(0,0,0,.18)
-        );
-
-      pointer-events: none;
-    }
-
-
-    /* =========================================
-       PROFILE INFORMATION
-    ========================================= */
-
-    .profile-info {
-      position: relative;
-
-      padding: 0 35px 25px;
-
-      background: rgba(255,255,255,.25);
-    }
-
-    .profile-main {
-      display: flex;
-      align-items: flex-end;
-
-      gap: 24px;
-
-      margin-top: -76px;
-
-      position: relative;
-      z-index: 5;
-    }
-
-
-    /* =========================================
-       PROFILE PICTURE
-    ========================================= */
-
-    .avatar-wrap {
-      flex: 0 0 auto;
-    }
-
-    .avatar {
-      width: 152px;
-      height: 152px;
-
-      border-radius: 50%;
-
-      object-fit: cover;
-
-      display: block;
-
-      border: 6px solid #efedef;
-
-      background: #ddd;
-
-      box-shadow:
-        0 5px 22px rgba(0,0,0,.14);
-    }
-
-
-    /* =========================================
-       PROFILE TEXT
-    ========================================= */
-
-    .profile-details {
-      flex: 1;
-
-      padding-bottom: 7px;
-
-      min-width: 0;
-    }
-
-    .name-row {
-      display: flex;
-      align-items: center;
-
-      gap: 13px;
-
-      flex-wrap: wrap;
-    }
-
-    .display-name {
-      margin: 0;
-
-      font-size: 28px;
-      font-weight: 500;
-
-      word-break: break-word;
-    }
-
-    .username {
-      margin-top: 3px;
-
-      font-size: 13px;
-
-      opacity: .62;
-    }
-
-    .bio {
-      margin: 13px 0 0;
-
-      max-width: 600px;
-
-      font-size: 14px;
-      line-height: 1.55;
-
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-
-    /* =========================================
-       EDIT BUTTON
-    ========================================= */
-
-    .edit-button {
-      flex: 0 0 auto;
-
-      border: 1px solid #222;
-
-      background: #fff;
-      color: #222;
-
-      padding: 10px 17px;
-
-      cursor: pointer;
-
-      font-size: 12px;
-
-      transition:
-        background .15s ease,
-        color .15s ease;
-    }
-
-    .edit-button:hover {
-      background: #222;
-      color: #fff;
-    }
-
-
-    /* =========================================
-       STATS
-    ========================================= */
-
-    .stats {
-      display: flex;
-
-      gap: 28px;
-
-      margin-top: 24px;
-
-      padding-top: 19px;
-
-      border-top: 1px solid rgba(0,0,0,.12);
-    }
-
-    .stat {
-      display: flex;
-      align-items: baseline;
-
-      gap: 5px;
-
-      font-size: 13px;
-    }
-
-    .stat-number {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .stat-label {
-      opacity: .6;
-    }
-
-
-    /* =========================================
-       TABS
-    ========================================= */
-
-    .tabs {
-      display: flex;
-
-      justify-content: center;
-
-      gap: 42px;
-
-      margin-top: 12px;
-
-      border-bottom: 1px solid rgba(0,0,0,.13);
-    }
-
-    .tab {
-      position: relative;
-
-      padding: 17px 5px 15px;
-
-      border: 0;
-      background: none;
-
-      cursor: pointer;
-
-      color: inherit;
-
-      font-size: 11px;
-      letter-spacing: .08em;
-      text-transform: lowercase;
-
-      opacity: .5;
-    }
-
-    .tab.active {
-      opacity: 1;
-    }
-
-    .tab.active::after {
-      content: "";
-
-      position: absolute;
-
-      left: 0;
-      right: 0;
-      bottom: -1px;
-
-      height: 2px;
-
-      background: currentColor;
-    }
-
-
-    /* =========================================
-       CONTENT
-    ========================================= */
-
-    .content {
-      padding: 30px 25px 0;
-    }
-
-    .section-title {
-      display: flex;
-
-      align-items: center;
-      justify-content: space-between;
-
-      margin-bottom: 18px;
-    }
-
-    .section-title h2 {
-      margin: 0;
-
-      font-size: 13px;
-      font-weight: 400;
-
-      letter-spacing: .08em;
-      text-transform: lowercase;
-
-      opacity: .7;
-    }
-
-    .section-title span {
-      font-size: 11px;
-      opacity: .4;
-    }
-
-
-    /* =========================================
-       PINTEREST-STYLE GRID
-    ========================================= */
-
-    .post-grid {
-      column-count: 4;
-      column-gap: 15px;
-    }
-
-    .post-card {
-      width: 100%;
-
-      margin: 0 0 15px;
-
-      break-inside: avoid;
-
-      position: relative;
-
-      cursor: pointer;
-
-      overflow: hidden;
-
-      background: #ddd;
-    }
-
-    .post-card img {
-      width: 100%;
-
-      height: auto;
-
-      display: block;
-
-      object-fit: cover;
-
-      transition:
-        transform .3s ease,
-        filter .3s ease;
-    }
-
-    .post-card:hover img {
-      transform: scale(1.025);
-      filter: brightness(.9);
-    }
-
-    .post-overlay {
-      position: absolute;
-
-      left: 0;
-      right: 0;
-      bottom: 0;
-
-      padding: 35px 13px 13px;
-
-      background:
-        linear-gradient(
-          transparent,
-          rgba(0,0,0,.65)
-        );
-
-      color: white;
-
-      opacity: 0;
-
-      transition: opacity .2s ease;
-    }
-
-    .post-card:hover .post-overlay {
-      opacity: 1;
-    }
-
-    .post-title {
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
-    .post-tags {
-      margin-top: 5px;
-
-      font-size: 10px;
-
-      opacity: .75;
-    }
-
-
-    /* =========================================
-       EMPTY STATE
-    ========================================= */
-
-    .empty {
-      display: none;
-
-      text-align: center;
-
-      padding: 90px 20px;
-
-      opacity: .5;
-    }
-
-    .empty-symbol {
-      font-size: 30px;
-      margin-bottom: 12px;
-    }
-
-    .empty-text {
-      font-size: 13px;
-    }
-
-
-    /* =========================================
-       LOADING
-    ========================================= */
-
-    .loading {
-      text-align: center;
-
-      padding: 90px 20px;
-
-      font-size: 12px;
-
-      opacity: .5;
-    }
-
-
-    /* =========================================
-       VIEWER
-    ========================================= */
-
-    .viewer {
-      position: fixed;
-
-      inset: 0;
-
-      z-index: 1000;
-
-      display: none;
-
-      align-items: center;
-      justify-content: center;
-
-      padding: 25px;
-
-      background: rgba(0,0,0,.82);
-
-      cursor: pointer;
-    }
-
-    .viewer.open {
-      display: flex;
-    }
-
-    .viewer-content {
-      max-width: min(900px, 94vw);
-      max-height: 90vh;
-
-      position: relative;
-
-      cursor: default;
-    }
-
-    .viewer-content img {
-      display: block;
-
-      max-width: 100%;
-      max-height: 78vh;
-
-      object-fit: contain;
-    }
-
-    .viewer-info {
-      color: #fff;
-
-      padding-top: 12px;
-    }
-
-    .viewer-title {
-      font-size: 14px;
-    }
-
-    .viewer-description {
-      margin-top: 5px;
-
-      font-size: 11px;
-
-      opacity: .65;
-    }
-
-    .viewer-close {
-      position: fixed;
-
-      top: 18px;
-      right: 22px;
-
-      border: 0;
-      background: none;
-
-      color: #fff;
-
-      font-size: 30px;
-
-      cursor: pointer;
-    }
-
-
-    /* =========================================
-       LAYOUT VARIANTS
-    ========================================= */
-
-    body.layout-minimal .banner {
-      height: 220px;
-    }
-
-    body.layout-boxed .profile-info {
-      margin: 0 18px;
-      padding-left: 28px;
-      padding-right: 28px;
-    }
-
-    body.layout-boxed .content {
-      margin: 0 18px;
-    }
-
-    body.layout-boxed .post-card {
-      border: 1px solid rgba(0,0,0,.1);
-    }
-
-
-    /* =========================================
-       MOBILE
-    ========================================= */
-
-    @media (max-width: 800px) {
-
-      .topbar {
-        height: 57px;
-        padding: 0 15px;
-      }
-
-      .logo {
-        font-size: 18px;
-      }
-
-      .banner {
-        height: 220px;
-      }
-
-      .profile-info {
-        padding: 0 16px 20px;
-      }
-
-      .profile-main {
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 13px;
-
-        margin-top: -58px;
-      }
-
-      .avatar {
-        width: 116px;
-        height: 116px;
-
-        border-width: 5px;
-      }
-
-      .profile-details {
-        width: 100%;
-
-        padding-bottom: 0;
-      }
-
-      .name-row {
-        justify-content: space-between;
-      }
-
-      .display-name {
-        font-size: 23px;
-      }
-
-      .edit-button {
-        position: absolute;
-
-        right: 0;
-        top: 12px;
-      }
-
-      .bio {
-        max-width: 90%;
-      }
-
-      .stats {
-        gap: 22px;
-      }
-
-      .tabs {
-        gap: 25px;
-      }
-
-      .content {
-        padding: 24px 12px 0;
-      }
-
-      .post-grid {
-        column-count: 2;
-        column-gap: 9px;
-      }
-
-      .post-card {
-        margin-bottom: 9px;
-      }
-
-      .post-overlay {
-        display: none;
-      }
-
-      .nav-button {
-        padding: 7px 10px;
-      }
-    }
-
-
-    @media (max-width: 380px) {
-
-      .tabs {
-        gap: 16px;
-      }
-
-      .stats {
-        gap: 15px;
-      }
-
-      .stat {
-        font-size: 11px;
-      }
-
-    }
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>kioku 記憶 · profile</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#101012;
+  --panel:#17171a;
+  --text:#f4f1f3;
+  --muted:#aaa3aa;
+  --line:#ffffff1c;
+  --soft:#ffffff0a;
+  --accent:#f2a9c8;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font:300 13px Manrope,sans-serif;
+  transition:.25s;
+}
+
+button{
+  font:inherit;
+  color:inherit;
+  cursor:pointer;
+}
+
+.topbar{
+  height:76px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  padding:0 4vw;
+  gap:12px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:#101012e8;
+  backdrop-filter:blur(18px);
+}
+
+.logo{
+  color:var(--text);
+  text-decoration:none;
+  font:18px 'DM Mono',monospace;
+  white-space:nowrap;
+}
+
+.logo small{
+  color:var(--accent);
+  font-size:10px;
+  margin-left:5px;
+}
+
+.top-actions{
+  margin-left:auto;
+  display:flex;
+  gap:8px;
+}
+
+.top-actions button{
+  border:1px solid var(--line);
+  background:var(--soft);
+  border-radius:999px;
+  padding:9px 14px;
+  font-size:11px;
+}
+
+.top-actions button:hover{
+  background:#f2a9c81c;
+  border-color:#f2a9c84d;
+  color:var(--accent);
+}
+
+.profile{
+  width:min(1200px,92vw);
+  margin:auto;
+  padding-bottom:80px;
+}
+
+.banner{
+  height:260px;
+  margin-top:22px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 30% 30%,#f2a9c82b,transparent 35%),
+    linear-gradient(135deg,#1d1b20,#111114);
+  background-size:cover;
+  background-position:center;
+  overflow:hidden;
+}
+
+.profile-head{
+  position:relative;
+  padding:0 28px;
+  margin-top:-48px;
+}
+
+.avatar{
+  width:104px;
+  height:104px;
+  border-radius:50%;
+  border:5px solid var(--bg);
+  background:#252328;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  background-size:cover;
+  background-position:center;
+  font:20px 'DM Mono',monospace;
+  color:var(--accent);
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.identity{
+  margin-top:15px;
+}
+
+.display-name{
+  font-size:27px;
+  font-weight:300;
+  letter-spacing:-.03em;
+}
+
+.username{
+  margin-top:5px;
+  color:var(--accent);
+  font:11px 'DM Mono',monospace;
+}
+
+.bio{
+  max-width:600px;
+  color:var(--muted);
+  line-height:1.7;
+  margin-top:13px;
+  white-space:pre-wrap;
+}
+
+.stats{
+  display:flex;
+  gap:24px;
+  margin-top:20px;
+  color:var(--muted);
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.stats strong{
+  color:var(--text);
+  font-weight:400;
+}
+
+.profile-nav{
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  margin-top:30px;
+  display:flex;
+  gap:25px;
+}
+
+.profile-nav button{
+  border:0;
+  background:none;
+  color:var(--muted);
+  padding:15px 0;
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+
+.profile-nav button.active,
+.profile-nav button:hover{
+  color:var(--accent);
+  border-bottom:1px solid var(--accent);
+}
+
+#postGrid{
+  columns:4 220px;
+  column-gap:15px;
+  margin-top:18px;
+}
+
+.card{
+  break-inside:avoid;
+  margin-bottom:15px;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+  background:#19191c;
+  cursor:pointer;
+}
+
+.card img{
+  display:block;
+  width:100%;
+  transition:.5s;
+}
+
+.card:hover img{
+  transform:scale(1.025);
+  filter:brightness(.82);
+}
+
+.card-info{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:55px 14px 13px;
+  background:linear-gradient(transparent,#000d);
+  opacity:0;
+  transition:.2s;
+}
+
+.card:hover .card-info{
+  opacity:1;
+}
+
+.card-title{
+  font-size:12px;
+}
+
+.card-tags{
+  color:#c6c1c5;
+  margin-top:5px;
+  font:9px 'DM Mono',monospace;
+}
+
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:90px 20px;
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+
+.loading{
+  text-align:center;
+  color:var(--muted);
+  padding:80px;
+  font:10px 'DM Mono',monospace;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  background:#08080bf5;
+  backdrop-filter:blur(20px);
+  padding:7vh 5vw;
+  overflow:auto;
+}
+
+.overlay[hidden]{
+  display:none;
+}
+
+.close{
+  position:fixed;
+  right:25px;
+  top:18px;
+  background:none;
+  border:0;
+  font-size:30px;
+  color:#aaa;
+}
+
+.viewer{
+  width:min(1050px,92vw);
+  margin:auto;
+}
+
+.viewer img{
+  display:block;
+  max-width:100%;
+  max-height:72vh;
+  width:auto;
+  margin:auto;
+}
+
+.viewer-info{
+  border-top:1px solid var(--line);
+  margin-top:18px;
+  padding-top:16px;
+}
+
+.viewer-info h2{
+  font-weight:300;
+  margin:0 0 7px;
+}
+
+.viewer-info p{
+  color:var(--muted);
+  line-height:1.7;
+}
+
+.viewer-tags{
+  color:#c6c1c5;
+  font:9px 'DM Mono',monospace;
+}
+
+@media(max-width:720px){
+  .topbar{
+    padding:0 3vw;
+  }
+
+  .top-actions button{
+    padding:8px 10px;
+    font-size:10px;
+  }
+
+  .banner{
+    height:190px;
+    margin-top:12px;
+    border-radius:11px;
+  }
+
+  .profile-head{
+    padding:0 15px;
+    margin-top:-40px;
+  }
+
+  .avatar{
+    width:82px;
+    height:82px;
+    border-width:4px;
+  }
+
+  .display-name{
+    font-size:23px;
+  }
+
+  #postGrid{
+    columns:2 145px;
+    column-gap:9px;
+  }
+
+  .card{
+    margin-bottom:9px;
+    border-radius:7px;
+  }
+
+  .card-info{
+    display:none;
+  }
+}
+</style>
 </head>
-
 
 <body>
 
-  <!-- =====================================
-       TOP BAR
-  ====================================== -->
-
-  <header class="topbar">
-
-    <a
-      href="index.html"
-      class="logo"
-    >
-      kioku
-      <span>記憶</span>
-    </a>
-
-    <div class="nav-right">
-
-      <button
-        class="nav-button"
-        id="homeButton"
-      >
-        home
-      </button>
-
-      <button
-        class="nav-button"
-        id="logoutButton"
-      >
-        log out
-      </button>
-
-    </div>
-
-  </header>
-
-
-  <!-- =====================================
-       PROFILE
-  ====================================== -->
-
-  <main
-    class="profile-page"
-    id="profilePage"
-  >
-
-    <!-- BANNER -->
-
-    <section
-      class="banner"
-      id="banner"
-    >
-      <div class="banner-overlay"></div>
-    </section>
-
-
-    <!-- PROFILE INFO -->
-
-    <section class="profile-info">
-
-      <div class="profile-main">
-
-        <!-- AVATAR -->
-
-        <div class="avatar-wrap">
-
-          <img
-            id="avatar"
-            class="avatar"
-            src=""
-            alt="profile picture"
-          >
-
-        </div>
-
-
-        <!-- DETAILS -->
-
-        <div class="profile-details">
-
-          <div class="name-row">
-
-            <div>
-
-              <h1
-                class="display-name"
-                id="displayName"
-              >
-                loading...
-              </h1>
-
-              <div
-                class="username"
-                id="username"
-              >
-                @username
-              </div>
-
-            </div>
-
-            <button
-              class="edit-button"
-              id="editButton"
-            >
-              edit profile
-            </button>
-
-          </div>
-
-
-          <div
-            class="bio"
-            id="bio"
-          ></div>
-
-
-          <!-- STATS -->
-
-          <div class="stats">
-
-            <div class="stat">
-
-              <span
-                class="stat-number"
-                id="postCount"
-              >
-                0
-              </span>
-
-              <span class="stat-label">
-                posts
-              </span>
-
-            </div>
-
-
-            <div class="stat">
-
-              <span
-                class="stat-number"
-                id="followerCount"
-              >
-                0
-              </span>
-
-              <span class="stat-label">
-                followers
-              </span>
-
-            </div>
-
-
-            <div class="stat">
-
-              <span
-                class="stat-number"
-                id="followingCount"
-              >
-                0
-              </span>
-
-              <span class="stat-label">
-                following
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- TABS -->
-
-    <nav class="tabs">
-
-      <button
-        class="tab active"
-        data-tab="posts"
-      >
-        posts
-      </button>
-
-      <button
-        class="tab"
-        data-tab="collections"
-      >
-        collections
-      </button>
-
-      <button
-        class="tab"
-        data-tab="saved"
-      >
-        saved
-      </button>
-
-    </nav>
-
-
-    <!-- CONTENT -->
-
-    <section class="content">
-
-      <div class="section-title">
-
-        <h2 id="sectionTitle">
-          posts
-        </h2>
-
-        <span id="sectionCount">
-          0
-        </span>
-
-      </div>
-
-
-      <!-- REAL POSTS -->
-
-      <div
-        class="post-grid"
-        id="postGrid"
-      ></div>
-
-
-      <!-- EMPTY -->
-
-      <div
-        class="empty"
-        id="empty"
-      >
-
-        <div class="empty-symbol">
-          ᯽
-        </div>
-
-        <div class="empty-text">
-          nothing here yet.
-        </div>
-
-      </div>
-
-
-      <!-- LOADING -->
-
-      <div
-        class="loading"
-        id="loading"
-      >
-        loading profile...
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- =====================================
-       IMAGE VIEWER
-  ====================================== -->
-
-  <div
-    class="viewer"
-    id="viewer"
-  >
-
-    <button
-      class="viewer-close"
-      id="viewerClose"
-    >
-      ×
-    </button>
-
-    <div
-      class="viewer-content"
-      id="viewerContent"
-    >
-
-      <img
-        id="viewerImage"
-        src=""
-        alt=""
-      >
-
-      <div class="viewer-info">
-
-        <div
-          class="viewer-title"
-          id="viewerTitle"
-        ></div>
-
-        <div
-          class="viewer-description"
-          id="viewerDescription"
-        ></div>
-
-      </div>
-
-    </div>
-
+<header class="topbar">
+  <a class="logo" href="index.html">
+    kioku <small>記憶</small>
+  </a>
+
+  <div class="top-actions">
+    <button id="homeBtn">home</button>
+    <button id="editBtn">edit</button>
+    <button id="logoutBtn">log out</button>
   </div>
+</header>
 
+<main class="profile">
 
-  <!-- =====================================
-       JAVASCRIPT
-  ====================================== -->
+  <div id="banner" class="banner"></div>
 
-  <script>
+  <section class="profile-head">
 
-    /* =====================================
-       SUPABASE
-    ====================================== */
+    <div id="avatar" class="avatar">
+      <span id="avatarLetter">k</span>
+    </div>
 
-    const SUPABASE_URL =
-      "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+    <div class="identity">
+      <div id="displayName" class="display-name">loading...</div>
+      <div id="username" class="username">@loading</div>
+      <div id="bio" class="bio"></div>
+    </div>
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+    <div class="stats">
+      <span><strong id="postCount">0</strong> posts</span>
+      <span><strong id="followerCount">0</strong> followers</span>
+      <span><strong id="followingCount">0</strong> following</span>
+    </div>
 
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
+  </section>
 
+  <nav class="profile-nav">
+    <button class="active" data-tab="posts">posts</button>
+    <button data-tab="collections">collections</button>
+    <button data-tab="saved">saved</button>
+  </nav>
 
-    /* =====================================
-       DEFAULT AVATAR
-    ====================================== */
+  <section id="content">
+    <div id="loading" class="loading">loading profile...</div>
+    <div id="postGrid"></div>
+    <div id="empty" class="empty" hidden>no posts yet</div>
+  </section>
 
-    const defaultAvatar =
-      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Crect width='100%25' height='100%25' fill='%23ddd'/%3E%3Ccircle cx='250' cy='190' r='85' fill='%23aaa'/%3E%3Cellipse cx='250' cy='430' rx='145' ry='115' fill='%23aaa'/%3E%3C/svg%3E";
+</main>
 
+<div id="viewer" class="overlay" hidden>
+  <button class="close" id="closeViewer">×</button>
 
-    /* =====================================
-       STATE
-    ====================================== */
+  <div class="viewer">
+    <img id="viewerImage" src="" alt="">
 
-    let currentUser = null;
-    let currentProfile = null;
-    let currentPosts = [];
+    <div class="viewer-info">
+      <h2 id="viewerTitle"></h2>
+      <p id="viewerDescription"></p>
+      <div id="viewerTags" class="viewer-tags"></div>
+    </div>
+  </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    /* =====================================
-       LOAD PROFILE
-    ====================================== */
+<script>
+const SUPABASE_URL =
+  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
 
-    async function loadProfile() {
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-      try {
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
 
-        const {
-          data: {
-            session
-          }
-        } =
-          await supabaseClient.auth.getSession();
+let currentUser = null;
+let profileData = null;
+let currentPosts = [];
 
+const $ = id => document.getElementById(id);
 
-        /* Not logged in */
+async function init(){
+  const { data:{ session } } =
+    await supabaseClient.auth.getSession();
 
-        if (!session) {
+  if(!session){
+    window.location.href = "auth.html";
+    return;
+  }
 
-          window.location.href =
-            "auth.html";
+  currentUser = session.user;
 
-          return;
-        }
+  await loadProfile();
+}
 
+async function loadProfile(){
 
-        currentUser =
-          session.user;
+  const { data:profile, error } =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id", currentUser.id)
+      .maybeSingle();
 
+  if(error){
+    console.error(error);
+    $("loading").textContent = "couldn't load profile";
+    return;
+  }
 
-        /* Get profile */
+  if(!profile){
+    const username =
+      currentUser.user_metadata?.username ||
+      "user" + currentUser.id.slice(0,6);
 
-        const {
-          data: profile,
-          error: profileError
-        } =
-          await supabaseClient
-            .from("profiles")
-            .select("*")
-            .eq(
-              "id",
-              currentUser.id
-            )
-            .maybeSingle();
+    const displayName =
+      currentUser.user_metadata?.display_name ||
+      username;
 
+    const { data:created, error:createError } =
+      await supabaseClient
+        .from("profiles")
+        .insert({
+          id:currentUser.id,
+          username,
+          display_name:displayName,
+          bio:""
+        })
+        .select()
+        .single();
 
-        if (profileError) {
-          throw profileError;
-        }
+    if(createError){
+      console.error(createError);
 
-
-        /* No profile yet */
-
-        if (!profile) {
-
-          document.getElementById(
-            "loading"
-          ).textContent =
-            "your profile hasn't been created yet.";
-
-          return;
-        }
-
-
-        currentProfile =
-          profile;
-
-
-        applyProfile(profile);
-
-        await loadPosts();
-
-        document.getElementById(
-          "loading"
-        ).style.display =
-          "none";
-
-
-      } catch (error) {
-
-        console.error(
-          "Profile loading error:",
-          error
-        );
-
-        document.getElementById(
-          "loading"
-        ).textContent =
-          "couldn't load profile.";
-
-      }
-
+      profileData = {
+        username,
+        display_name:displayName,
+        bio:""
+      };
+    }else{
+      profileData = created;
     }
+  }else{
+    profileData = profile;
+  }
 
+  applyProfile();
+  await loadPosts();
+}
 
-    /* =====================================
-       APPLY PROFILE APPEARANCE
-    ====================================== */
+function applyProfile(){
 
-    function applyProfile(profile) {
+  const p = profileData;
 
-      const pageColor =
-        profile.page_color ||
-        "#efedef";
+  $("displayName").textContent =
+    p.display_name || p.username || "kioku user";
 
-      const accentColor =
-        profile.accent_color ||
-        "#e8b8cb";
+  $("username").textContent =
+    "@" + (p.username || "user");
 
-      document.body.style.background =
-        pageColor;
+  $("bio").textContent =
+    p.bio || "";
 
+  document.documentElement.style.setProperty(
+    "--accent",
+    p.accent_color || "#f2a9c8"
+  );
 
-      /* Font */
+  if(p.page_color){
+    document.body.style.background = p.page_color;
+  }
 
-      if (profile.font === "serif") {
+  if(p.font === "serif"){
+    document.body.style.fontFamily = "Georgia,serif";
+  }else if(p.font === "mono"){
+    document.body.style.fontFamily = "'DM Mono',monospace";
+  }else{
+    document.body.style.fontFamily = "Manrope,sans-serif";
+  }
 
-        document.body.style.fontFamily =
-          "Georgia, serif";
+  if(p.background_url){
+    $("banner").style.backgroundImage =
+      `url("${p.background_url}")`;
+  }
 
-      } else if (
-        profile.font === "mono"
-      ) {
+  if(p.avatar_url){
+    $("avatar").style.backgroundImage =
+      `url("${p.avatar_url}")`;
+    $("avatarLetter").style.display = "none";
+  }else{
+    const name =
+      p.display_name ||
+      p.username ||
+      "k";
 
-        document.body.style.fontFamily =
-          "monospace";
+    $("avatarLetter").textContent =
+      name.charAt(0).toLowerCase();
+  }
 
-      } else {
+  document.body.classList.remove(
+    "layout-soft",
+    "layout-minimal",
+    "layout-boxed"
+  );
 
-        document.body.style.fontFamily =
-          "Arial, sans-serif";
+  document.body.classList.add(
+    "layout-" + (p.layout || "soft")
+  );
+}
 
-      }
+async function loadPosts(){
 
+  $("loading").hidden = false;
+  $("empty").hidden = true;
+  $("postGrid").innerHTML = "";
 
-      /* Layout */
+  const { data:posts, error } =
+    await supabaseClient
+      .from("posts")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .order("created_at",{ascending:false});
 
-      document.body.classList.remove(
-        "layout-soft",
-        "layout-minimal",
-        "layout-boxed"
-      );
+  $("loading").hidden = true;
 
-      document.body.classList.add(
-        "layout-" +
-        (
-          profile.layout ||
-          "soft"
-        )
-      );
+  if(error){
+    console.error(error);
+    $("empty").hidden = false;
+    $("empty").textContent = "couldn't load posts";
+    return;
+  }
 
+  currentPosts = posts || [];
 
-      /* Banner */
+  $("postCount").textContent =
+    currentPosts.length;
 
-      const banner =
-        document.getElementById(
-          "banner"
-        );
+  renderPosts();
+}
 
-      if (
-        profile.background_url
-      ) {
+function renderPosts(){
 
-        banner.style.backgroundImage =
-          `
-            url("${profile.background_url}")
-          `;
+  $("postGrid").innerHTML = "";
 
-      } else {
+  if(!currentPosts.length){
+    $("empty").hidden = false;
+    $("empty").textContent = "no posts yet";
+    return;
+  }
 
-        banner.style.backgroundImage =
-          `
-            linear-gradient(
-              135deg,
-              ${accentColor},
-              ${pageColor}
-            )
-          `;
+  $("empty").hidden = true;
 
-      }
+  currentPosts.forEach(post => {
 
+    const card =
+      document.createElement("article");
 
-      /* Avatar */
+    card.className = "card";
 
-      const avatar =
-        document.getElementById(
-          "avatar"
-        );
+    const img =
+      document.createElement("img");
 
-      avatar.src =
-        profile.avatar_url ||
-        defaultAvatar;
+    img.src = post.image_url;
+    img.alt = post.title || "kioku photo";
+    img.loading = "lazy";
 
+    const info =
+      document.createElement("div");
 
-      /* Text */
+    info.className = "card-info";
 
-      document.getElementById(
-        "displayName"
-      ).textContent =
-        profile.display_name ||
-        profile.username ||
-        "kioku user";
+    const title =
+      document.createElement("div");
 
+    title.className = "card-title";
+    title.textContent =
+      post.title || "untitled";
 
-      document.getElementById(
-        "username"
-      ).textContent =
-        profile.username
-          ? "@" + profile.username
-          : "";
+    const tags =
+      document.createElement("div");
 
+    tags.className = "card-tags";
+    tags.textContent =
+      Array.isArray(post.tags)
+        ? post.tags.map(t => "#" + t).join(" ")
+        : "";
 
-      document.getElementById(
-        "bio"
-      ).textContent =
-        profile.bio || "";
+    info.append(title,tags);
+    card.append(img,info);
 
+    card.addEventListener("click",() =>
+      openViewer(post)
+    );
 
-      /* Accent */
+    $("postGrid").appendChild(card);
+  });
+}
 
-      document.documentElement
-        .style
-        .setProperty(
-          "--kioku-accent",
-          accentColor
-        );
+function openViewer(post){
 
+  $("viewerImage").src =
+    post.image_url;
+
+  $("viewerTitle").textContent =
+    post.title || "untitled";
+
+  $("viewerDescription").textContent =
+    post.description || "";
+
+  $("viewerTags").textContent =
+    Array.isArray(post.tags)
+      ? post.tags.map(t => "#" + t).join(" ")
+      : "";
+
+  $("viewer").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function closeViewer(){
+
+  $("viewer").hidden = true;
+  $("viewerImage").src = "";
+  document.body.style.overflow = "";
+}
+
+$("closeViewer").addEventListener(
+  "click",
+  closeViewer
+);
+
+$("viewer").addEventListener(
+  "click",
+  e => {
+    if(e.target === $("viewer")){
+      closeViewer();
     }
+  }
+);
 
-
-    /* =====================================
-       LOAD REAL POSTS
-    ====================================== */
-
-    async function loadPosts() {
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .from("posts")
-          .select("*")
-          .eq(
-            "user_id",
-            currentUser.id
-          )
-          .order(
-            "created_at",
-            {
-              ascending: false
-            }
-          );
-
-
-      if (error) {
-
-        console.error(
-          "Post loading error:",
-          error
-        );
-
-        return;
-      }
-
-
-      currentPosts =
-        data || [];
-
-
-      renderPosts();
-
+document.addEventListener(
+  "keydown",
+  e => {
+    if(e.key === "Escape"){
+      closeViewer();
     }
-
-
-    /* =====================================
-       RENDER POSTS
-    ====================================== */
-
-    function renderPosts() {
-
-      const grid =
-        document.getElementById(
-          "postGrid"
-        );
-
-      const empty =
-        document.getElementById(
-          "empty"
-        );
-
-
-      grid.innerHTML = "";
-
-
-      document.getElementById(
-        "postCount"
-      ).textContent =
-        currentPosts.length;
-
-
-      document.getElementById(
-        "sectionCount"
-      ).textContent =
-        currentPosts.length;
-
-
-      if (
-        currentPosts.length === 0
-      ) {
-
-        empty.style.display =
-          "block";
-
-        return;
-
-      }
-
-
-      empty.style.display =
-        "none";
-
-
-      currentPosts.forEach(
-        post => {
-
-          const card =
-            document.createElement(
-              "article"
-            );
-
-          card.className =
-            "post-card";
-
-
-          const image =
-            document.createElement(
-              "img"
-            );
-
-          image.src =
-            post.image_url;
-
-          image.alt =
-            post.title ||
-            "kioku post";
-
-          image.loading =
-            "lazy";
-
-
-          const overlay =
-            document.createElement(
-              "div"
-            );
-
-          overlay.className =
-            "post-overlay";
-
-
-          const title =
-            document.createElement(
-              "div"
-            );
-
-          title.className =
-            "post-title";
-
-          title.textContent =
-            post.title || "";
-
-
-          const tags =
-            document.createElement(
-              "div"
-            );
-
-          tags.className =
-            "post-tags";
-
-          tags.textContent =
-            (post.tags || [])
-              .map(
-                tag =>
-                  "#" + tag
-              )
-              .join(" ");
-
-
-          overlay.appendChild(
-            title
-          );
-
-          overlay.appendChild(
-            tags
-          );
-
-
-          card.appendChild(
-            image
-          );
-
-          card.appendChild(
-            overlay
-          );
-
-
-          card.addEventListener(
-            "click",
-            () => {
-
-              openViewer(post);
-
-            }
-          );
-
-
-          grid.appendChild(
-            card
-          );
-
-        }
-      );
-
-    }
-
-
-    /* =====================================
-       VIEWER
-    ====================================== */
-
-    function openViewer(post) {
-
-      const viewer =
-        document.getElementById(
-          "viewer"
-        );
-
-      const image =
-        document.getElementById(
-          "viewerImage"
-        );
-
-      const title =
-        document.getElementById(
-          "viewerTitle"
-        );
-
-      const description =
-        document.getElementById(
-          "viewerDescription"
-        );
-
-
-      image.src =
-        post.image_url;
-
-      image.alt =
-        post.title || "kioku post";
-
-      title.textContent =
-        post.title || "";
-
-      description.textContent =
-        post.description || "";
-
-
-      viewer.classList.add(
-        "open"
-      );
-
-    }
-
-
-    function closeViewer() {
+  }
+);
+
+$("homeBtn").addEventListener(
+  "click",
+  () => {
+    window.location.href = "index.html";
+  }
+);
+
+$("editBtn").addEventListener(
+  "click",
+  () => {
+    window.location.href = "edit-profile.html";
+  }
+);
+
+$("logoutBtn").addEventListener(
+  "click",
+  async () => {
+
+    $("logoutBtn").disabled = true;
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href = "auth.html";
+  }
+);
+
+document
+  .querySelectorAll(".profile-nav button")
+  .forEach(button => {
+
+    button.addEventListener("click",() => {
 
       document
-        .getElementById("viewer")
-        .classList.remove(
-          "open"
+        .querySelectorAll(".profile-nav button")
+        .forEach(b =>
+          b.classList.remove("active")
         );
 
-    }
+      button.classList.add("active");
 
+      const tab =
+        button.dataset.tab;
 
-    document
-      .getElementById(
-        "viewerClose"
-      )
-      .addEventListener(
-        "click",
-        closeViewer
-      );
+      if(tab === "posts"){
+        renderPosts();
+      }else{
+        $("postGrid").innerHTML = "";
+        $("empty").hidden = false;
 
-
-    document
-      .getElementById(
-        "viewer"
-      )
-      .addEventListener(
-        "click",
-        event => {
-
-          if (
-            event.target.id ===
-            "viewer"
-          ) {
-
-            closeViewer();
-
-          }
-
+        if(tab === "collections"){
+          $("empty").textContent =
+            "collections are coming soon";
         }
-      );
 
-
-    /* =====================================
-       EDIT PROFILE
-    ====================================== */
-
-    document
-      .getElementById(
-        "editButton"
-      )
-      .addEventListener(
-        "click",
-        () => {
-
-          window.location.href =
-            "edit-profile.html";
-
+        if(tab === "saved"){
+          $("empty").textContent =
+            "saved posts are coming soon";
         }
-      );
+      }
+    });
+  });
 
-
-    /* =====================================
-       HOME
-    ====================================== */
-
-    document
-      .getElementById(
-        "homeButton"
-      )
-      .addEventListener(
-        "click",
-        () => {
-
-          window.location.href =
-            "index.html";
-
-        }
-      );
-
-
-    /* =====================================
-       LOG OUT
-    ====================================== */
-
-    document
-      .getElementById(
-        "logoutButton"
-      )
-      .addEventListener(
-        "click",
-        async () => {
-
-          await supabaseClient
-            .auth
-            .signOut();
-
-          window.location.href =
-            "index.html";
-
-        }
-      );
-
-
-    /* =====================================
-       TABS
-    ====================================== */
-
-    document
-      .querySelectorAll(".tab")
-      .forEach(
-        tab => {
-
-          tab.addEventListener(
-            "click",
-            () => {
-
-              document
-                .querySelectorAll(
-                  ".tab"
-                )
-                .forEach(
-                  item =>
-                    item.classList
-                      .remove(
-                        "active"
-                      )
-                );
-
-
-              tab.classList.add(
-                "active"
-              );
-
-
-              const type =
-                tab.dataset.tab;
-
-
-              document.getElementById(
-                "sectionTitle"
-              ).textContent =
-                type;
-
-
-              if (
-                type === "posts"
-              ) {
-
-                renderPosts();
-
-              } else {
-
-                document.getElementById(
-                  "postGrid"
-                ).innerHTML = "";
-
-
-                document.getElementById(
-                  "empty"
-                ).style.display =
-                  "block";
-
-
-                document.getElementById(
-                  "empty"
-                ).querySelector(
-                  ".empty-text"
-                ).textContent =
-                  type === "collections"
-                    ? "no collections yet."
-                    : "nothing saved yet.";
-
-              }
-
-            }
-          );
-
-        }
-      );
-
-
-    /* =====================================
-       START
-    ====================================== */
-
-    loadProfile();
-
-  </script>
+init();
+</script>
 
 </body>
 </html>
