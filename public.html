@@ -1,772 +1,764 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>kioku 記憶 · profile</title>
 
-  <title>kioku 記憶 — profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+:root{
+  --bg:#101012;
+  --panel:#17171a;
+  --text:#f4f1f3;
+  --muted:#aaa3aa;
+  --line:#ffffff1c;
+  --soft:#ffffff0a;
+  --accent:#f2a9c8;
+}
 
-    body {
-      margin: 0;
-      color: #222;
-      background: #efedef;
-      font-family: Arial, sans-serif;
-      transition: background .3s ease;
-    }
+*{box-sizing:border-box}
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font:300 13px Manrope,sans-serif;
+}
 
-    button {
-      font-family: inherit;
-    }
+button{
+  font:inherit;
+  color:inherit;
+  cursor:pointer;
+}
 
-    .topbar {
-      height: 64px;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255,255,255,.76);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(0,0,0,.06);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
+.topbar{
+  height:76px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  padding:0 4vw;
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:#101012e8;
+  backdrop-filter:blur(18px);
+}
 
-    .logo {
-      font-size: 20px;
-      letter-spacing: .04em;
-    }
+.logo{
+  color:var(--text);
+  text-decoration:none;
+  font:18px 'DM Mono',monospace;
+}
 
-    .back {
-      font-size: 13px;
-      color: #555;
-    }
+.logo small{
+  color:var(--accent);
+  font-size:10px;
+  margin-left:5px;
+}
 
-    .page {
-      width: min(1000px, calc(100% - 28px));
-      margin: 28px auto 70px;
-    }
+.back{
+  margin-left:auto;
+  border:1px solid var(--line);
+  background:var(--soft);
+  border-radius:999px;
+  padding:9px 14px;
+  font-size:11px;
+}
 
-    .profile {
-      overflow: hidden;
-      border-radius: 24px;
-      background: rgba(255,255,255,.74);
-      border: 1px solid rgba(0,0,0,.07);
-    }
+.back:hover{
+  color:var(--accent);
+  border-color:#f2a9c84d;
+  background:#f2a9c81c;
+}
 
-    .banner {
-      height: 280px;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-    }
+.profile{
+  width:min(1200px,92vw);
+  margin:auto;
+  padding-bottom:80px;
+}
 
-    .profileInfo {
-      padding: 0 36px 32px;
-      position: relative;
-    }
+.banner{
+  height:260px;
+  margin-top:22px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 30% 30%,#f2a9c82b,transparent 35%),
+    linear-gradient(135deg,#1d1b20,#111114);
+  background-size:cover;
+  background-position:center;
+}
 
-    .avatar {
-      width: 130px;
-      height: 130px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-top: -65px;
-      border: 6px solid rgba(255,255,255,.95);
-      background: #ddd;
-      display: block;
-    }
+.profile-head{
+  position:relative;
+  margin-top:-48px;
+  padding:0 28px;
+}
 
-    .nameRow {
-      margin-top: 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
-    }
+.avatar{
+  width:104px;
+  height:104px;
+  border-radius:50%;
+  border:5px solid var(--bg);
+  background:#252328;
+  background-size:cover;
+  background-position:center;
+  display:grid;
+  place-items:center;
+  color:var(--accent);
+  font:20px 'DM Mono',monospace;
+}
 
-    .name {
-      font-size: 28px;
-      font-weight: 500;
-      margin: 0;
-    }
+.identity{
+  margin-top:15px;
+}
 
-    .username {
-      color: #888;
-      font-size: 14px;
-      margin-top: 5px;
-    }
+.display-name{
+  font-size:27px;
+  font-weight:300;
+  letter-spacing:-.03em;
+}
 
-    .bio {
-      max-width: 620px;
-      margin-top: 16px;
-      font-size: 14px;
-      line-height: 1.65;
-      white-space: pre-wrap;
-    }
+.username{
+  margin-top:5px;
+  color:var(--accent);
+  font:11px 'DM Mono',monospace;
+}
 
-    .follow {
-      border: 0;
-      padding: 11px 22px;
-      border-radius: 999px;
-      cursor: pointer;
-      background: #222;
-      color: white;
-      font-size: 13px;
-      white-space: nowrap;
-    }
+.bio{
+  max-width:600px;
+  color:var(--muted);
+  line-height:1.7;
+  margin-top:13px;
+  white-space:pre-wrap;
+}
 
-    .follow.following {
-      background: transparent;
-      color: #222;
-      border: 1px solid rgba(0,0,0,.18);
-    }
+.actions{
+  margin-top:18px;
+  display:flex;
+  gap:8px;
+}
 
-    .stats {
-      display: flex;
-      gap: 25px;
-      margin-top: 22px;
-      font-size: 13px;
-      color: #666;
-    }
+.follow{
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:#171217;
+  border-radius:999px;
+  padding:9px 19px;
+  font-size:11px;
+}
 
-    .stats strong {
-      color: #222;
-      font-weight: 500;
-    }
+.follow.following{
+  background:transparent;
+  color:var(--accent);
+}
 
-    .tabs {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      padding: 0 20px;
-      border-top: 1px solid rgba(0,0,0,.06);
-      border-bottom: 1px solid rgba(0,0,0,.06);
-    }
+.stats{
+  display:flex;
+  gap:24px;
+  margin-top:20px;
+  color:var(--muted);
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
 
-    .tab {
-      border: 0;
-      background: none;
-      padding: 18px 22px;
-      cursor: pointer;
-      font-size: 13px;
-      color: #888;
-      position: relative;
-    }
+.stats strong{
+  color:var(--text);
+  font-weight:400;
+}
 
-    .tab.active {
-      color: #222;
-    }
+.profile-nav{
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  margin-top:30px;
+  display:flex;
+  gap:25px;
+}
 
-    .tab.active::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 20%;
-      right: 20%;
-      height: 2px;
-      background: currentColor;
-    }
+.profile-nav button{
+  border:0;
+  background:none;
+  color:var(--muted);
+  padding:15px 0;
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
 
-    .content {
-      padding: 28px;
-    }
+.profile-nav button.active,
+.profile-nav button:hover{
+  color:var(--accent);
+  border-bottom:1px solid var(--accent);
+}
 
-    .masonry {
-      columns: 3 240px;
-      column-gap: 18px;
-    }
+#postGrid{
+  columns:4 220px;
+  column-gap:15px;
+  margin-top:18px;
+}
 
-    .photo {
-      break-inside: avoid;
-      margin-bottom: 18px;
-      border-radius: 16px;
-      overflow: hidden;
-      background: #ddd;
-      cursor: pointer;
-      position: relative;
-    }
+.card{
+  break-inside:avoid;
+  margin-bottom:15px;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+  background:#19191c;
+  cursor:pointer;
+}
 
-    .photo img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
+.card img{
+  display:block;
+  width:100%;
+  transition:.5s;
+}
 
-    .photoInfo {
-      padding: 12px;
-      background: rgba(255,255,255,.88);
-    }
+.card:hover img{
+  transform:scale(1.025);
+  filter:brightness(.82);
+}
 
-    .photoTitle {
-      font-size: 13px;
-    }
+.card-info{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:55px 14px 13px;
+  background:linear-gradient(transparent,#000d);
+  opacity:0;
+  transition:.2s;
+}
 
-    .photoStats {
-      margin-top: 6px;
-      font-size: 11px;
-      color: #888;
-    }
+.card:hover .card-info{
+  opacity:1;
+}
 
-    .empty {
-      text-align: center;
-      padding: 80px 20px;
-      color: #888;
-      font-size: 14px;
-    }
+.card-title{
+  font-size:12px;
+}
 
-    .error {
-      text-align: center;
-      padding: 100px 20px;
-      color: #777;
-    }
+.card-tags{
+  color:#c6c1c5;
+  margin-top:5px;
+  font:9px 'DM Mono',monospace;
+}
 
-    .error strong {
-      display: block;
-      color: #222;
-      margin-bottom: 8px;
-    }
+.empty,
+.loading{
+  text-align:center;
+  color:var(--muted);
+  padding:90px 20px;
+  font:10px 'DM Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
 
-    .minimal {
-      border-radius: 0;
-      background: transparent;
-      border: 0;
-    }
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  background:#08080bf5;
+  backdrop-filter:blur(20px);
+  padding:7vh 5vw;
+  overflow:auto;
+}
 
-    .minimal .profileInfo {
-      padding-left: 10px;
-      padding-right: 10px;
-    }
+.overlay[hidden]{
+  display:none;
+}
 
-    .minimal .tabs {
-      border-left: 0;
-      border-right: 0;
-    }
+.close{
+  position:fixed;
+  right:25px;
+  top:18px;
+  background:none;
+  border:0;
+  font-size:30px;
+  color:#aaa;
+}
 
-    .boxed {
-      border-radius: 8px;
-    }
+.viewer{
+  width:min(1050px,92vw);
+  margin:auto;
+}
 
-    .boxed .photo {
-      border-radius: 6px;
-    }
+.viewer img{
+  display:block;
+  max-width:100%;
+  max-height:72vh;
+  width:auto;
+  margin:auto;
+}
 
-    @media (max-width: 650px) {
+.viewer-info{
+  border-top:1px solid var(--line);
+  margin-top:18px;
+  padding-top:16px;
+}
 
-      .topbar {
-        padding: 0 16px;
-      }
+.viewer-info h2{
+  font-weight:300;
+  margin:0 0 7px;
+}
 
-      .page {
-        width: 100%;
-        margin-top: 0;
-      }
+.viewer-info p{
+  color:var(--muted);
+  line-height:1.7;
+}
 
-      .profile {
-        border-radius: 0;
-        border-left: 0;
-        border-right: 0;
-      }
+.viewer-tags{
+  color:#c6c1c5;
+  font:9px 'DM Mono',monospace;
+}
 
-      .banner {
-        height: 190px;
-      }
+@media(max-width:720px){
+  .topbar{
+    padding:0 3vw;
+  }
 
-      .profileInfo {
-        padding: 0 20px 26px;
-      }
+  .banner{
+    height:190px;
+    margin-top:12px;
+    border-radius:11px;
+  }
 
-      .avatar {
-        width: 105px;
-        height: 105px;
-        margin-top: -52px;
-      }
+  .profile-head{
+    padding:0 15px;
+    margin-top:-40px;
+  }
 
-      .nameRow {
-        display: block;
-      }
+  .avatar{
+    width:82px;
+    height:82px;
+    border-width:4px;
+  }
 
-      .follow {
-        margin-top: 18px;
-      }
+  .display-name{
+    font-size:23px;
+  }
 
-      .tabs {
-        overflow-x: auto;
-        justify-content: flex-start;
-      }
+  #postGrid{
+    columns:2 145px;
+    column-gap:9px;
+  }
 
-      .tab {
-        flex-shrink: 0;
-      }
+  .card{
+    margin-bottom:9px;
+    border-radius:7px;
+  }
 
-      .content {
-        padding: 16px;
-      }
-
-      .masonry {
-        columns: 2 150px;
-        column-gap: 10px;
-      }
-
-      .photo {
-        margin-bottom: 10px;
-        border-radius: 10px;
-      }
-    }
-  </style>
+  .card-info{
+    display:none;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <header class="topbar">
-    <a class="logo" href="index.html">
-      kioku 記憶
-    </a>
+<header class="topbar">
+  <a class="logo" href="index.html">
+    kioku <small>記憶</small>
+  </a>
 
-    <a class="back" href="index.html">
-      ← home
-    </a>
-  </header>
+  <button class="back" id="backBtn">home</button>
+</header>
 
+<main class="profile">
 
-  <main class="page">
+  <div id="banner" class="banner"></div>
 
-    <div id="profile" class="profile">
+  <section class="profile-head">
 
-      <div id="banner" class="banner"></div>
+    <div id="avatar" class="avatar">k</div>
 
-      <section class="profileInfo">
+    <div class="identity">
+      <div id="displayName" class="display-name">loading...</div>
+      <div id="username" class="username">@loading</div>
+      <div id="bio" class="bio"></div>
 
-        <img
-          id="avatar"
-          class="avatar"
-          alt="profile picture"
-        >
-
-        <div class="nameRow">
-
-          <div>
-
-            <h1 id="name" class="name">
-              loading...
-            </h1>
-
-            <div id="username" class="username"></div>
-
-          </div>
-
-          <button
-            id="follow"
-            class="follow"
-            type="button"
-          >
-            follow
-          </button>
-
-        </div>
-
-        <div id="bio" class="bio"></div>
-
-        <div class="stats">
-
-          <span>
-            <strong id="followers">0</strong>
-            followers
-          </span>
-
-          <span>
-            <strong id="following">0</strong>
-            following
-          </span>
-
-        </div>
-
-      </section>
-
-
-      <nav class="tabs">
-
-        <button
-          class="tab active"
-          data-tab="posts"
-        >
-          posts
-        </button>
-
-        <button
-          class="tab"
-          data-tab="collections"
-        >
-          collections
-        </button>
-
-        <button
-          class="tab"
-          data-tab="saved"
-        >
-          saved
-        </button>
-
-      </nav>
-
-
-      <section class="content">
-
-        <div id="posts" class="masonry"></div>
-
-        <div id="empty" class="empty" style="display:none;">
-          nothing here yet.
-        </div>
-
-      </section>
-
+      <div class="actions">
+        <button id="followBtn" class="follow">follow</button>
+      </div>
     </div>
 
-  </main>
+    <div class="stats">
+      <span><strong id="postCount">0</strong> posts</span>
+      <span><strong id="followerCount">0</strong> followers</span>
+      <span><strong id="followingCount">0</strong> following</span>
+    </div>
 
+  </section>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <nav class="profile-nav">
+    <button class="active" data-tab="posts">posts</button>
+    <button data-tab="collections">collections</button>
+    <button data-tab="saved">saved</button>
+  </nav>
 
-  <script>
+  <section>
+    <div id="loading" class="loading">loading profile...</div>
+    <div id="postGrid"></div>
+    <div id="empty" class="empty" hidden></div>
+  </section>
 
-    const SUPABASE_URL =
-      "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+</main>
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+<div id="viewer" class="overlay" hidden>
+  <button class="close" id="closeViewer">×</button>
 
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
+  <div class="viewer">
+    <img id="viewerImage" src="" alt="">
 
+    <div class="viewer-info">
+      <h2 id="viewerTitle"></h2>
+      <p id="viewerDescription"></p>
+      <div id="viewerTags" class="viewer-tags"></div>
+    </div>
+  </div>
+</div>
 
-    const $ = id =>
-      document.getElementById(id);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script>
+const SUPABASE_URL =
+  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
 
-    const params =
-      new URLSearchParams(window.location.search);
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-    const requestedUsername =
-      params.get("username");
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
 
+let profileData = null;
+let currentPosts = [];
+let isFollowing = false;
 
-    const defaults = [
-      {
-        src: "assets/clouds.jpg",
-        title: "between weather",
-        likes: 0
-      },
-      {
-        src: "assets/purple-glow.jpg",
-        title: "violet static",
-        likes: 0
-      },
-      {
-        src: "assets/purple-architecture.jpg",
-        title: "afterimage",
-        likes: 0
-      },
-      {
-        src: "assets/night-trails.jpg",
-        title: "somewhere above",
-        likes: 0
-      },
-      {
-        src: "assets/night-sky.jpg",
-        title: "02:17",
-        likes: 0
-      },
-      {
-        src: "assets/night-blue.jpg",
-        title: "blue hour",
-        likes: 0
-      }
-    ];
+const $ = id => document.getElementById(id);
 
+async function init(){
 
-    function applyFont(font) {
+  const params =
+    new URLSearchParams(window.location.search);
 
-      if (font === "serif") {
+  const requestedUsername =
+    params.get("username");
 
-        document.body.style.fontFamily =
-          "Georgia, serif";
+  if(!requestedUsername){
+    $("loading").hidden = true;
+    $("empty").hidden = false;
+    $("empty").textContent =
+      "no username provided";
+    return;
+  }
 
-      } else if (font === "mono") {
+  await loadPublicProfile(requestedUsername);
+}
 
-        document.body.style.fontFamily =
-          "monospace";
+async function loadPublicProfile(username){
 
-      } else {
+  const { data:profile, error } =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("username", username)
+      .maybeSingle();
 
-        document.body.style.fontFamily =
-          "Arial, sans-serif";
-      }
+  if(error){
+    console.error(error);
+    showError();
+    return;
+  }
+
+  if(!profile){
+    $("loading").hidden = true;
+    $("empty").hidden = false;
+    $("empty").textContent =
+      "profile not found";
+    return;
+  }
+
+  profileData = profile;
+
+  applyProfile();
+  await loadPosts();
+}
+
+function applyProfile(){
+
+  const p = profileData;
+
+  document.title =
+    `${p.display_name || p.username} · kioku`;
+
+  $("displayName").textContent =
+    p.display_name || p.username;
+
+  $("username").textContent =
+    "@" + p.username;
+
+  $("bio").textContent =
+    p.bio || "";
+
+  document.documentElement.style.setProperty(
+    "--accent",
+    p.accent_color || "#f2a9c8"
+  );
+
+  if(p.page_color){
+    document.body.style.background =
+      p.page_color;
+  }
+
+  if(p.font === "serif"){
+    document.body.style.fontFamily =
+      "Georgia,serif";
+  }else if(p.font === "mono"){
+    document.body.style.fontFamily =
+      "'DM Mono',monospace";
+  }else{
+    document.body.style.fontFamily =
+      "Manrope,sans-serif";
+  }
+
+  if(p.background_url){
+    $("banner").style.backgroundImage =
+      `url("${p.background_url}")`;
+  }
+
+  if(p.avatar_url){
+    $("avatar").textContent = "";
+    $("avatar").style.backgroundImage =
+      `url("${p.avatar_url}")`;
+  }else{
+    $("avatar").textContent =
+      (p.display_name || p.username || "k")
+        .charAt(0)
+        .toLowerCase();
+  }
+}
+
+async function loadPosts(){
+
+  const { data:posts, error } =
+    await supabaseClient
+      .from("posts")
+      .select("*")
+      .eq("user_id", profileData.id)
+      .order("created_at",{ascending:false});
+
+  $("loading").hidden = true;
+
+  if(error){
+    console.error(error);
+    showError();
+    return;
+  }
+
+  currentPosts = posts || [];
+
+  $("postCount").textContent =
+    currentPosts.length;
+
+  renderPosts();
+}
+
+function renderPosts(){
+
+  $("postGrid").innerHTML = "";
+
+  if(!currentPosts.length){
+    $("empty").hidden = false;
+    $("empty").textContent =
+      "no posts yet";
+    return;
+  }
+
+  $("empty").hidden = true;
+
+  currentPosts.forEach(post => {
+
+    const card =
+      document.createElement("article");
+
+    card.className = "card";
+
+    const img =
+      document.createElement("img");
+
+    img.src = post.image_url;
+    img.alt = post.title || "kioku photo";
+    img.loading = "lazy";
+
+    const info =
+      document.createElement("div");
+
+    info.className = "card-info";
+
+    const title =
+      document.createElement("div");
+
+    title.className = "card-title";
+    title.textContent =
+      post.title || "untitled";
+
+    const tags =
+      document.createElement("div");
+
+    tags.className = "card-tags";
+
+    tags.textContent =
+      Array.isArray(post.tags)
+        ? post.tags.map(t => "#" + t).join(" ")
+        : "";
+
+    info.append(title,tags);
+    card.append(img,info);
+
+    card.addEventListener(
+      "click",
+      () => openViewer(post)
+    );
+
+    $("postGrid").appendChild(card);
+  });
+}
+
+function openViewer(post){
+
+  $("viewerImage").src =
+    post.image_url;
+
+  $("viewerTitle").textContent =
+    post.title || "untitled";
+
+  $("viewerDescription").textContent =
+    post.description || "";
+
+  $("viewerTags").textContent =
+    Array.isArray(post.tags)
+      ? post.tags.map(t => "#" + t).join(" ")
+      : "";
+
+  $("viewer").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function closeViewer(){
+
+  $("viewer").hidden = true;
+  $("viewerImage").src = "";
+  document.body.style.overflow = "";
+}
+
+function showError(){
+
+  $("loading").hidden = true;
+  $("empty").hidden = false;
+  $("empty").textContent =
+    "something went wrong";
+}
+
+$("closeViewer").addEventListener(
+  "click",
+  closeViewer
+);
+
+$("viewer").addEventListener(
+  "click",
+  e => {
+    if(e.target === $("viewer")){
+      closeViewer();
     }
+  }
+);
 
-
-    function applyLayout(layout) {
-
-      $("profile").classList.remove(
-        "minimal",
-        "boxed"
-      );
-
-      if (layout === "minimal") {
-
-        $("profile").classList.add(
-          "minimal"
-        );
-
-      } else if (layout === "boxed") {
-
-        $("profile").classList.add(
-          "boxed"
-        );
-      }
+document.addEventListener(
+  "keydown",
+  e => {
+    if(e.key === "Escape"){
+      closeViewer();
     }
+  }
+);
 
+$("backBtn").addEventListener(
+  "click",
+  () => {
+    window.location.href =
+      "index.html";
+  }
+);
 
-    function renderPhotos() {
+$("followBtn").addEventListener(
+  "click",
+  () => {
 
-      const container = $("posts");
+    isFollowing = !isFollowing;
 
-      container.innerHTML = "";
+    $("followBtn").textContent =
+      isFollowing
+        ? "following"
+        : "follow";
 
-      if (!defaults.length) {
+    $("followBtn").classList.toggle(
+      "following",
+      isFollowing
+    );
 
-        $("empty").style.display =
-          "block";
+    $("followerCount").textContent =
+      isFollowing
+        ? "1"
+        : "0";
+  }
+);
 
-        return;
+document
+  .querySelectorAll(".profile-nav button")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        document
+          .querySelectorAll(".profile-nav button")
+          .forEach(b =>
+            b.classList.remove("active")
+          );
+
+        button.classList.add("active");
+
+        const tab =
+          button.dataset.tab;
+
+        if(tab === "posts"){
+          renderPosts();
+          return;
+        }
+
+        $("postGrid").innerHTML = "";
+        $("empty").hidden = false;
+
+        $("empty").textContent =
+          tab === "collections"
+            ? "collections are coming soon"
+            : "saved posts are coming soon";
       }
-
-      $("empty").style.display =
-        "none";
-
-
-      defaults.forEach(photo => {
-
-        const card =
-          document.createElement("article");
-
-        card.className = "photo";
-
-        card.innerHTML = `
-
-          <img
-            src="${photo.src}"
-            alt="${photo.title}"
-            loading="lazy"
-          >
-
-          <div class="photoInfo">
-
-            <div class="photoTitle">
-              ${photo.title}
-            </div>
-
-            <div class="photoStats">
-              ♡ ${photo.likes}
-            </div>
-
-          </div>
-
-        `;
-
-        container.appendChild(card);
-
-      });
-    }
-
-
-    async function loadProfile() {
-
-      if (!requestedUsername) {
-
-        $("name").textContent =
-          "profile not found";
-
-        $("username").textContent =
-          "";
-
-        $("follow").style.display =
-          "none";
-
-        return;
-      }
-
-
-      const cleanUsername =
-        requestedUsername
-          .replace(/^@/, "")
-          .trim();
-
-
-      const { data, error } =
-        await supabaseClient
-          .from("profiles")
-          .select("*")
-          .eq("username", cleanUsername)
-          .maybeSingle();
-
-
-      if (error) {
-
-        console.error(error);
-
-        $("name").textContent =
-          "something went wrong";
-
-        $("username").textContent =
-          error.message;
-
-        $("follow").style.display =
-          "none";
-
-        return;
-      }
-
-
-      if (!data) {
-
-        $("name").textContent =
-          "profile not found";
-
-        $("username").textContent =
-          "@" + cleanUsername;
-
-        $("follow").style.display =
-          "none";
-
-        return;
-      }
-
-
-      document.title =
-        `kioku 記憶 — ${data.display_name}`;
-
-
-      $("name").textContent =
-        data.display_name || data.username;
-
-
-      $("username").textContent =
-        "@" + data.username;
-
-
-      $("bio").textContent =
-        data.bio || "";
-
-
-      if (data.avatar_url) {
-
-        $("avatar").src =
-          data.avatar_url;
-
-      } else {
-
-        $("avatar").style.display =
-          "none";
-      }
-
-
-      if (data.background_url) {
-
-        $("banner").style.backgroundImage =
-          `url("${data.background_url}")`;
-
-      } else {
-
-        $("banner").style.background =
-          `linear-gradient(
-            135deg,
-            ${data.page_color || "#efedef"},
-            ${data.accent_color || "#e8b8cb"}
-          )`;
-      }
-
-
-      document.body.style.background =
-        data.page_color || "#efedef";
-
-
-      applyFont(
-        data.font || "sans"
-      );
-
-
-      applyLayout(
-        data.layout || "soft"
-      );
-
-
-      $("follow").style.background =
-        data.accent_color || "#222";
-
-
-      renderPhotos();
-
-    }
-
-
-    document.querySelectorAll(".tab")
-      .forEach(tab => {
-
-        tab.addEventListener(
-          "click",
-          () => {
-
-            document.querySelectorAll(".tab")
-              .forEach(t =>
-                t.classList.remove("active")
-              );
-
-            tab.classList.add("active");
-
-
-            const type =
-              tab.dataset.tab;
-
-
-            if (type === "posts") {
-
-              renderPhotos();
-
-            } else {
-
-              $("posts").innerHTML = "";
-
-              $("empty").style.display =
-                "block";
-
-              $("empty").textContent =
-                type === "collections"
-                  ? "collections will appear here."
-                  : "saved posts will appear here.";
-            }
-
-          }
-        );
-
-      });
-
-
-    loadProfile();
-
-  </script>
+    );
+  });
+
+init();
+</script>
 
 </body>
 </html>
