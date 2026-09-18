@@ -15,6 +15,7 @@
     body {
       margin: 0;
       padding: 0;
+      width: 100%;
       min-height: 100%;
       background: #ffffff;
       color: #222;
@@ -26,18 +27,22 @@
     }
 
     /* =========================
-       HEADER
+       HOME HEADER
     ========================= */
 
     header {
       width: 100%;
       height: 68px;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
+
       padding: 0 18px;
+
       background: #ffffff;
       border-bottom: 1px solid #eeeeee;
+
       position: sticky;
       top: 0;
       z-index: 50;
@@ -46,10 +51,10 @@
     .logo {
       color: #222;
       text-decoration: none;
+
       font-size: 20px;
       font-weight: 600;
       letter-spacing: 0.4px;
-      white-space: nowrap;
     }
 
     .header-right {
@@ -61,12 +66,17 @@
     .header-button {
       height: 34px;
       min-width: 34px;
+
       padding: 0 11px;
+
       border: 1px solid #d7d7d7;
       border-radius: 9px;
-      background: #fff;
+
+      background: #ffffff;
       color: #222;
+
       font-size: 13px;
+
       cursor: pointer;
     }
 
@@ -77,7 +87,9 @@
     .add-button {
       width: 34px;
       min-width: 34px;
+
       padding: 0;
+
       font-size: 20px;
       line-height: 1;
     }
@@ -87,6 +99,7 @@
     ========================= */
 
     .search-area {
+      width: 100%;
       padding: 14px 18px 8px;
     }
 
@@ -94,26 +107,32 @@
       width: 100%;
       max-width: 520px;
       height: 38px;
+
+      padding: 0 13px;
+
       border: 1px solid #dddddd;
       border-radius: 10px;
-      padding: 0 13px;
+
       background: #fafafa;
       color: #222;
+
       font-size: 13px;
+
       outline: none;
     }
 
     #search:focus {
-      background: #fff;
+      background: #ffffff;
       border-color: #cdb3c0;
     }
 
     /* =========================
-       GALLERY
+       HOME GALLERY
     ========================= */
 
     #gallery {
       width: 100%;
+
       padding: 10px 14px 35px;
 
       column-count: 3;
@@ -122,21 +141,30 @@
 
     .photo-card {
       width: 100%;
+
       display: inline-block;
       vertical-align: top;
+
       margin: 0 0 16px;
+
       break-inside: avoid;
       -webkit-column-break-inside: avoid;
+
       cursor: pointer;
     }
 
     .photo-card img {
       display: block;
+
       width: 100%;
       height: auto;
+
       border-radius: 9px;
+
       background: #f1f1f1;
+
       object-fit: cover;
+
       transition: opacity 0.15s ease;
     }
 
@@ -144,17 +172,20 @@
       opacity: 0.91;
     }
 
-    /* TITLE IS VISIBLE ON HOME */
+    /* TITLE STAYS VISIBLE ON HOME */
 
     .photo-title {
       display: block !important;
+
       margin: 7px 2px 0;
+
       color: #333;
+
       font-size: 12px;
       line-height: 1.35;
     }
 
-    /* HASHTAGS HIDDEN ON HOME */
+    /* TAGS STAY HIDDEN ON HOME */
 
     .photo-tags,
     .tags,
@@ -168,146 +199,198 @@
 
     #empty {
       display: none;
+
       padding: 60px 20px;
+
       text-align: center;
+
       color: #999;
+
       font-size: 13px;
     }
 
-    /* =========================
-       PINTEREST STYLE VIEWER
-    ========================= */
+
+    /* =====================================================
+       FULL PAGE PHOTO VIEW
+       ===================================================== */
 
     #viewer {
       display: none;
+
       position: fixed;
       inset: 0;
-      z-index: 200;
-      background: rgba(255, 255, 255, 0.98);
+
+      width: 100%;
+      height: 100%;
+
+      z-index: 1000;
+
+      background: #ffffff;
+
       overflow-y: auto;
+      overflow-x: hidden;
     }
 
     #viewer.active {
       display: block;
     }
 
-    .viewer-top {
-      position: sticky;
-      top: 0;
-      z-index: 210;
+    /* =========================
+       VIEWER HEADER
+    ========================= */
 
+    .viewer-header {
       width: 100%;
-      height: 58px;
+      height: 64px;
 
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: space-between;
 
-      padding: 0 15px;
+      padding: 0 20px;
 
-      background: rgba(255, 255, 255, 0.94);
+      background: #ffffff;
+
       border-bottom: 1px solid #eeeeee;
+
+      position: sticky;
+      top: 0;
+
+      z-index: 1010;
     }
 
-    .viewer-close {
-      width: 38px;
-      height: 38px;
+    .viewer-logo {
+      font-size: 18px;
+      font-weight: 600;
+      color: #222;
+      text-decoration: none;
+    }
+
+    /*
+      THIS IS THE CLOSE BUTTON.
+      It is deliberately a normal button,
+      not an overlay or fancy positioned element.
+    */
+
+    #viewerClose {
+      width: 40px;
+      height: 40px;
 
       display: flex;
       align-items: center;
       justify-content: center;
 
-      border: 1px solid #d6d6d6;
+      padding: 0;
+
+      border: 1px solid #d4d4d4;
       border-radius: 50%;
 
-      background: #fff;
+      background: #ffffff;
       color: #222;
 
-      font-size: 22px;
+      font-size: 23px;
       line-height: 1;
 
       cursor: pointer;
+
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    .viewer-close:hover {
+    #viewerClose:hover {
       background: #f5f5f5;
     }
 
-    .viewer-layout {
+    /* =========================
+       FULL PAGE CONTENT
+    ========================= */
+
+    .viewer-page {
       width: 100%;
-      max-width: 1050px;
-      margin: 0 auto;
+      min-height: calc(100% - 64px);
 
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
-
-      min-height: calc(100vh - 58px);
+      display: flex;
+      flex-direction: column;
     }
 
     /* =========================
-       VIEWER IMAGE
+       LARGE PHOTO
     ========================= */
 
-    .viewer-image-area {
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
+    .viewer-photo-section {
+      width: 100%;
 
-      padding: 28px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 35px 30px 25px;
+
+      background: #ffffff;
     }
 
     #viewerImage {
       display: block;
 
-      max-width: 100%;
       width: auto;
+      max-width: min(900px, 100%);
+
       height: auto;
       max-height: 78vh;
 
-      border-radius: 10px;
       object-fit: contain;
 
-      background: #f3f3f3;
+      border-radius: 10px;
+
+      background: #f2f2f2;
     }
 
     /* =========================
-       VIEWER INFORMATION
+       DETAILS AREA
     ========================= */
 
-    .viewer-details {
-      padding: 28px 28px 40px 8px;
+    .viewer-information {
+      width: 100%;
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 10px 30px 60px;
     }
 
     #viewerTitle {
-      margin: 0 0 12px;
-
-      font-size: 22px;
-      line-height: 1.25;
-      font-weight: 500;
+      margin: 0 0 13px;
 
       color: #222;
+
+      font-size: 25px;
+      line-height: 1.25;
+
+      font-weight: 500;
     }
 
     #viewerDescription {
-      margin: 0 0 18px;
+      margin: 0 0 20px;
 
       color: #555;
+
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.65;
 
       white-space: pre-wrap;
     }
 
     /* =========================
-       TAGS
+       HASHTAGS
     ========================= */
 
     #viewerTags {
       display: flex;
       flex-wrap: wrap;
+
       gap: 7px;
 
-      margin-bottom: 24px;
+      margin-bottom: 30px;
     }
 
     .viewer-tag {
@@ -328,51 +411,60 @@
     ========================= */
 
     .comments-section {
+      width: 100%;
+
       border-top: 1px solid #eeeeee;
-      padding-top: 20px;
+
+      padding-top: 25px;
     }
 
     .comments-heading {
-      margin: 0 0 14px;
-
-      font-size: 14px;
-      font-weight: 600;
+      margin: 0 0 18px;
 
       color: #333;
+
+      font-size: 15px;
+      font-weight: 600;
     }
 
     #commentsList {
+      width: 100%;
+
       display: flex;
       flex-direction: column;
-      gap: 13px;
 
-      margin-bottom: 20px;
+      gap: 15px;
+
+      margin-bottom: 25px;
     }
 
     .comment {
-      padding-bottom: 12px;
+      padding-bottom: 14px;
+
       border-bottom: 1px solid #f0f0f0;
     }
 
     .comment-user {
-      margin-bottom: 3px;
+      margin-bottom: 4px;
+
+      color: #333;
 
       font-size: 12px;
       font-weight: 600;
-
-      color: #333;
     }
 
     .comment-text {
-      font-size: 13px;
-      line-height: 1.45;
       color: #555;
+
+      font-size: 13px;
+      line-height: 1.5;
 
       overflow-wrap: anywhere;
     }
 
     .no-comments {
       color: #999;
+
       font-size: 13px;
     }
 
@@ -381,21 +473,22 @@
     ========================= */
 
     .comment-form {
+      width: 100%;
+
       display: flex;
       flex-direction: column;
-      gap: 8px;
+
+      gap: 9px;
     }
 
     #commentInput {
       width: 100%;
-      min-height: 75px;
+      min-height: 82px;
 
-      padding: 10px;
-
-      resize: vertical;
+      padding: 12px;
 
       border: 1px solid #dddddd;
-      border-radius: 9px;
+      border-radius: 10px;
 
       background: #fafafa;
       color: #222;
@@ -404,25 +497,28 @@
       font-size: 13px;
 
       outline: none;
+
+      resize: vertical;
     }
 
     #commentInput:focus {
-      background: #fff;
+      background: #ffffff;
       border-color: #cdb3c0;
     }
 
     #commentSubmit {
       align-self: flex-end;
 
+      padding: 9px 15px;
+
       border: 1px solid #d7d7d7;
       border-radius: 8px;
 
-      background: #fff;
+      background: #ffffff;
       color: #333;
 
-      padding: 8px 13px;
-
       font-size: 12px;
+
       cursor: pointer;
     }
 
@@ -440,7 +536,7 @@
       position: fixed;
       inset: 0;
 
-      z-index: 300;
+      z-index: 2000;
 
       background: rgba(0, 0, 0, 0.25);
 
@@ -460,7 +556,8 @@
 
       padding: 22px;
 
-      background: #fff;
+      background: #ffffff;
+
       border-radius: 14px;
 
       box-shadow: 0 12px 45px rgba(0, 0, 0, 0.15);
@@ -478,6 +575,7 @@
       width: 100%;
 
       padding: 10px;
+
       margin-bottom: 10px;
 
       border: 1px solid #dddddd;
@@ -497,18 +595,20 @@
     .add-actions {
       display: flex;
       justify-content: flex-end;
+
       gap: 8px;
     }
 
     .add-actions button {
+      padding: 8px 13px;
+
       border: 1px solid #d7d7d7;
       border-radius: 8px;
 
-      background: #fff;
-
-      padding: 8px 13px;
+      background: #ffffff;
 
       font-size: 13px;
+
       cursor: pointer;
     }
 
@@ -517,7 +617,7 @@
     }
 
     /* =========================
-       MOBILE
+       TABLET
     ========================= */
 
     @media (max-width: 800px) {
@@ -534,12 +634,8 @@
         margin-bottom: 13px;
       }
 
-      .viewer-layout {
-        display: block;
-      }
-
-      .viewer-image-area {
-        padding: 16px 12px 10px;
+      .viewer-photo-section {
+        padding: 20px 15px 15px;
       }
 
       #viewerImage {
@@ -547,14 +643,15 @@
         max-height: none;
       }
 
-      .viewer-details {
-        padding: 12px 18px 40px;
+      .viewer-information {
+        padding: 10px 20px 45px;
       }
 
-      #viewerTitle {
-        font-size: 20px;
-      }
     }
+
+    /* =========================
+       PHONE
+    ========================= */
 
     @media (max-width: 480px) {
 
@@ -570,6 +667,7 @@
       .header-button {
         height: 32px;
         min-width: 32px;
+
         padding: 0 9px;
       }
 
@@ -591,27 +689,48 @@
         font-size: 11px;
       }
 
-      .viewer-top {
-        height: 55px;
+      .viewer-header {
+        height: 58px;
+
+        padding: 0 13px;
       }
 
-      .viewer-close {
-        width: 36px;
-        height: 36px;
+      .viewer-logo {
+        font-size: 17px;
       }
+
+      .viewer-photo-section {
+        padding: 15px 10px 10px;
+      }
+
+      .viewer-information {
+        padding: 10px 16px 40px;
+      }
+
+      #viewerTitle {
+        font-size: 21px;
+      }
+
+      #viewerDescription {
+        font-size: 13px;
+      }
+
     }
+
   </style>
 </head>
 
 <body>
 
-  <!-- =========================
-       HEADER
-  ========================= -->
+  <!-- =====================================================
+       HOME
+  ===================================================== -->
 
   <header>
 
-    <a href="index.html" class="logo">
+    <a
+      href="index.html"
+      class="logo">
       kioku 記憶
     </a>
 
@@ -637,10 +756,6 @@
   </header>
 
 
-  <!-- =========================
-       SEARCH
-  ========================= -->
-
   <div class="search-area">
 
     <input
@@ -651,10 +766,6 @@
 
   </div>
 
-
-  <!-- =========================
-       HOME GALLERY
-  ========================= -->
 
   <main>
 
@@ -667,19 +778,25 @@
   </main>
 
 
-  <!-- =========================
-       PHOTO DETAIL VIEW
-  ========================= -->
+  <!-- =====================================================
+       FULL PHOTO PAGE
+  ===================================================== -->
 
   <div
     id="viewer"
     aria-hidden="true">
 
-    <div class="viewer-top">
+    <div class="viewer-header">
+
+      <a
+        href="#"
+        class="viewer-logo"
+        id="viewerLogo">
+        kioku 記憶
+      </a>
 
       <button
         id="viewerClose"
-        class="viewer-close"
         type="button"
         aria-label="Close photo">
         ×
@@ -688,11 +805,11 @@
     </div>
 
 
-    <div class="viewer-layout">
+    <div class="viewer-page">
 
-      <!-- IMAGE -->
+      <!-- LARGE IMAGE -->
 
-      <div class="viewer-image-area">
+      <div class="viewer-photo-section">
 
         <img
           id="viewerImage"
@@ -702,9 +819,9 @@
       </div>
 
 
-      <!-- DETAILS -->
+      <!-- INFORMATION -->
 
-      <div class="viewer-details">
+      <div class="viewer-information">
 
         <h1 id="viewerTitle"></h1>
 
@@ -723,8 +840,6 @@
 
           <div id="commentsList"></div>
 
-
-          <!-- COMMENT FORM -->
 
           <form
             id="commentForm"
@@ -752,9 +867,9 @@
   </div>
 
 
-  <!-- =========================
-       ADD PHOTO MODAL
-  ========================= -->
+  <!-- =====================================================
+       ADD PHOTO
+  ===================================================== -->
 
   <div id="addModal">
 
@@ -797,41 +912,65 @@
   </div>
 
 
-  <!-- SUPABASE -->
+  <!-- =====================================================
+       SUPABASE
+  ===================================================== -->
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- EXISTING APP -->
+  <!-- YOUR EXISTING APP.JS -->
 
   <script src="app.js"></script>
 
 
-  <!-- =========================
-       DETAIL VIEW + COMMENTS
-  ========================= -->
+  <!-- =====================================================
+       PHOTO PAGE JAVASCRIPT
+  ===================================================== -->
 
   <script>
 
     document.addEventListener("DOMContentLoaded", function () {
 
-      const viewer = document.getElementById("viewer");
-      const closeButton = document.getElementById("viewerClose");
+      const viewer =
+        document.getElementById("viewer");
 
-      const viewerImage = document.getElementById("viewerImage");
-      const viewerTitle = document.getElementById("viewerTitle");
-      const viewerDescription = document.getElementById("viewerDescription");
-      const viewerTags = document.getElementById("viewerTags");
+      const closeButton =
+        document.getElementById("viewerClose");
 
-      const commentsList = document.getElementById("commentsList");
-      const commentForm = document.getElementById("commentForm");
-      const commentInput = document.getElementById("commentInput");
+      const viewerLogo =
+        document.getElementById("viewerLogo");
+
+      const viewerImage =
+        document.getElementById("viewerImage");
+
+      const viewerTitle =
+        document.getElementById("viewerTitle");
+
+      const viewerDescription =
+        document.getElementById("viewerDescription");
+
+      const viewerTags =
+        document.getElementById("viewerTags");
+
+      const commentsList =
+        document.getElementById("commentsList");
+
+      const commentForm =
+        document.getElementById("commentForm");
+
+      const commentInput =
+        document.getElementById("commentInput");
+
+      const gallery =
+        document.getElementById("gallery");
+
 
       let currentPhotoId = null;
 
 
-      /* =========================
-         COMMENT STORAGE
-      ========================= */
+      /* =====================================================
+         COMMENTS
+      ===================================================== */
 
       function getComments(photoId) {
 
@@ -846,11 +985,14 @@
             return [];
           }
 
-          const parsed = JSON.parse(saved);
+          const comments =
+            JSON.parse(saved);
 
-          return Array.isArray(parsed)
-            ? parsed
-            : [];
+          if (!Array.isArray(comments)) {
+            return [];
+          }
+
+          return comments;
 
         } catch (error) {
 
@@ -861,7 +1003,10 @@
       }
 
 
-      function saveComments(photoId, comments) {
+      function saveComments(
+        photoId,
+        comments
+      ) {
 
         try {
 
@@ -872,87 +1017,100 @@
 
         } catch (error) {
 
-          console.log("Could not save comments.");
+          console.log(
+            "Could not save comments."
+          );
 
         }
 
       }
 
 
-      /* =========================
-         DISPLAY COMMENTS
-      ========================= */
-
       function renderComments(photoId) {
-
-        if (!commentsList) {
-          return;
-        }
 
         commentsList.innerHTML = "";
 
-        const comments = getComments(photoId);
+        const comments =
+          getComments(photoId);
+
 
         if (comments.length === 0) {
 
-          const empty = document.createElement("div");
+          const empty =
+            document.createElement("div");
 
-          empty.className = "no-comments";
+          empty.className =
+            "no-comments";
 
           empty.textContent =
             "no comments yet.";
 
-          commentsList.appendChild(empty);
+          commentsList.appendChild(
+            empty
+          );
 
           return;
         }
 
 
-        comments.forEach(function (comment) {
+        comments.forEach(
+          function (comment) {
 
-          const wrapper =
-            document.createElement("div");
+            const wrapper =
+              document.createElement("div");
 
-          wrapper.className = "comment";
-
-
-          const username =
-            document.createElement("div");
-
-          username.className = "comment-user";
-
-          username.textContent =
-            comment.username || "you";
+            wrapper.className =
+              "comment";
 
 
-          const text =
-            document.createElement("div");
+            const username =
+              document.createElement("div");
 
-          text.className = "comment-text";
+            username.className =
+              "comment-user";
 
-          text.textContent =
-            comment.text;
+            username.textContent =
+              comment.username || "you";
 
 
-          wrapper.appendChild(username);
-          wrapper.appendChild(text);
+            const text =
+              document.createElement("div");
 
-          commentsList.appendChild(wrapper);
+            text.className =
+              "comment-text";
 
-        });
+            text.textContent =
+              comment.text;
+
+
+            wrapper.appendChild(
+              username
+            );
+
+            wrapper.appendChild(
+              text
+            );
+
+            commentsList.appendChild(
+              wrapper
+            );
+
+          }
+        );
 
       }
 
 
-      /* =========================
-         OPEN PHOTO
-      ========================= */
+      /* =====================================================
+         OPEN VIEWER
+      ===================================================== */
 
       function openViewer(photo) {
 
-        if (!photo || !viewer) {
+        if (!photo) {
           return;
         }
+
 
         currentPhotoId =
           photo.id ||
@@ -963,16 +1121,20 @@
         viewerImage.src =
           photo.src || "";
 
+
         viewerImage.alt =
-          photo.title || "kioku photo";
+          photo.title ||
+          "kioku photo";
 
 
         viewerTitle.textContent =
-          photo.title || "untitled";
+          photo.title ||
+          "untitled";
 
 
         viewerDescription.textContent =
-          photo.description || "";
+          photo.description ||
+          "";
 
 
         viewerTags.innerHTML = "";
@@ -980,86 +1142,146 @@
 
         if (
           Array.isArray(photo.tags) &&
-          photo.tags.length
+          photo.tags.length > 0
         ) {
 
-          photo.tags.forEach(function (tag) {
+          photo.tags.forEach(
+            function (tag) {
 
-            const tagElement =
-              document.createElement("span");
+              const tagElement =
+                document.createElement(
+                  "span"
+                );
 
-            tagElement.className =
-              "viewer-tag";
+              tagElement.className =
+                "viewer-tag";
 
-            tagElement.textContent =
-              "#" + String(tag).replace(/^#/, "");
+              tagElement.textContent =
+                "#" +
+                String(tag)
+                  .replace(/^#/, "");
 
-            viewerTags.appendChild(tagElement);
+              viewerTags.appendChild(
+                tagElement
+              );
 
-          });
+            }
+          );
 
         }
 
 
-        renderComments(currentPhotoId);
+        renderComments(
+          currentPhotoId
+        );
 
 
-        viewer.classList.add("active");
+        viewer.classList.add(
+          "active"
+        );
+
 
         viewer.setAttribute(
           "aria-hidden",
           "false"
         );
 
-        document.body.style.overflow = "hidden";
+
+        document.body.style.overflow =
+          "hidden";
+
+
+        /*
+          Start at the top of the
+          photo page every time.
+        */
+
+        viewer.scrollTop = 0;
 
       }
 
 
-      /* =========================
-         CLOSE PHOTO
-      ========================= */
+      /* =====================================================
+         CLOSE VIEWER
+      ===================================================== */
 
       function closeViewer() {
 
-        if (!viewer) {
-          return;
-        }
+        /*
+          Remove the active class.
+        */
 
-        viewer.classList.remove("active");
+        viewer.classList.remove(
+          "active"
+        );
+
+
+        /*
+          Explicitly hide it too.
+        */
+
+        viewer.style.display =
+          "none";
+
 
         viewer.setAttribute(
           "aria-hidden",
           "true"
         );
 
-        document.body.style.overflow = "";
 
-        currentPhotoId = null;
-
-      }
+        document.body.style.overflow =
+          "";
 
 
-      if (closeButton) {
+        viewerImage.src =
+          "";
 
-        closeButton.addEventListener(
-          "click",
-          function (event) {
 
-            event.preventDefault();
-            event.stopPropagation();
-
-            closeViewer();
-
-          }
-        );
+        currentPhotoId =
+          null;
 
       }
 
 
-      /* =========================
-         ESCAPE KEY
-      ========================= */
+      /*
+        X BUTTON
+      */
+
+      closeButton.addEventListener(
+        "click",
+        function (event) {
+
+          event.preventDefault();
+
+          event.stopPropagation();
+
+          closeViewer();
+
+        }
+      );
+
+
+      /*
+        Logo also closes the photo page
+        and returns to the home gallery.
+      */
+
+      viewerLogo.addEventListener(
+        "click",
+        function (event) {
+
+          event.preventDefault();
+
+          closeViewer();
+
+        }
+      );
+
+
+      /*
+        Escape key
+      */
 
       document.addEventListener(
         "keydown",
@@ -1067,7 +1289,6 @@
 
           if (
             event.key === "Escape" &&
-            viewer &&
             viewer.classList.contains("active")
           ) {
 
@@ -1079,13 +1300,9 @@
       );
 
 
-      /* =========================
-         CLICKING HOME PHOTOS
-      ========================= */
-
-      const gallery =
-        document.getElementById("gallery");
-
+      /* =====================================================
+         FIND PHOTO DATA FROM HOME CARDS
+      ===================================================== */
 
       function attachPhotoClicks() {
 
@@ -1100,121 +1317,124 @@
           );
 
 
-        cards.forEach(function (card) {
+        cards.forEach(
+          function (card) {
 
-          if (card.dataset.kiokuClickAttached) {
-            return;
-          }
-
-          card.dataset.kiokuClickAttached = "true";
-
-
-          card.addEventListener(
-            "click",
-            function () {
-
-              /*
-                Try to find the image.
-              */
-
-              const image =
-                card.querySelector("img");
-
-              if (!image) {
-                return;
-              }
-
-
-              /*
-                Try to find the title.
-              */
-
-              const titleElement =
-                card.querySelector(
-                  ".photo-title, .title"
-                );
-
-
-              let title =
-                titleElement
-                  ? titleElement.textContent.trim()
-                  : "";
-
-
-              /*
-                Try to find the tags.
-              */
-
-              const tagElements =
-                card.querySelectorAll(
-                  ".photo-tags span, .tags span, .hashtags span"
-                );
-
-
-              const tags = [];
-
-
-              tagElements.forEach(
-                function (element) {
-
-                  const value =
-                    element.textContent.trim();
-
-                  if (value) {
-                    tags.push(value);
-                  }
-
-                }
-              );
-
-
-              /*
-                Try to find description.
-              */
-
-              const descriptionElement =
-                card.querySelector(
-                  ".photo-description, .description"
-                );
-
-
-              const description =
-                descriptionElement
-                  ? descriptionElement.textContent.trim()
-                  : "";
-
-
-              openViewer({
-
-                id:
-                  card.dataset.id ||
-                  image.src,
-
-                src:
-                  image.src,
-
-                title:
-                  title,
-
-                tags:
-                  tags,
-
-                description:
-                  description
-
-              });
-
+            if (
+              card.dataset.kiokuViewerAttached
+            ) {
+              return;
             }
-          );
 
-        });
+
+            card.dataset.kiokuViewerAttached =
+              "true";
+
+
+            card.addEventListener(
+              "click",
+              function (event) {
+
+                /*
+                  Prevent accidentally opening
+                  a link/button inside a card.
+                */
+
+                if (
+                  event.target.closest(
+                    "button, a"
+                  )
+                ) {
+                  return;
+                }
+
+
+                const image =
+                  card.querySelector("img");
+
+
+                if (!image) {
+                  return;
+                }
+
+
+                const titleElement =
+                  card.querySelector(
+                    ".photo-title, .title"
+                  );
+
+
+                const descriptionElement =
+                  card.querySelector(
+                    ".photo-description, .description"
+                  );
+
+
+                /*
+                  Look for hidden tag elements
+                  that app.js may already create.
+                */
+
+                const tagElements =
+                  card.querySelectorAll(
+                    ".photo-tags span, .tags span, .hashtags span"
+                  );
+
+
+                const tags = [];
+
+
+                tagElements.forEach(
+                  function (element) {
+
+                    const value =
+                      element.textContent.trim();
+
+
+                    if (value) {
+                      tags.push(value);
+                    }
+
+                  }
+                );
+
+
+                openViewer({
+
+                  id:
+                    card.dataset.id ||
+                    image.src,
+
+                  src:
+                    image.src,
+
+                  title:
+                    titleElement
+                      ? titleElement.textContent.trim()
+                      : "",
+
+                  description:
+                    descriptionElement
+                      ? descriptionElement.textContent.trim()
+                      : "",
+
+                  tags:
+                    tags
+
+                });
+
+              }
+            );
+
+          }
+        );
 
       }
 
 
-      /*
-        Watch for cards created by app.js.
-      */
+      /* =====================================================
+         WATCH FOR PHOTOS ADDED BY APP.JS
+      ===================================================== */
 
       if (gallery) {
 
@@ -1224,8 +1444,10 @@
 
               attachPhotoClicks();
 
+
               /*
-                Keep hashtags hidden on the home page.
+                Hide tags only on the
+                home gallery.
               */
 
               const tags =
@@ -1233,9 +1455,13 @@
                   ".photo-tags, .tags, .hashtags"
                 );
 
+
               tags.forEach(
                 function (element) {
-                  element.style.display = "none";
+
+                  element.style.display =
+                    "none";
+
                 }
               );
 
@@ -1257,121 +1483,100 @@
       }
 
 
-      /* =========================
-         COMMENTS
-      ========================= */
+      /* =====================================================
+         COMMENT SUBMISSION
+      ===================================================== */
 
-      if (commentForm) {
+      commentForm.addEventListener(
+        "submit",
+        function (event) {
 
-        commentForm.addEventListener(
-          "submit",
-          function (event) {
-
-            event.preventDefault();
-
-            if (!currentPhotoId) {
-              return;
-            }
+          event.preventDefault();
 
 
-            const text =
-              commentInput.value.trim();
+          if (!currentPhotoId) {
+            return;
+          }
 
 
-            if (!text) {
-              return;
-            }
+          const text =
+            commentInput.value.trim();
 
 
-            const comments =
-              getComments(currentPhotoId);
+          if (!text) {
+            return;
+          }
 
 
-            comments.push({
-
-              username: "you",
-
-              text: text,
-
-              created_at:
-                new Date().toISOString()
-
-            });
-
-
-            saveComments(
-              currentPhotoId,
-              comments
-            );
-
-
-            commentInput.value = "";
-
-            renderComments(
+          const comments =
+            getComments(
               currentPhotoId
             );
 
-          }
-        );
 
-      }
+          comments.push({
+
+            username: "you",
+
+            text: text,
+
+            created_at:
+              new Date()
+                .toISOString()
+
+          });
 
 
-      /* =========================
-         HIDE HOME HASHTAGS
-      ========================= */
-
-      function hideHomeTags() {
-
-        if (!gallery) {
-          return;
-        }
-
-        const tags =
-          gallery.querySelectorAll(
-            ".photo-tags, .tags, .hashtags"
+          saveComments(
+            currentPhotoId,
+            comments
           );
 
-        tags.forEach(
-          function (element) {
 
-            element.style.display =
-              "none";
-
-          }
-        );
-
-      }
+          commentInput.value =
+            "";
 
 
-      hideHomeTags();
+          renderComments(
+            currentPhotoId
+          );
+
+        }
+      );
 
 
-      /*
-        Repeatedly make sure dynamically
-        generated tags stay hidden.
-      */
+      /* =====================================================
+         IMPORTANT:
+         IF APP.JS OPENS THE OLD VIEWER ITSELF,
+         THIS MAKES THE NEW FULL PAGE VISIBLE.
+      ===================================================== */
 
-      const tagObserver =
+      const viewerObserver =
         new MutationObserver(
           function () {
-            hideHomeTags();
-            attachPhotoClicks();
+
+            if (
+              viewer.classList.contains(
+                "active"
+              )
+            ) {
+
+              viewer.style.display =
+                "block";
+
+            }
+
           }
         );
 
 
-      if (gallery) {
-
-        tagObserver.observe(
-          gallery,
-          {
-            childList: true,
-            subtree: true
-          }
-        );
-
-      }
+      viewerObserver.observe(
+        viewer,
+        {
+          attributes: true,
+          attributeFilter: ["class"]
+        }
+      );
 
     });
 
