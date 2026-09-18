@@ -172,7 +172,7 @@
       opacity: 0.91;
     }
 
-    /* TITLE STAYS VISIBLE ON HOME */
+    /* TITLE STAYS VISIBLE */
 
     .photo-title {
       display: block !important;
@@ -185,7 +185,7 @@
       line-height: 1.35;
     }
 
-    /* TAGS STAY HIDDEN ON HOME */
+    /* TAGS HIDDEN ON HOME */
 
     .photo-tags,
     .tags,
@@ -211,8 +211,8 @@
 
 
     /* =====================================================
-       FULL PAGE PHOTO VIEW
-       ===================================================== */
+       FULL PHOTO PAGE
+    ===================================================== */
 
     #viewer {
       display: none;
@@ -265,12 +265,6 @@
       color: #222;
       text-decoration: none;
     }
-
-    /*
-      THIS IS THE CLOSE BUTTON.
-      It is deliberately a normal button,
-      not an overlay or fancy positioned element.
-    */
 
     #viewerClose {
       width: 40px;
@@ -346,7 +340,7 @@
     }
 
     /* =========================
-       DETAILS AREA
+       DETAILS
     ========================= */
 
     .viewer-information {
@@ -526,9 +520,10 @@
       background: #f6f6f6;
     }
 
-    /* =========================
-       ADD MODAL
-    ========================= */
+
+    /* =====================================================
+       ADD POST MODAL
+    ===================================================== */
 
     #addModal {
       display: none;
@@ -552,7 +547,11 @@
 
     .add-box {
       width: 100%;
-      max-width: 430px;
+      max-width: 470px;
+
+      max-height: 90vh;
+
+      overflow-y: auto;
 
       padding: 22px;
 
@@ -564,11 +563,102 @@
     }
 
     .add-box h2 {
-      margin: 0 0 16px;
+      margin: 0 0 17px;
 
       font-size: 18px;
       font-weight: 500;
     }
+
+    /* =========================
+       PHOTO PICKER
+    ========================= */
+
+    .photo-picker {
+      width: 100%;
+
+      margin-bottom: 14px;
+    }
+
+    #postPhotoInput {
+      display: none;
+    }
+
+    .choose-photo {
+      width: 100%;
+      min-height: 48px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 12px;
+
+      border: 1px dashed #cfcfcf;
+      border-radius: 10px;
+
+      background: #fafafa;
+      color: #444;
+
+      font-size: 13px;
+
+      cursor: pointer;
+    }
+
+    .choose-photo:hover {
+      background: #f6f6f6;
+    }
+
+    #photoPreviewBox {
+      display: none;
+
+      width: 100%;
+
+      margin-top: 10px;
+
+      text-align: center;
+    }
+
+    #photoPreviewBox.active {
+      display: block;
+    }
+
+    #photoPreview {
+      display: block;
+
+      width: auto;
+      max-width: 100%;
+      max-height: 300px;
+
+      margin: 0 auto;
+
+      border-radius: 9px;
+
+      object-fit: contain;
+
+      background: #f1f1f1;
+    }
+
+    .remove-photo {
+      margin-top: 7px;
+
+      border: none;
+
+      background: none;
+
+      color: #999;
+
+      font-size: 11px;
+
+      cursor: pointer;
+    }
+
+    .remove-photo:hover {
+      color: #555;
+    }
+
+    /* =========================
+       POST FIELDS
+    ========================= */
 
     .add-box input,
     .add-box textarea {
@@ -581,31 +671,52 @@
       border: 1px solid #dddddd;
       border-radius: 9px;
 
+      background: #ffffff;
+
+      color: #222;
+
       font-family: inherit;
       font-size: 13px;
 
       outline: none;
     }
 
+    .add-box input:focus,
+    .add-box textarea:focus {
+      border-color: #cdb3c0;
+    }
+
     .add-box textarea {
-      min-height: 80px;
+      min-height: 85px;
+
       resize: vertical;
     }
 
+    /* =========================
+       ADD BUTTONS
+    ========================= */
+
     .add-actions {
       display: flex;
+
       justify-content: flex-end;
 
       gap: 8px;
+
+      margin-top: 4px;
     }
 
     .add-actions button {
-      padding: 8px 13px;
+      min-height: 36px;
+
+      padding: 8px 14px;
 
       border: 1px solid #d7d7d7;
       border-radius: 8px;
 
       background: #ffffff;
+
+      color: #333;
 
       font-size: 13px;
 
@@ -615,6 +726,36 @@
     .add-actions button:hover {
       background: #f6f6f6;
     }
+
+    #savePostButton {
+      background: #f5e9ee;
+      border-color: #e4ccd6;
+    }
+
+    #savePostButton:hover {
+      background: #f0dfe6;
+    }
+
+    #savePostButton:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    #postError {
+      display: none;
+
+      margin: 0 0 10px;
+
+      color: #a05c70;
+
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    #postError.active {
+      display: block;
+    }
+
 
     /* =========================
        TABLET
@@ -648,6 +789,7 @@
       }
 
     }
+
 
     /* =========================
        PHONE
@@ -715,15 +857,23 @@
         font-size: 13px;
       }
 
+      .add-box {
+        max-height: 88vh;
+
+        padding: 18px;
+      }
+
     }
 
   </style>
 </head>
 
+
 <body>
 
+
   <!-- =====================================================
-       HOME
+       HOME HEADER
   ===================================================== -->
 
   <header>
@@ -734,6 +884,7 @@
       kioku 記憶
     </a>
 
+
     <div class="header-right">
 
       <button
@@ -743,11 +894,12 @@
         profile
       </button>
 
+
       <button
         id="add"
         class="header-button add-button"
         type="button"
-        aria-label="Add photo">
+        aria-label="Add post">
         +
       </button>
 
@@ -755,6 +907,10 @@
 
   </header>
 
+
+  <!-- =====================================================
+       SEARCH
+  ===================================================== -->
 
   <div class="search-area">
 
@@ -766,6 +922,10 @@
 
   </div>
 
+
+  <!-- =====================================================
+       HOME GALLERY
+  ===================================================== -->
 
   <main>
 
@@ -786,6 +946,7 @@
     id="viewer"
     aria-hidden="true">
 
+
     <div class="viewer-header">
 
       <a
@@ -794,6 +955,7 @@
         id="viewerLogo">
         kioku 記憶
       </a>
+
 
       <button
         id="viewerClose"
@@ -807,7 +969,8 @@
 
     <div class="viewer-page">
 
-      <!-- LARGE IMAGE -->
+
+      <!-- PHOTO -->
 
       <div class="viewer-photo-section">
 
@@ -838,6 +1001,7 @@
             comments
           </h2>
 
+
           <div id="commentsList"></div>
 
 
@@ -849,6 +1013,7 @@
               id="commentInput"
               placeholder="write a comment..."
               maxlength="500"></textarea>
+
 
             <button
               id="commentSubmit"
@@ -868,28 +1033,88 @@
 
 
   <!-- =====================================================
-       ADD PHOTO
+       ADD POST MODAL
   ===================================================== -->
 
   <div id="addModal">
 
+
     <div class="add-box">
 
-      <h2>add to kioku</h2>
+      <h2>
+        add to kioku
+      </h2>
+
+
+      <!-- PHOTO -->
+
+      <div class="photo-picker">
+
+        <input
+          id="postPhotoInput"
+          type="file"
+          accept="image/*">
+
+
+        <label
+          for="postPhotoInput"
+          class="choose-photo">
+          choose a photo
+        </label>
+
+
+        <div id="photoPreviewBox">
+
+          <img
+            id="photoPreview"
+            src=""
+            alt="Selected photo preview">
+
+
+          <button
+            id="removePhoto"
+            class="remove-photo"
+            type="button">
+            remove photo
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- TITLE -->
 
       <input
         id="addTitle"
         type="text"
-        placeholder="title">
+        placeholder="title"
+        maxlength="120">
+
+
+      <!-- TAGS -->
 
       <input
         id="addTags"
         type="text"
-        placeholder="tags">
+        placeholder="hashtags  ·  night, sky, purple"
+        maxlength="300">
+
+
+      <!-- DESCRIPTION -->
 
       <textarea
         id="addDescription"
-        placeholder="description"></textarea>
+        placeholder="description"
+        maxlength="1000"></textarea>
+
+
+      <!-- ERROR -->
+
+      <div id="postError"></div>
+
+
+      <!-- BUTTONS -->
 
       <div class="add-actions">
 
@@ -899,10 +1124,11 @@
           cancel
         </button>
 
+
         <button
-          id="saveAdd"
+          id="savePostButton"
           type="button">
-          save
+          save post
         </button>
 
       </div>
@@ -918,251 +1144,268 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- YOUR EXISTING APP.JS -->
 
+  <!-- YOUR EXISTING APP -->
   <script src="app.js"></script>
 
 
   <!-- =====================================================
-       PHOTO PAGE JAVASCRIPT
+       KIoku PAGE FUNCTIONALITY
   ===================================================== -->
 
   <script>
 
-    document.addEventListener("DOMContentLoaded", function () {
-
-      const viewer =
-        document.getElementById("viewer");
-
-      const closeButton =
-        document.getElementById("viewerClose");
-
-      const viewerLogo =
-        document.getElementById("viewerLogo");
-
-      const viewerImage =
-        document.getElementById("viewerImage");
-
-      const viewerTitle =
-        document.getElementById("viewerTitle");
-
-      const viewerDescription =
-        document.getElementById("viewerDescription");
-
-      const viewerTags =
-        document.getElementById("viewerTags");
-
-      const commentsList =
-        document.getElementById("commentsList");
-
-      const commentForm =
-        document.getElementById("commentForm");
-
-      const commentInput =
-        document.getElementById("commentInput");
-
-      const gallery =
-        document.getElementById("gallery");
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
 
 
-      let currentPhotoId = null;
+        /* =================================================
+           ELEMENTS
+        ================================================= */
+
+        const gallery =
+          document.getElementById("gallery");
 
 
-      /* =====================================================
-         COMMENTS
-      ===================================================== */
+        const viewer =
+          document.getElementById("viewer");
 
-      function getComments(photoId) {
 
-        try {
+        const viewerClose =
+          document.getElementById("viewerClose");
 
-          const saved =
-            localStorage.getItem(
-              "kioku-comments-" + photoId
-            );
 
-          if (!saved) {
+        const viewerLogo =
+          document.getElementById("viewerLogo");
+
+
+        const viewerImage =
+          document.getElementById("viewerImage");
+
+
+        const viewerTitle =
+          document.getElementById("viewerTitle");
+
+
+        const viewerDescription =
+          document.getElementById("viewerDescription");
+
+
+        const viewerTags =
+          document.getElementById("viewerTags");
+
+
+        const commentsList =
+          document.getElementById("commentsList");
+
+
+        const commentForm =
+          document.getElementById("commentForm");
+
+
+        const commentInput =
+          document.getElementById("commentInput");
+
+
+        const addButton =
+          document.getElementById("add");
+
+
+        const addModal =
+          document.getElementById("addModal");
+
+
+        const cancelAdd =
+          document.getElementById("cancelAdd");
+
+
+        const savePostButton =
+          document.getElementById("savePostButton");
+
+
+        const postPhotoInput =
+          document.getElementById("postPhotoInput");
+
+
+        const photoPreview =
+          document.getElementById("photoPreview");
+
+
+        const photoPreviewBox =
+          document.getElementById("photoPreviewBox");
+
+
+        const removePhoto =
+          document.getElementById("removePhoto");
+
+
+        const addTitle =
+          document.getElementById("addTitle");
+
+
+        const addTags =
+          document.getElementById("addTags");
+
+
+        const addDescription =
+          document.getElementById("addDescription");
+
+
+        const postError =
+          document.getElementById("postError");
+
+
+        let currentPhotoId = null;
+
+        let selectedPhotoFile = null;
+
+
+        /* =================================================
+           COMMENTS
+        ================================================= */
+
+        function getComments(photoId) {
+
+          try {
+
+            const saved =
+              localStorage.getItem(
+                "kioku-comments-" + photoId
+              );
+
+
+            if (!saved) {
+              return [];
+            }
+
+
+            const comments =
+              JSON.parse(saved);
+
+
+            return Array.isArray(comments)
+              ? comments
+              : [];
+
+          } catch (error) {
+
             return [];
-          }
-
-          const comments =
-            JSON.parse(saved);
-
-          if (!Array.isArray(comments)) {
-            return [];
-          }
-
-          return comments;
-
-        } catch (error) {
-
-          return [];
-
-        }
-
-      }
-
-
-      function saveComments(
-        photoId,
-        comments
-      ) {
-
-        try {
-
-          localStorage.setItem(
-            "kioku-comments-" + photoId,
-            JSON.stringify(comments)
-          );
-
-        } catch (error) {
-
-          console.log(
-            "Could not save comments."
-          );
-
-        }
-
-      }
-
-
-      function renderComments(photoId) {
-
-        commentsList.innerHTML = "";
-
-        const comments =
-          getComments(photoId);
-
-
-        if (comments.length === 0) {
-
-          const empty =
-            document.createElement("div");
-
-          empty.className =
-            "no-comments";
-
-          empty.textContent =
-            "no comments yet.";
-
-          commentsList.appendChild(
-            empty
-          );
-
-          return;
-        }
-
-
-        comments.forEach(
-          function (comment) {
-
-            const wrapper =
-              document.createElement("div");
-
-            wrapper.className =
-              "comment";
-
-
-            const username =
-              document.createElement("div");
-
-            username.className =
-              "comment-user";
-
-            username.textContent =
-              comment.username || "you";
-
-
-            const text =
-              document.createElement("div");
-
-            text.className =
-              "comment-text";
-
-            text.textContent =
-              comment.text;
-
-
-            wrapper.appendChild(
-              username
-            );
-
-            wrapper.appendChild(
-              text
-            );
-
-            commentsList.appendChild(
-              wrapper
-            );
 
           }
-        );
 
-      }
-
-
-      /* =====================================================
-         OPEN VIEWER
-      ===================================================== */
-
-      function openViewer(photo) {
-
-        if (!photo) {
-          return;
         }
 
 
-        currentPhotoId =
-          photo.id ||
-          photo.src ||
-          String(Date.now());
-
-
-        viewerImage.src =
-          photo.src || "";
-
-
-        viewerImage.alt =
-          photo.title ||
-          "kioku photo";
-
-
-        viewerTitle.textContent =
-          photo.title ||
-          "untitled";
-
-
-        viewerDescription.textContent =
-          photo.description ||
-          "";
-
-
-        viewerTags.innerHTML = "";
-
-
-        if (
-          Array.isArray(photo.tags) &&
-          photo.tags.length > 0
+        function saveComments(
+          photoId,
+          comments
         ) {
 
-          photo.tags.forEach(
-            function (tag) {
+          try {
 
-              const tagElement =
+            localStorage.setItem(
+              "kioku-comments-" + photoId,
+              JSON.stringify(comments)
+            );
+
+          } catch (error) {
+
+            console.log(
+              "Could not save comments."
+            );
+
+          }
+
+        }
+
+
+        function renderComments(photoId) {
+
+          commentsList.innerHTML = "";
+
+
+          const comments =
+            getComments(photoId);
+
+
+          if (comments.length === 0) {
+
+            const empty =
+              document.createElement("div");
+
+
+            empty.className =
+              "no-comments";
+
+
+            empty.textContent =
+              "no comments yet.";
+
+
+            commentsList.appendChild(
+              empty
+            );
+
+
+            return;
+
+          }
+
+
+          comments.forEach(
+            function (comment) {
+
+              const wrapper =
                 document.createElement(
-                  "span"
+                  "div"
                 );
 
-              tagElement.className =
-                "viewer-tag";
 
-              tagElement.textContent =
-                "#" +
-                String(tag)
-                  .replace(/^#/, "");
+              wrapper.className =
+                "comment";
 
-              viewerTags.appendChild(
-                tagElement
+
+              const username =
+                document.createElement(
+                  "div"
+                );
+
+
+              username.className =
+                "comment-user";
+
+
+              username.textContent =
+                comment.username || "you";
+
+
+              const text =
+                document.createElement(
+                  "div"
+                );
+
+
+              text.className =
+                "comment-text";
+
+
+              text.textContent =
+                comment.text;
+
+
+              wrapper.appendChild(
+                username
+              );
+
+
+              wrapper.appendChild(
+                text
+              );
+
+
+              commentsList.appendChild(
+                wrapper
               );
 
             }
@@ -1171,398 +1414,181 @@
         }
 
 
-        renderComments(
-          currentPhotoId
-        );
+        /* =================================================
+           OPEN PHOTO
+        ================================================= */
 
+        function openViewer(photo) {
 
-        viewer.classList.add(
-          "active"
-        );
-
-
-        viewer.setAttribute(
-          "aria-hidden",
-          "false"
-        );
-
-
-        document.body.style.overflow =
-          "hidden";
-
-
-        /*
-          Start at the top of the
-          photo page every time.
-        */
-
-        viewer.scrollTop = 0;
-
-      }
-
-
-      /* =====================================================
-         CLOSE VIEWER
-      ===================================================== */
-
-      function closeViewer() {
-
-        /*
-          Remove the active class.
-        */
-
-        viewer.classList.remove(
-          "active"
-        );
-
-
-        /*
-          Explicitly hide it too.
-        */
-
-        viewer.style.display =
-          "none";
-
-
-        viewer.setAttribute(
-          "aria-hidden",
-          "true"
-        );
-
-
-        document.body.style.overflow =
-          "";
-
-
-        viewerImage.src =
-          "";
-
-
-        currentPhotoId =
-          null;
-
-      }
-
-
-      /*
-        X BUTTON
-      */
-
-      closeButton.addEventListener(
-        "click",
-        function (event) {
-
-          event.preventDefault();
-
-          event.stopPropagation();
-
-          closeViewer();
-
-        }
-      );
-
-
-      /*
-        Logo also closes the photo page
-        and returns to the home gallery.
-      */
-
-      viewerLogo.addEventListener(
-        "click",
-        function (event) {
-
-          event.preventDefault();
-
-          closeViewer();
-
-        }
-      );
-
-
-      /*
-        Escape key
-      */
-
-      document.addEventListener(
-        "keydown",
-        function (event) {
-
-          if (
-            event.key === "Escape" &&
-            viewer.classList.contains("active")
-          ) {
-
-            closeViewer();
-
+          if (!photo) {
+            return;
           }
 
-        }
-      );
+
+          currentPhotoId =
+            photo.id ||
+            photo.src ||
+            String(Date.now());
 
 
-      /* =====================================================
-         FIND PHOTO DATA FROM HOME CARDS
-      ===================================================== */
-
-      function attachPhotoClicks() {
-
-        if (!gallery) {
-          return;
-        }
+          viewerImage.src =
+            photo.src || "";
 
 
-        const cards =
-          gallery.querySelectorAll(
-            ".photo-card"
-          );
+          viewerImage.alt =
+            photo.title ||
+            "kioku photo";
 
 
-        cards.forEach(
-          function (card) {
-
-            if (
-              card.dataset.kiokuViewerAttached
-            ) {
-              return;
-            }
+          viewerTitle.textContent =
+            photo.title ||
+            "untitled";
 
 
-            card.dataset.kiokuViewerAttached =
-              "true";
+          viewerDescription.textContent =
+            photo.description ||
+            "";
 
 
-            card.addEventListener(
-              "click",
-              function (event) {
-
-                /*
-                  Prevent accidentally opening
-                  a link/button inside a card.
-                */
-
-                if (
-                  event.target.closest(
-                    "button, a"
-                  )
-                ) {
-                  return;
-                }
+          viewerTags.innerHTML = "";
 
 
-                const image =
-                  card.querySelector("img");
+          if (
+            Array.isArray(photo.tags) &&
+            photo.tags.length > 0
+          ) {
 
+            photo.tags.forEach(
+              function (tag) {
 
-                if (!image) {
-                  return;
-                }
-
-
-                const titleElement =
-                  card.querySelector(
-                    ".photo-title, .title"
+                const tagElement =
+                  document.createElement(
+                    "span"
                   );
 
 
-                const descriptionElement =
-                  card.querySelector(
-                    ".photo-description, .description"
-                  );
+                tagElement.className =
+                  "viewer-tag";
 
 
-                /*
-                  Look for hidden tag elements
-                  that app.js may already create.
-                */
-
-                const tagElements =
-                  card.querySelectorAll(
-                    ".photo-tags span, .tags span, .hashtags span"
-                  );
+                tagElement.textContent =
+                  "#" +
+                  String(tag)
+                    .replace(/^#/, "");
 
 
-                const tags = [];
-
-
-                tagElements.forEach(
-                  function (element) {
-
-                    const value =
-                      element.textContent.trim();
-
-
-                    if (value) {
-                      tags.push(value);
-                    }
-
-                  }
+                viewerTags.appendChild(
+                  tagElement
                 );
-
-
-                openViewer({
-
-                  id:
-                    card.dataset.id ||
-                    image.src,
-
-                  src:
-                    image.src,
-
-                  title:
-                    titleElement
-                      ? titleElement.textContent.trim()
-                      : "",
-
-                  description:
-                    descriptionElement
-                      ? descriptionElement.textContent.trim()
-                      : "",
-
-                  tags:
-                    tags
-
-                });
 
               }
             );
 
           }
-        );
-
-      }
-
-
-      /* =====================================================
-         WATCH FOR PHOTOS ADDED BY APP.JS
-      ===================================================== */
-
-      if (gallery) {
-
-        const galleryObserver =
-          new MutationObserver(
-            function () {
-
-              attachPhotoClicks();
-
-
-              /*
-                Hide tags only on the
-                home gallery.
-              */
-
-              const tags =
-                gallery.querySelectorAll(
-                  ".photo-tags, .tags, .hashtags"
-                );
-
-
-              tags.forEach(
-                function (element) {
-
-                  element.style.display =
-                    "none";
-
-                }
-              );
-
-            }
-          );
-
-
-        galleryObserver.observe(
-          gallery,
-          {
-            childList: true,
-            subtree: true
-          }
-        );
-
-
-        attachPhotoClicks();
-
-      }
-
-
-      /* =====================================================
-         COMMENT SUBMISSION
-      ===================================================== */
-
-      commentForm.addEventListener(
-        "submit",
-        function (event) {
-
-          event.preventDefault();
-
-
-          if (!currentPhotoId) {
-            return;
-          }
-
-
-          const text =
-            commentInput.value.trim();
-
-
-          if (!text) {
-            return;
-          }
-
-
-          const comments =
-            getComments(
-              currentPhotoId
-            );
-
-
-          comments.push({
-
-            username: "you",
-
-            text: text,
-
-            created_at:
-              new Date()
-                .toISOString()
-
-          });
-
-
-          saveComments(
-            currentPhotoId,
-            comments
-          );
-
-
-          commentInput.value =
-            "";
 
 
           renderComments(
             currentPhotoId
           );
 
+
+          viewer.classList.add(
+            "active"
+          );
+
+
+          viewer.setAttribute(
+            "aria-hidden",
+            "false"
+          );
+
+
+          viewer.style.display =
+            "block";
+
+
+          document.body.style.overflow =
+            "hidden";
+
+
+          viewer.scrollTop =
+            0;
+
         }
-      );
 
 
-      /* =====================================================
-         IMPORTANT:
-         IF APP.JS OPENS THE OLD VIEWER ITSELF,
-         THIS MAKES THE NEW FULL PAGE VISIBLE.
-      ===================================================== */
+        /* =================================================
+           CLOSE PHOTO
+        ================================================= */
 
-      const viewerObserver =
-        new MutationObserver(
-          function () {
+        function closeViewer() {
+
+          viewer.classList.remove(
+            "active"
+          );
+
+
+          viewer.style.display =
+            "none";
+
+
+          viewer.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+
+          document.body.style.overflow =
+            "";
+
+
+          viewerImage.src =
+            "";
+
+
+          currentPhotoId =
+            null;
+
+        }
+
+
+        viewerClose.addEventListener(
+          "click",
+          function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            closeViewer();
+
+          }
+        );
+
+
+        viewerLogo.addEventListener(
+          "click",
+          function (event) {
+
+            event.preventDefault();
+
+            closeViewer();
+
+          }
+        );
+
+
+        document.addEventListener(
+          "keydown",
+          function (event) {
 
             if (
+              event.key === "Escape" &&
               viewer.classList.contains(
                 "active"
               )
             ) {
 
-              viewer.style.display =
-                "block";
+              closeViewer();
 
             }
 
@@ -1570,15 +1596,1076 @@
         );
 
 
-      viewerObserver.observe(
-        viewer,
-        {
-          attributes: true,
-          attributeFilter: ["class"]
-        }
-      );
+        /* =================================================
+           HOME PHOTO CLICKS
+        ================================================= */
 
-    });
+        function attachPhotoClicks() {
+
+          if (!gallery) {
+            return;
+          }
+
+
+          const cards =
+            gallery.querySelectorAll(
+              ".photo-card"
+            );
+
+
+          cards.forEach(
+            function (card) {
+
+              if (
+                card.dataset.kiokuAttached
+              ) {
+                return;
+              }
+
+
+              card.dataset.kiokuAttached =
+                "true";
+
+
+              card.addEventListener(
+                "click",
+                function (event) {
+
+                  if (
+                    event.target.closest(
+                      "button, a"
+                    )
+                  ) {
+                    return;
+                  }
+
+
+                  const image =
+                    card.querySelector(
+                      "img"
+                    );
+
+
+                  if (!image) {
+                    return;
+                  }
+
+
+                  const titleElement =
+                    card.querySelector(
+                      ".photo-title, .title"
+                    );
+
+
+                  const descriptionElement =
+                    card.querySelector(
+                      ".photo-description, .description"
+                    );
+
+
+                  const tagElements =
+                    card.querySelectorAll(
+                      ".photo-tags span, .tags span, .hashtags span"
+                    );
+
+
+                  const tags = [];
+
+
+                  tagElements.forEach(
+                    function (element) {
+
+                      const value =
+                        element.textContent
+                          .trim();
+
+
+                      if (value) {
+                        tags.push(value);
+                      }
+
+                    }
+                  );
+
+
+                  openViewer({
+
+                    id:
+                      card.dataset.id ||
+                      image.src,
+
+                    src:
+                      image.src,
+
+                    title:
+                      titleElement
+                        ? titleElement
+                            .textContent
+                            .trim()
+                        : "",
+
+                    description:
+                      descriptionElement
+                        ? descriptionElement
+                            .textContent
+                            .trim()
+                        : "",
+
+                    tags:
+                      tags
+
+                  });
+
+                }
+              );
+
+            }
+          );
+
+        }
+
+
+        if (gallery) {
+
+          const galleryObserver =
+            new MutationObserver(
+              function () {
+
+                attachPhotoClicks();
+
+
+                const tags =
+                  gallery.querySelectorAll(
+                    ".photo-tags, .tags, .hashtags"
+                  );
+
+
+                tags.forEach(
+                  function (element) {
+
+                    element.style.display =
+                      "none";
+
+                  }
+                );
+
+              }
+            );
+
+
+          galleryObserver.observe(
+            gallery,
+            {
+              childList: true,
+              subtree: true
+            }
+          );
+
+
+          attachPhotoClicks();
+
+        }
+
+
+        /* =================================================
+           COMMENT SUBMISSION
+        ================================================= */
+
+        commentForm.addEventListener(
+          "submit",
+          function (event) {
+
+            event.preventDefault();
+
+
+            if (!currentPhotoId) {
+              return;
+            }
+
+
+            const text =
+              commentInput.value.trim();
+
+
+            if (!text) {
+              return;
+            }
+
+
+            const comments =
+              getComments(
+                currentPhotoId
+              );
+
+
+            comments.push({
+
+              username: "you",
+
+              text: text,
+
+              created_at:
+                new Date()
+                  .toISOString()
+
+            });
+
+
+            saveComments(
+              currentPhotoId,
+              comments
+            );
+
+
+            commentInput.value =
+              "";
+
+
+            renderComments(
+              currentPhotoId
+            );
+
+          }
+        );
+
+
+        /* =================================================
+           ADD POST
+        ================================================= */
+
+        function showAddModal() {
+
+          addModal.classList.add(
+            "active"
+          );
+
+
+          addModal.style.display =
+            "flex";
+
+
+          document.body.style.overflow =
+            "hidden";
+
+
+          postError.textContent =
+            "";
+
+
+          postError.classList.remove(
+            "active"
+          );
+
+        }
+
+
+        function hideAddModal() {
+
+          addModal.classList.remove(
+            "active"
+          );
+
+
+          addModal.style.display =
+            "none";
+
+
+          document.body.style.overflow =
+            "";
+
+
+          resetPostForm();
+
+        }
+
+
+        function resetPostForm() {
+
+          selectedPhotoFile =
+            null;
+
+
+          postPhotoInput.value =
+            "";
+
+
+          photoPreview.src =
+            "";
+
+
+          photoPreviewBox.classList.remove(
+            "active"
+          );
+
+
+          addTitle.value =
+            "";
+
+
+          addTags.value =
+            "";
+
+
+          addDescription.value =
+            "";
+
+
+          postError.textContent =
+            "";
+
+
+          postError.classList.remove(
+            "active"
+          );
+
+
+          savePostButton.disabled =
+            false;
+
+
+          savePostButton.textContent =
+            "save post";
+
+        }
+
+
+        /*
+          Use capture mode so this button
+          reliably opens THIS add window
+          even if older app.js code has
+          an old listener attached.
+        */
+
+        addButton.addEventListener(
+          "click",
+          function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            showAddModal();
+
+          },
+          true
+        );
+
+
+        /* =================================================
+           CANCEL
+        ================================================= */
+
+        cancelAdd.addEventListener(
+          "click",
+          function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            hideAddModal();
+
+          }
+        );
+
+
+        /* =================================================
+           CLICK OUTSIDE ADD WINDOW
+        ================================================= */
+
+        addModal.addEventListener(
+          "click",
+          function (event) {
+
+            if (
+              event.target === addModal
+            ) {
+
+              hideAddModal();
+
+            }
+
+          }
+        );
+
+
+        /* =================================================
+           ESCAPE CLOSES ADD WINDOW
+        ================================================= */
+
+        document.addEventListener(
+          "keydown",
+          function (event) {
+
+            if (
+              event.key === "Escape" &&
+              addModal.classList.contains(
+                "active"
+              )
+            ) {
+
+              hideAddModal();
+
+            }
+
+          }
+        );
+
+
+        /* =================================================
+           CHOOSE PHOTO
+        ================================================= */
+
+        postPhotoInput.addEventListener(
+          "change",
+          function () {
+
+            const file =
+              postPhotoInput.files &&
+              postPhotoInput.files[0];
+
+
+            if (!file) {
+              return;
+            }
+
+
+            if (
+              !file.type ||
+              !file.type.startsWith(
+                "image/"
+              )
+            ) {
+
+              showPostError(
+                "Please choose an image."
+              );
+
+              postPhotoInput.value =
+                "";
+
+              return;
+
+            }
+
+
+            selectedPhotoFile =
+              file;
+
+
+            const previewUrl =
+              URL.createObjectURL(
+                file
+              );
+
+
+            photoPreview.src =
+              previewUrl;
+
+
+            photoPreviewBox.classList.add(
+              "active"
+            );
+
+
+            clearPostError();
+
+          }
+        );
+
+
+        /* =================================================
+           REMOVE PHOTO
+        ================================================= */
+
+        removePhoto.addEventListener(
+          "click",
+          function () {
+
+            selectedPhotoFile =
+              null;
+
+
+            postPhotoInput.value =
+              "";
+
+
+            photoPreview.src =
+              "";
+
+
+            photoPreviewBox.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+
+        /* =================================================
+           ERROR
+        ================================================= */
+
+        function showPostError(
+          message
+        ) {
+
+          postError.textContent =
+            message;
+
+
+          postError.classList.add(
+            "active"
+          );
+
+        }
+
+
+        function clearPostError() {
+
+          postError.textContent =
+            "";
+
+
+          postError.classList.remove(
+            "active"
+          );
+
+        }
+
+
+        /* =================================================
+           CREATE HOME CARD
+        ================================================= */
+
+        function createHomeCard(
+          photo
+        ) {
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "photo-card";
+
+
+          card.dataset.id =
+            photo.id;
+
+
+          const image =
+            document.createElement(
+              "img"
+            );
+
+
+          image.src =
+            photo.src;
+
+
+          image.alt =
+            photo.title ||
+            "kioku photo";
+
+
+          const title =
+            document.createElement(
+              "div"
+            );
+
+
+          title.className =
+            "photo-title";
+
+
+          title.textContent =
+            photo.title ||
+            "untitled";
+
+
+          /*
+            Hidden data for the viewer.
+          */
+
+          const hiddenTags =
+            document.createElement(
+              "div"
+            );
+
+
+          hiddenTags.className =
+            "photo-tags";
+
+
+          hiddenTags.style.display =
+            "none";
+
+
+          if (
+            Array.isArray(photo.tags)
+          ) {
+
+            photo.tags.forEach(
+              function (tag) {
+
+                const span =
+                  document.createElement(
+                    "span"
+                  );
+
+
+                span.textContent =
+                  tag;
+
+
+                hiddenTags.appendChild(
+                  span
+                );
+
+              }
+            );
+
+          }
+
+
+          const hiddenDescription =
+            document.createElement(
+              "div"
+            );
+
+
+          hiddenDescription.className =
+            "photo-description";
+
+
+          hiddenDescription.style.display =
+            "none";
+
+
+          hiddenDescription.textContent =
+            photo.description ||
+            "";
+
+
+          card.appendChild(
+            image
+          );
+
+
+          card.appendChild(
+            title
+          );
+
+
+          card.appendChild(
+            hiddenTags
+          );
+
+
+          card.appendChild(
+            hiddenDescription
+          );
+
+
+          gallery.prepend(
+            card
+          );
+
+
+          attachPhotoClicks();
+
+
+          return card;
+
+        }
+
+
+        /* =================================================
+           SAVE POST
+        ================================================= */
+
+        savePostButton.addEventListener(
+          "click",
+          async function () {
+
+            clearPostError();
+
+
+            /*
+              Photo is required.
+            */
+
+            if (!selectedPhotoFile) {
+
+              showPostError(
+                "Choose a photo first."
+              );
+
+              return;
+
+            }
+
+
+            const title =
+              addTitle.value.trim();
+
+
+            const description =
+              addDescription.value.trim();
+
+
+            /*
+              Turn:
+                night, sky, purple
+              into:
+                ["night", "sky", "purple"]
+            */
+
+            const tags =
+              addTags.value
+                .split(",")
+                .map(
+                  function (tag) {
+                    return tag
+                      .trim()
+                      .replace(/^#/, "");
+                  }
+                )
+                .filter(
+                  function (tag) {
+                    return tag.length > 0;
+                  }
+                );
+
+
+            /*
+              Require a title.
+            */
+
+            if (!title) {
+
+              showPostError(
+                "Add a title for your post."
+              );
+
+              return;
+
+            }
+
+
+            savePostButton.disabled =
+              true;
+
+
+            savePostButton.textContent =
+              "saving...";
+
+
+            try {
+
+              /*
+                Try to use the existing
+                Supabase client created
+                by app.js.
+              */
+
+              let client =
+                window.supabaseClient;
+
+
+              /*
+                If app.js does not expose
+                it, create one here.
+              */
+
+              if (!client) {
+
+                const SUPABASE_URL =
+                  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+
+
+                const SUPABASE_PUBLISHABLE_KEY =
+                  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+
+
+                client =
+                  window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_PUBLISHABLE_KEY
+                  );
+
+              }
+
+
+              /*
+                Get current user.
+              */
+
+              const sessionResult =
+                await client.auth.getSession();
+
+
+              const session =
+                sessionResult
+                  .data
+                  .session;
+
+
+              /*
+                Give the photo a unique name.
+              */
+
+              const userId =
+                session &&
+                session.user
+                  ? session.user.id
+                  : "anonymous";
+
+
+              const extension =
+                (
+                  selectedPhotoFile.name
+                    .split(".")
+                    .pop() ||
+                  "jpg"
+                )
+                .toLowerCase();
+
+
+              const filePath =
+                "photos/" +
+                userId +
+                "-" +
+                Date.now() +
+                "." +
+                extension;
+
+
+              /*
+                Upload to the existing
+                avatars bucket.
+              */
+
+              const uploadResult =
+                await client.storage
+                  .from("avatars")
+                  .upload(
+                    filePath,
+                    selectedPhotoFile,
+                    {
+                      contentType:
+                        selectedPhotoFile.type ||
+                        "image/jpeg",
+
+                      upsert: false
+                    }
+                  );
+
+
+              if (
+                uploadResult.error
+              ) {
+
+                throw uploadResult.error;
+
+              }
+
+
+              /*
+                Get public image URL.
+              */
+
+              const urlResult =
+                client.storage
+                  .from("avatars")
+                  .getPublicUrl(
+                    filePath
+                  );
+
+
+              const imageUrl =
+                urlResult.data.publicUrl;
+
+
+              /*
+                Create local post object.
+              */
+
+              const post = {
+
+                id:
+                  "post-" +
+                  Date.now() +
+                  "-" +
+                  Math.random()
+                    .toString(36)
+                    .slice(2),
+
+                src:
+                  imageUrl,
+
+                title:
+                  title,
+
+                tags:
+                  tags,
+
+                description:
+                  description
+
+              };
+
+
+              /*
+                Put it into the home page
+                immediately.
+              */
+
+              createHomeCard(
+                post
+              );
+
+
+              /*
+                Also try to save it to
+                Supabase if the posts table
+                already exists.
+              */
+
+              try {
+
+                if (
+                  session &&
+                  session.user
+                ) {
+
+                  await client
+                    .from("posts")
+                    .insert({
+
+                      user_id:
+                        session.user.id,
+
+                      image_url:
+                        imageUrl,
+
+                      title:
+                        title,
+
+                      description:
+                        description,
+
+                      tags:
+                        tags
+
+                    });
+
+                }
+
+              } catch (databaseError) {
+
+                /*
+                  The photo still works locally
+                  even if the posts table has
+                  not been created yet.
+                */
+
+                console.log(
+                  "Post database save skipped:",
+                  databaseError
+                );
+
+              }
+
+
+              /*
+                Close the add window.
+              */
+
+              hideAddModal();
+
+
+              /*
+                Open the new post immediately,
+                so the user can see exactly
+                what they just created.
+              */
+
+              setTimeout(
+                function () {
+
+                  openViewer(
+                    post
+                  );
+
+                },
+                100
+              );
+
+
+            } catch (error) {
+
+              console.error(
+                "Post upload error:",
+                error
+              );
+
+
+              showPostError(
+                "The photo could not be uploaded. Make sure the avatars storage bucket allows authenticated uploads."
+              );
+
+
+              savePostButton.disabled =
+                false;
+
+
+              savePostButton.textContent =
+                "save post";
+
+            }
+
+          }
+        );
+
+
+        /* =================================================
+           VIEWER OBSERVER
+        ================================================= */
+
+        const viewerObserver =
+          new MutationObserver(
+            function () {
+
+              if (
+                viewer.classList.contains(
+                  "active"
+                )
+              ) {
+
+                viewer.style.display =
+                  "block";
+
+              }
+
+            }
+          );
+
+
+        viewerObserver.observe(
+          viewer,
+          {
+            attributes: true,
+            attributeFilter: [
+              "class"
+            ]
+          }
+        );
+
+
+      });
 
   </script>
 
