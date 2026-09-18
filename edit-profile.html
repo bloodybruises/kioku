@@ -1,1681 +1,2230 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>kioku 記憶 — profile</title>
+  <meta charset="UTF-8">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-<style>
-*{
-  box-sizing:border-box;
-}
+  <title>edit profile — kioku</title>
 
-body{
-  margin:0;
-  min-height:100vh;
-  background:#efedef;
-  color:#222;
-  font-family:Arial,sans-serif;
-  transition:.2s;
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-.top{
-  padding:20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+  <style>
 
-.logo{
-  font-size:20px;
-  letter-spacing:1px;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-.back{
-  border:0;
-  background:transparent;
-  cursor:pointer;
-  color:#222;
-  font-size:14px;
-}
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
 
-.wrap{
-  width:min(850px,94%);
-  margin:20px auto 80px;
-}
+    body {
+      background: #efedef;
+      color: #222;
 
-h1{
-  font-size:28px;
-  font-weight:400;
-  margin:20px 0 5px;
-}
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+    }
 
-.sub{
-  color:#777;
-  font-size:13px;
-  margin-bottom:25px;
-}
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
 
-.card{
-  background:rgba(255,255,255,.65);
-  border:1px solid rgba(0,0,0,.08);
-  border-radius:22px;
-  padding:22px;
-  margin-bottom:18px;
-}
+    button {
+      cursor: pointer;
+    }
 
-label{
-  display:block;
-  font-size:13px;
-  margin-bottom:7px;
-  color:#555;
-}
 
-input[type="text"],
-textarea,
-select{
-  width:100%;
-  border:1px solid #ddd;
-  background:#fff;
-  border-radius:12px;
-  padding:12px;
-  font:inherit;
-  outline:none;
-}
+    /* =========================================
+       TOP BAR
+    ========================================= */
 
-textarea{
-  min-height:100px;
-  resize:vertical;
-}
+    .topbar {
+      width: 100%;
+      height: 62px;
 
-.field{
-  margin-bottom:18px;
-}
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-.colors{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-}
+      padding: 0 20px;
 
-.colorbox{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+      background: rgba(255,255,255,.82);
 
-input[type="color"]{
-  width:45px;
-  height:38px;
-  border:0;
-  padding:0;
-  background:transparent;
-}
+      border-bottom: 1px solid rgba(0,0,0,.12);
 
-.upload-section{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
 
-.upload-box{
-  text-align:center;
-}
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-.image-preview{
-  width:130px;
-  height:130px;
-  border-radius:50%;
-  object-fit:cover;
-  display:block;
-  margin:0 auto 14px;
-  background:#ddd;
-  border:3px solid white;
-  box-shadow:0 4px 18px rgba(0,0,0,.1);
-}
+    .logo {
+      color: #222;
+      text-decoration: none;
 
-.banner-preview{
-  width:100%;
-  height:150px;
-  border-radius:15px;
-  object-fit:cover;
-  display:block;
-  margin-bottom:14px;
-  background:#ddd;
-}
+      font-size: 20px;
+      letter-spacing: .04em;
+    }
 
-.upload-button{
-  display:inline-block;
-  border:1px solid #222 !important;
-  background:#fff !important;
-  color:#222 !important;
-  padding:10px 16px;
-  border-radius:999px;
-  cursor:pointer;
-  font:inherit;
-  font-size:13px;
-  appearance:none;
-  -webkit-appearance:none;
-}
+    .logo span {
+      font-size: 13px;
+      opacity: .55;
+      margin-left: 4px;
+    }
 
-.upload-button:hover{
-  background:#f2f2f2 !important;
-}
+    .back-button {
+      border: 1px solid #222;
 
-.upload-button:active{
-  background:#eee !important;
-  color:#222 !important;
-}
+      background: #fff;
+      color: #222;
 
-input[type="file"]{
-  display:none;
-}
+      padding: 8px 13px;
 
-.save{
-  width:100%;
-  border:0;
-  border-radius:999px;
-  padding:14px;
-  background:#222;
-  color:white;
-  cursor:pointer;
-  font:inherit;
-}
+      font-size: 12px;
 
-.save:disabled{
-  opacity:.6;
-  cursor:default;
-}
+      transition:
+        background .15s ease,
+        color .15s ease;
+    }
 
-.logout{
-  width:100%;
-  border:1px solid #bbb;
-  border-radius:999px;
-  padding:12px;
-  background:white;
-  color:#222;
-  cursor:pointer;
-  margin-top:10px;
-  font:inherit;
-}
+    .back-button:hover {
+      background: #222;
+      color: #fff;
+    }
 
-.status{
-  text-align:center;
-  font-size:13px;
-  margin-top:12px;
-  min-height:18px;
-}
 
-.preview-title{
-  font-size:13px;
-  color:#777;
-  margin-bottom:10px;
-}
+    /* =========================================
+       PAGE
+    ========================================= */
 
-.profile-preview{
-  border-radius:22px;
-  overflow:hidden;
-  background:#efedef;
-  transition:.2s;
-}
+    .page {
+      width: 100%;
+      max-width: 850px;
 
-.preview-banner{
-  height:150px;
-  background:#ddd center/cover no-repeat;
-}
+      margin: 0 auto;
 
-.preview-content{
-  padding:0 22px 25px;
-  position:relative;
-}
+      padding: 35px 20px 70px;
+    }
 
-.preview-avatar{
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  object-fit:cover;
-  border:4px solid #efedef;
-  margin-top:-45px;
-  background:#ddd;
-  display:block;
-}
+    .page-title {
+      margin: 0 0 7px;
 
-.preview-name{
-  font-size:24px;
-  margin-top:12px;
-}
+      font-size: 25px;
+      font-weight: 400;
+    }
 
-.preview-username{
-  font-size:13px;
-  opacity:.55;
-  margin-top:3px;
-}
+    .page-subtitle {
+      margin: 0 0 30px;
 
-.preview-bio{
-  margin-top:14px;
-  font-size:14px;
-  line-height:1.5;
-}
+      font-size: 12px;
 
-.preview-layout-box{
-  margin-top:20px;
-  padding:15px;
-  border:1px solid rgba(0,0,0,.1);
-  border-radius:15px;
-}
+      opacity: .55;
+    }
 
-/* cropper */
 
-.crop-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.78);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-  padding:15px;
-}
+    /* =========================================
+       EDIT CARD
+    ========================================= */
 
-.crop-overlay.active{
-  display:flex;
-}
+    .card {
+      background: rgba(255,255,255,.72);
 
-.crop-modal{
-  width:min(700px,100%);
-  background:#fff;
-  border-radius:22px;
-  padding:18px;
-  max-height:95vh;
-  overflow:auto;
-}
+      border: 1px solid rgba(0,0,0,.12);
 
-.crop-title{
-  font-size:18px;
-  margin-bottom:12px;
-}
+      padding: 25px;
 
-.crop-area{
-  width:100%;
-  height:420px;
-  overflow:hidden;
-  background:#111;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:14px;
-  position:relative;
-  touch-action:none;
-}
+      margin-bottom: 18px;
+    }
 
-.crop-area.banner-mode{
-  height:300px;
-}
+    .card-title {
+      margin: 0 0 20px;
 
-.crop-image-wrap{
-  position:relative;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+      font-size: 13px;
+      font-weight: 500;
 
-#cropImage{
-  position:absolute;
-  max-width:none;
-  max-height:none;
-  user-select:none;
-  -webkit-user-drag:none;
-  touch-action:none;
-  transform-origin:center center;
-}
+      letter-spacing: .04em;
+    }
 
-.crop-mask{
-  position:absolute;
-  pointer-events:none;
-  border:2px solid rgba(255,255,255,.9);
-  box-shadow:0 0 0 9999px rgba(0,0,0,.35);
-}
 
-.crop-mask.avatar-mask{
-  width:min(82vw,360px);
-  height:min(82vw,360px);
-  max-width:82%;
-  max-height:82%;
-  border-radius:50%;
-}
+    /* =========================================
+       IMAGE PREVIEWS
+    ========================================= */
 
-.crop-mask.banner-mask{
-  width:88%;
-  height:58%;
-  border-radius:8px;
-}
+    .visuals {
+      display: grid;
 
-.crop-controls{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  margin-top:15px;
-}
+      grid-template-columns:
+        150px
+        1fr;
 
-.crop-controls span{
-  font-size:13px;
-}
+      gap: 22px;
 
-.crop-controls input{
-  flex:1;
-}
+      align-items: center;
+    }
 
-.crop-buttons{
-  display:flex;
-  gap:10px;
-  margin-top:15px;
-}
+    .avatar-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-.crop-buttons button{
-  flex:1;
-  border-radius:999px;
-  padding:12px;
-  border:1px solid #ccc;
-  background:#fff;
-  color:#222;
-  cursor:pointer;
-  font:inherit;
-}
+      gap: 10px;
+    }
 
-.crop-buttons .apply{
-  background:#222;
-  color:#fff;
-  border-color:#222;
-}
+    .avatar-preview {
+      width: 135px;
+      height: 135px;
 
-@media(max-width:600px){
+      border-radius: 50%;
 
-  .upload-section{
-    grid-template-columns:1fr;
-  }
+      object-fit: cover;
 
-  .colors{
-    grid-template-columns:1fr;
-  }
+      background: #ddd;
 
-  .crop-modal{
-    border-radius:18px;
-  }
+      border: 5px solid #fff;
 
-  .crop-area{
-    height:330px;
-  }
+      box-shadow:
+        0 4px 18px rgba(0,0,0,.13);
+    }
 
-  .crop-area.banner-mode{
-    height:240px;
-  }
-}
-</style>
+    .banner-section {
+      min-width: 0;
+    }
+
+    .banner-preview {
+      width: 100%;
+      height: 150px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #e8b8cb,
+          #efedef
+        );
+
+      background-size: cover;
+      background-position: center;
+
+      border: 1px solid rgba(0,0,0,.12);
+    }
+
+    .upload-button {
+      border: 1px solid #222 !important;
+
+      background: #fff !important;
+
+      color: #222 !important;
+
+      padding: 8px 11px;
+
+      font-size: 10px;
+
+      white-space: nowrap;
+    }
+
+    .upload-button:hover {
+      background: #222 !important;
+      color: #fff !important;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+
+    /* =========================================
+       FORM
+    ========================================= */
+
+    .field {
+      margin-bottom: 19px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field-label {
+      display: block;
+
+      margin-bottom: 7px;
+
+      font-size: 11px;
+
+      opacity: .65;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+
+      border: 1px solid #ccc;
+
+      background: #fff;
+
+      color: #222;
+
+      padding: 11px 12px;
+
+      outline: none;
+
+      font-size: 13px;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: #888;
+    }
+
+    .field textarea {
+      min-height: 100px;
+
+      resize: vertical;
+
+      line-height: 1.5;
+    }
+
+
+    /* =========================================
+       COLOR CONTROLS
+    ========================================= */
+
+    .color-row {
+      display: grid;
+
+      grid-template-columns:
+        1fr
+        1fr;
+
+      gap: 15px;
+    }
+
+    .color-control {
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      border: 1px solid #ccc;
+
+      background: #fff;
+
+      padding: 8px 10px;
+    }
+
+    .color-control input[type="color"] {
+      width: 38px;
+      height: 32px;
+
+      padding: 0;
+
+      border: 0;
+
+      background: transparent;
+
+      cursor: pointer;
+    }
+
+    .color-value {
+      font-size: 11px;
+
+      opacity: .65;
+    }
+
+
+    /* =========================================
+       LAYOUT OPTIONS
+    ========================================= */
+
+    .options {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 10px;
+    }
+
+    .option {
+      border: 1px solid #ccc;
+
+      background: #fff;
+
+      padding: 13px 10px;
+
+      text-align: center;
+
+      cursor: pointer;
+
+      font-size: 11px;
+
+      transition:
+        border-color .15s ease,
+        background .15s ease;
+    }
+
+    .option:hover {
+      border-color: #999;
+    }
+
+    .option.active {
+      border-color: #222;
+
+      background: #f3f3f3;
+    }
+
+
+    /* =========================================
+       LIVE PREVIEW
+    ========================================= */
+
+    .preview-box {
+      border: 1px solid rgba(0,0,0,.12);
+
+      overflow: hidden;
+
+      background: #efedef;
+    }
+
+    .preview-banner {
+      height: 120px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #e8b8cb,
+          #efedef
+        );
+
+      background-size: cover;
+      background-position: center;
+    }
+
+    .preview-profile {
+      position: relative;
+
+      padding: 0 20px 20px;
+    }
+
+    .preview-avatar {
+      width: 88px;
+      height: 88px;
+
+      margin-top: -44px;
+
+      border-radius: 50%;
+
+      object-fit: cover;
+
+      border: 4px solid #efedef;
+
+      background: #ddd;
+
+      position: relative;
+    }
+
+    .preview-name {
+      margin: 9px 0 0;
+
+      font-size: 19px;
+      font-weight: 500;
+    }
+
+    .preview-username {
+      margin-top: 3px;
+
+      font-size: 10px;
+
+      opacity: .55;
+    }
+
+    .preview-bio {
+      margin-top: 10px;
+
+      font-size: 11px;
+
+      line-height: 1.5;
+
+      opacity: .8;
+
+      white-space: pre-wrap;
+    }
+
+
+    /* =========================================
+       SAVE
+    ========================================= */
+
+    .actions {
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      gap: 15px;
+
+      margin-top: 25px;
+    }
+
+    .save-button {
+      border: 1px solid #222;
+
+      background: #222;
+      color: #fff;
+
+      padding: 11px 24px;
+
+      font-size: 12px;
+
+      min-width: 120px;
+    }
+
+    .save-button:hover {
+      background: #444;
+    }
+
+    .logout-button {
+      border: 1px solid #bbb;
+
+      background: #fff;
+      color: #555;
+
+      padding: 10px 17px;
+
+      font-size: 11px;
+    }
+
+    .logout-button:hover {
+      border-color: #888;
+    }
+
+    .status {
+      min-height: 18px;
+
+      font-size: 11px;
+
+      opacity: .65;
+
+      text-align: center;
+    }
+
+
+    /* =========================================
+       CROP MODAL
+    ========================================= */
+
+    .crop-modal {
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 1000;
+
+      display: none;
+
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(0,0,0,.65);
+
+      padding: 18px;
+    }
+
+    .crop-modal.open {
+      display: flex;
+    }
+
+    .crop-box {
+      width: min(600px, 100%);
+
+      max-height: 92vh;
+
+      overflow: auto;
+
+      background: #fff;
+
+      padding: 20px;
+
+      border: 1px solid #222;
+    }
+
+    .crop-title {
+      margin: 0 0 15px;
+
+      font-size: 15px;
+
+      font-weight: 400;
+    }
+
+    .crop-area {
+      width: 100%;
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      background: #111;
+
+      overflow: hidden;
+
+      position: relative;
+
+      touch-action: none;
+    }
+
+    .crop-area.profile-crop {
+      aspect-ratio: 1 / 1;
+    }
+
+    .crop-area.banner-crop {
+      aspect-ratio: 16 / 6;
+    }
+
+    .crop-image {
+      position: absolute;
+
+      max-width: none;
+
+      user-select: none;
+
+      -webkit-user-drag: none;
+
+      transform-origin: center center;
+
+      cursor: grab;
+    }
+
+    .crop-image.dragging {
+      cursor: grabbing;
+    }
+
+    .crop-controls {
+      margin-top: 15px;
+    }
+
+    .zoom-label {
+      display: block;
+
+      margin-bottom: 6px;
+
+      font-size: 11px;
+
+      opacity: .6;
+    }
+
+    .zoom-slider {
+      width: 100%;
+    }
+
+    .crop-actions {
+      display: flex;
+
+      justify-content: flex-end;
+
+      gap: 9px;
+
+      margin-top: 16px;
+    }
+
+    .crop-cancel,
+    .crop-save {
+      border: 1px solid #222;
+
+      padding: 9px 15px;
+
+      font-size: 11px;
+    }
+
+    .crop-cancel {
+      background: #fff;
+      color: #222;
+    }
+
+    .crop-save {
+      background: #222;
+      color: #fff;
+    }
+
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media (max-width: 650px) {
+
+      .topbar {
+        height: 58px;
+
+        padding:
+          0
+          14px;
+      }
+
+      .page {
+        padding:
+          27px
+          13px
+          55px;
+      }
+
+      .page-title {
+        font-size: 22px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .visuals {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+      }
+
+      .avatar-section {
+        align-items: flex-start;
+      }
+
+      .banner-preview {
+        height: 130px;
+      }
+
+      .color-row {
+        grid-template-columns: 1fr;
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+      }
+
+      .save-button,
+      .logout-button {
+        width: 100%;
+      }
+
+    }
+
+  </style>
+
 </head>
+
 
 <body>
 
-<div class="top">
-  <div class="logo">kioku 記憶</div>
 
-  <button
-    class="back"
-    id="backBtn"
-    type="button">
-    ← back
-  </button>
-</div>
+  <!-- =========================================
+       TOP BAR
+  ========================================== -->
 
+  <header class="topbar">
 
-<div class="wrap">
+    <a
+      href="profile.html"
+      class="logo"
+    >
+      kioku
+      <span>記憶</span>
+    </a>
 
-<h1>your profile</h1>
 
-<div class="sub">
-  shape the little corner of kioku that belongs to you.
-</div>
+    <!-- THIS NOW GOES TO PROFILE -->
 
+    <button
+      class="back-button"
+      id="backButton"
+    >
+      back
+    </button>
 
-<div class="card">
+  </header>
 
-  <div class="upload-section">
 
-    <!-- PROFILE PICTURE -->
+  <!-- =========================================
+       PAGE
+  ========================================== -->
 
-    <div class="upload-box">
+  <main class="page">
 
-      <img
-        id="avatarPreview"
-        class="image-preview"
-        alt="profile picture">
+    <h1 class="page-title">
+      edit profile
+    </h1>
 
-      <button
-        type="button"
-        class="upload-button"
-        id="avatarButton">
-        change profile picture
-      </button>
+    <p class="page-subtitle">
+      change how your profile appears to the world.
+    </p>
 
-      <input
-        type="file"
-        id="avatarInput"
-        accept="image/*">
 
-    </div>
+    <!-- =======================================
+         VISUALS
+    ======================================== -->
 
+    <section class="card">
 
-    <!-- BANNER -->
+      <h2 class="card-title">
+        appearance
+      </h2>
 
-    <div class="upload-box">
 
-      <img
-        id="bannerPreview"
-        class="banner-preview"
-        alt="profile banner">
+      <div class="visuals">
 
-      <button
-        type="button"
-        class="upload-button"
-        id="bannerButton">
-        change banner
-      </button>
 
-      <input
-        type="file"
-        id="bannerInput"
-        accept="image/*">
+        <!-- PROFILE PICTURE -->
 
-    </div>
+        <div class="avatar-section">
 
-  </div>
+          <img
+            id="avatarPreview"
+            class="avatar-preview"
+            src=""
+            alt="profile picture"
+          >
 
-</div>
+          <input
+            id="avatarInput"
+            type="file"
+            accept="image/*"
+          >
 
+          <button
+            class="upload-button"
+            id="avatarButton"
+            type="button"
+          >
+            change profile picture
+          </button>
 
-<div class="card">
+        </div>
 
-  <div class="field">
 
-    <label>display name</label>
+        <!-- BANNER -->
 
-    <input
-      id="displayName"
-      type="text"
-      maxlength="50">
+        <div class="banner-section">
 
-  </div>
+          <div
+            id="bannerPreview"
+            class="banner-preview"
+          ></div>
 
+          <input
+            id="bannerInput"
+            type="file"
+            accept="image/*"
+          >
 
-  <div class="field">
+          <button
+            class="upload-button"
+            id="bannerButton"
+            type="button"
+            style="margin-top:10px;"
+          >
+            change banner
+          </button>
 
-    <label>username</label>
-
-    <input
-      id="username"
-      type="text"
-      maxlength="30"
-      placeholder="yourname">
-
-  </div>
-
-
-  <div class="field">
-
-    <label>bio</label>
-
-    <textarea
-      id="bio"
-      maxlength="300"></textarea>
-
-  </div>
-
-
-  <div class="colors">
-
-    <div class="field">
-
-      <label>page color</label>
-
-      <div class="colorbox">
-
-        <input
-          id="pageColor"
-          type="color"
-          value="#efedef">
-
-        <span id="pageColorText">
-          #efedef
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <div class="field">
-
-      <label>accent color</label>
-
-      <div class="colorbox">
-
-        <input
-          id="accentColor"
-          type="color"
-          value="#e8b8cb">
-
-        <span id="accentColorText">
-          #e8b8cb
-        </span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="field">
-
-    <label>font</label>
-
-    <select id="font">
-
-      <option value="sans">sans</option>
-      <option value="serif">serif</option>
-      <option value="mono">mono</option>
-
-    </select>
-
-  </div>
-
-
-  <div class="field">
-
-    <label>profile layout</label>
-
-    <select id="layout">
-
-      <option value="soft">soft</option>
-      <option value="minimal">minimal</option>
-      <option value="boxed">boxed</option>
-
-    </select>
-
-  </div>
-
-</div>
-
-
-<!-- LIVE PREVIEW -->
-
-<div class="card">
-
-  <div class="preview-title">
-    live preview
-  </div>
-
-
-  <div
-    class="profile-preview"
-    id="profilePreview">
-
-    <div
-      class="preview-banner"
-      id="previewBanner">
-    </div>
-
-
-    <div class="preview-content">
-
-      <img
-        id="previewAvatar"
-        class="preview-avatar"
-        alt="">
-
-
-      <div
-        class="preview-name"
-        id="previewName">
-        your name
-      </div>
-
-
-      <div
-        class="preview-username"
-        id="previewUsername">
-        @username
-      </div>
-
-
-      <div
-        class="preview-bio"
-        id="previewBio">
-        your bio will appear here.
-      </div>
-
-
-      <div
-        class="preview-layout-box"
-        id="previewLayoutBox">
-        posts will appear here
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<div class="card">
-
-  <button
-    class="save"
-    id="saveBtn"
-    type="button">
-    save profile
-  </button>
-
-
-  <div
-    class="status"
-    id="status">
-  </div>
-
-
-  <button
-    class="logout"
-    id="logoutBtn"
-    type="button">
-    log out
-  </button>
-
-</div>
-
-</div>
-
-
-<!-- CROP MODAL -->
-
-<div
-  class="crop-overlay"
-  id="cropOverlay">
-
-  <div class="crop-modal">
-
-    <div
-      class="crop-title"
-      id="cropTitle">
-      crop image
-    </div>
-
-
-    <div
-      class="crop-area"
-      id="cropArea">
-
-      <div class="crop-image-wrap">
-
-        <img
-          id="cropImage"
-          alt="crop">
-
-        <div
-          class="crop-mask"
-          id="cropMask">
         </div>
 
       </div>
 
-    </div>
+    </section>
 
 
-    <div class="crop-controls">
+    <!-- =======================================
+         BASIC INFORMATION
+    ======================================== -->
 
-      <span>zoom</span>
+    <section class="card">
 
-      <input
-        id="zoomSlider"
-        type="range"
-        min="1"
-        max="4"
-        step="0.01"
-        value="1">
-
-    </div>
+      <h2 class="card-title">
+        information
+      </h2>
 
 
-    <div class="crop-buttons">
+      <div class="field">
+
+        <label
+          class="field-label"
+          for="displayNameInput"
+        >
+          display name
+        </label>
+
+        <input
+          id="displayNameInput"
+          type="text"
+          maxlength="60"
+          placeholder="your name"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label
+          class="field-label"
+          for="usernameInput"
+        >
+          username
+        </label>
+
+        <input
+          id="usernameInput"
+          type="text"
+          maxlength="30"
+          placeholder="username"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label
+          class="field-label"
+          for="bioInput"
+        >
+          bio
+        </label>
+
+        <textarea
+          id="bioInput"
+          maxlength="300"
+          placeholder="something about you..."
+        ></textarea>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================
+         COLORS
+    ======================================== -->
+
+    <section class="card">
+
+      <h2 class="card-title">
+        colors
+      </h2>
+
+
+      <div class="color-row">
+
+
+        <div class="field">
+
+          <label class="field-label">
+            page color
+          </label>
+
+          <div class="color-control">
+
+            <input
+              id="pageColorInput"
+              type="color"
+              value="#efedef"
+            >
+
+            <span
+              class="color-value"
+              id="pageColorValue"
+            >
+              #efedef
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label class="field-label">
+            accent color
+          </label>
+
+          <div class="color-control">
+
+            <input
+              id="accentColorInput"
+              type="color"
+              value="#e8b8cb"
+            >
+
+            <span
+              class="color-value"
+              id="accentColorValue"
+            >
+              #e8b8cb
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================
+         FONT
+    ======================================== -->
+
+    <section class="card">
+
+      <h2 class="card-title">
+        font
+      </h2>
+
+
+      <div class="field">
+
+        <select id="fontInput">
+
+          <option value="sans">
+            sans
+          </option>
+
+          <option value="serif">
+            serif
+          </option>
+
+          <option value="mono">
+            mono
+          </option>
+
+        </select>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================
+         LAYOUT
+    ======================================== -->
+
+    <section class="card">
+
+      <h2 class="card-title">
+        profile layout
+      </h2>
+
+
+      <div
+        class="options"
+        id="layoutOptions"
+      >
+
+        <button
+          class="option active"
+          data-layout="soft"
+          type="button"
+        >
+          soft
+        </button>
+
+        <button
+          class="option"
+          data-layout="minimal"
+          type="button"
+        >
+          minimal
+        </button>
+
+        <button
+          class="option"
+          data-layout="boxed"
+          type="button"
+        >
+          boxed
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================
+         LIVE PREVIEW
+    ======================================== -->
+
+    <section class="card">
+
+      <h2 class="card-title">
+        live preview
+      </h2>
+
+
+      <div
+        class="preview-box"
+        id="previewLayoutBox"
+      >
+
+        <div
+          class="preview-banner"
+          id="previewBanner"
+        ></div>
+
+
+        <div class="preview-profile">
+
+          <img
+            class="preview-avatar"
+            id="previewAvatar"
+            src=""
+            alt=""
+          >
+
+
+          <div
+            class="preview-name"
+            id="previewName"
+          >
+            your name
+          </div>
+
+
+          <div
+            class="preview-username"
+            id="previewUsername"
+          >
+            @username
+          </div>
+
+
+          <div
+            class="preview-bio"
+            id="previewBio"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================
+         ACTIONS
+    ======================================== -->
+
+    <div class="actions">
 
       <button
+        class="logout-button"
+        id="logoutButton"
         type="button"
-        id="cancelCrop">
-        cancel
+      >
+        log out
       </button>
 
 
+      <div
+        class="status"
+        id="status"
+      ></div>
+
+
       <button
+        class="save-button"
+        id="saveButton"
         type="button"
-        class="apply"
-        id="applyCrop">
-        crop & use
+      >
+        save changes
       </button>
+
+    </div>
+
+  </main>
+
+
+  <!-- =========================================
+       CROP MODAL
+  ========================================== -->
+
+  <div
+    class="crop-modal"
+    id="cropModal"
+  >
+
+    <div class="crop-box">
+
+      <h2
+        class="crop-title"
+        id="cropTitle"
+      >
+        crop image
+      </h2>
+
+
+      <div
+        class="crop-area profile-crop"
+        id="cropArea"
+      >
+
+        <img
+          class="crop-image"
+          id="cropImage"
+          src=""
+          alt=""
+        >
+
+      </div>
+
+
+      <div class="crop-controls">
+
+        <label
+          class="zoom-label"
+          for="zoomSlider"
+        >
+          zoom
+        </label>
+
+        <input
+          class="zoom-slider"
+          id="zoomSlider"
+          type="range"
+          min="1"
+          max="3"
+          step="0.01"
+          value="1"
+        >
+
+      </div>
+
+
+      <div class="crop-actions">
+
+        <button
+          class="crop-cancel"
+          id="cropCancel"
+          type="button"
+        >
+          cancel
+        </button>
+
+        <button
+          class="crop-save"
+          id="cropSave"
+          type="button"
+        >
+          use image
+        </button>
+
+      </div>
 
     </div>
 
   </div>
 
-</div>
 
+  <!-- =========================================
+       JAVASCRIPT
+  ========================================== -->
 
-<script>
+  <script>
 
-const SUPABASE_URL =
-  "https://qadbabbfhrqcbmjrkuvw.supabase.co";
+    /* =========================================
+       SUPABASE
+    ========================================== */
 
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
+    const SUPABASE_URL =
+      "https://qadbabbfhrqcbmjrkuvw.supabase.co";
 
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
-
-
-const $ = id =>
-  document.getElementById(id);
-
-
-let user = null;
-
-let avatarUrl = null;
-
-let bannerUrl = null;
-
-let cropType = null;
-
-let cropFile = null;
-
-let cropObjectUrl = null;
-
-let zoom = 1;
-
-let dragX = 0;
-
-let dragY = 0;
-
-let dragging = false;
-
-let startX = 0;
-
-let startY = 0;
-
-let startDragX = 0;
-
-let startDragY = 0;
-
-
-/* --------------------------------------------------
-   DEFAULT PLACEHOLDERS
--------------------------------------------------- */
-
-const DEFAULT_AVATAR =
-  "data:image/svg+xml;charset=UTF-8," +
-  encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg"
-         width="300"
-         height="300">
-      <rect width="100%" height="100%" fill="#ddd"/>
-      <text x="50%"
-            y="50%"
-            dominant-baseline="middle"
-            text-anchor="middle"
-            fill="#888"
-            font-size="90">?</text>
-    </svg>
-  `);
-
-
-const DEFAULT_BANNER =
-  "data:image/svg+xml;charset=UTF-8," +
-  encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg"
-         width="1200"
-         height="400">
-      <rect width="100%"
-            height="100%"
-            fill="#ddd"/>
-    </svg>
-  `);
-
-
-/* --------------------------------------------------
-   STATUS
--------------------------------------------------- */
-
-function setStatus(message){
-
-  $("status").textContent = message;
-
-}
-
-
-/* --------------------------------------------------
-   LOAD PROFILE
--------------------------------------------------- */
-
-async function loadProfile(){
-
-  const {
-    data: { session },
-    error: sessionError
-  } =
-    await supabaseClient.auth.getSession();
-
-
-  if(sessionError){
-
-    console.error(sessionError);
-
-    setStatus(
-      "couldn't check login: " +
-      sessionError.message
-    );
-
-    return;
-  }
-
-
-  if(!session){
-
-    window.location.href =
-      "auth.html";
-
-    return;
-  }
-
-
-  user = session.user;
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .maybeSingle();
-
-
-  if(error){
-
-    console.error(error);
-
-    setStatus(
-      "couldn't load profile: " +
-      error.message
-    );
-
-    return;
-  }
-
-
-  if(data){
-
-    $("displayName").value =
-      data.display_name || "";
-
-
-    $("username").value =
-      data.username || "";
-
-
-    $("bio").value =
-      data.bio || "";
-
-
-    $("pageColor").value =
-      data.page_color ||
-      "#efedef";
-
-
-    $("accentColor").value =
-      data.accent_color ||
-      "#e8b8cb";
-
-
-    $("font").value =
-      data.font ||
-      "sans";
-
-
-    $("layout").value =
-      data.layout ||
-      "soft";
-
-
-    avatarUrl =
-      data.avatar_url ||
-      null;
-
-
-    bannerUrl =
-      data.background_url ||
-      null;
-
-  }else{
-
-    $("username").value =
-      user.user_metadata?.username ||
-      "";
-
-
-    $("displayName").value =
-      user.user_metadata?.display_name ||
-      "";
-
-  }
-
-
-  updateImages();
-
-  updatePreview();
-
-}
-
-
-/* --------------------------------------------------
-   UPDATE IMAGES
--------------------------------------------------- */
-
-function updateImages(){
-
-  $("avatarPreview").src =
-    avatarUrl ||
-    DEFAULT_AVATAR;
-
-
-  $("previewAvatar").src =
-    avatarUrl ||
-    DEFAULT_AVATAR;
-
-
-  $("bannerPreview").src =
-    bannerUrl ||
-    DEFAULT_BANNER;
-
-
-  if(bannerUrl){
-
-    $("previewBanner").style.backgroundImage =
-      `url("${bannerUrl}")`;
-
-  }else{
-
-    $("previewBanner").style.backgroundImage =
-      `url("${DEFAULT_BANNER}")`;
-
-  }
-
-}
-
-
-/* --------------------------------------------------
-   LIVE PREVIEW
--------------------------------------------------- */
-
-function updatePreview(){
-
-  const name =
-    $("displayName").value.trim();
-
-
-  const username =
-    $("username")
-      .value
-      .trim()
-      .replace(/^@/, "");
-
-
-  const bio =
-    $("bio").value.trim();
-
-
-  const pageColor =
-    $("pageColor").value;
-
-
-  const accentColor =
-    $("accentColor").value;
-
-
-  const font =
-    $("font").value;
-
-
-  const layout =
-    $("layout").value;
-
-
-  $("previewName").textContent =
-    name || "your name";
-
-
-  $("previewUsername").textContent =
-    username
-      ? "@" + username
-      : "@username";
-
-
-  $("previewBio").textContent =
-    bio ||
-    "your bio will appear here.";
-
-
-  $("profilePreview").style.background =
-    pageColor;
-
-
-  $("previewAvatar").style.borderColor =
-    pageColor;
-
-
-  $("previewBanner").style.backgroundColor =
-    accentColor;
-
-
-  $("pageColorText").textContent =
-    pageColor;
-
-
-  $("accentColorText").textContent =
-    accentColor;
-
-
-  if(font === "serif"){
-
-    $("profilePreview").style.fontFamily =
-      "Georgia, serif";
-
-  }else if(font === "mono"){
-
-    $("profilePreview").style.fontFamily =
-      "monospace";
-
-  }else{
-
-    $("profilePreview").style.fontFamily =
-      "Arial, sans-serif";
-
-  }
-
-
-  if(layout === "minimal"){
-
-    $("profilePreview").style.borderRadius =
-      "5px";
-
-    $("previewLayoutBox").style.borderRadius =
-      "3px";
-
-    $("previewLayoutBox").style.borderWidth =
-      "1px";
-
-  }else if(layout === "boxed"){
-
-    $("profilePreview").style.borderRadius =
-      "8px";
-
-    $("previewLayoutBox").style.borderRadius =
-      "5px";
-
-    $("previewLayoutBox").style.borderWidth =
-      "2px";
-
-  }else{
-
-    $("profilePreview").style.borderRadius =
-      "22px";
-
-    $("previewLayoutBox").style.borderRadius =
-      "15px";
-
-    $("previewLayoutBox").style.borderWidth =
-      "1px";
-
-  }
-
-}
-
-
-/* --------------------------------------------------
-   FILE PICKERS
--------------------------------------------------- */
-
-$("avatarButton").addEventListener(
-  "click",
-  function(){
-
-    $("avatarInput").click();
-
-  }
-);
-
-
-$("bannerButton").addEventListener(
-  "click",
-  function(){
-
-    $("bannerInput").click();
-
-  }
-);
-
-
-$("avatarInput").addEventListener(
-  "change",
-  function(event){
-
-    const file =
-      event.target.files &&
-      event.target.files[0];
-
-
-    if(!file){
-
-      return;
-    }
-
-
-    openCropper(
-      file,
-      "avatar"
-    );
-
-  }
-);
-
-
-$("bannerInput").addEventListener(
-  "change",
-  function(event){
-
-    const file =
-      event.target.files &&
-      event.target.files[0];
-
-
-    if(!file){
-
-      return;
-    }
-
-
-    openCropper(
-      file,
-      "banner"
-    );
-
-  }
-);
-
-
-/* --------------------------------------------------
-   OPEN CROPPER
--------------------------------------------------- */
-
-function openCropper(
-  file,
-  type
-){
-
-  if(!file.type.startsWith("image/")){
-
-    setStatus(
-      "please choose an image."
-    );
-
-    return;
-  }
-
-
-  if(file.size > 10 * 1024 * 1024){
-
-    setStatus(
-      "image must be smaller than 10 MB."
-    );
-
-    return;
-  }
-
-
-  cropType = type;
-
-  cropFile = file;
-
-  zoom = 1;
-
-  dragX = 0;
-
-  dragY = 0;
-
-
-  $("zoomSlider").value =
-    "1";
-
-
-  if(type === "avatar"){
-
-    $("cropTitle").textContent =
-      "crop profile picture";
-
-
-    $("cropArea")
-      .classList
-      .remove("banner-mode");
-
-
-    $("cropMask")
-      .className =
-      "crop-mask avatar-mask";
-
-  }else{
-
-    $("cropTitle").textContent =
-      "crop banner";
-
-
-    $("cropArea")
-      .classList
-      .add("banner-mode");
-
-
-    $("cropMask")
-      .className =
-      "crop-mask banner-mask";
-
-  }
-
-
-  if(cropObjectUrl){
-
-    URL.revokeObjectURL(
-      cropObjectUrl
-    );
-
-  }
-
-
-  cropObjectUrl =
-    URL.createObjectURL(file);
-
-
-  $("cropImage").src =
-    cropObjectUrl;
-
-
-  $("cropOverlay")
-    .classList
-    .add("active");
-
-
-  $("cropImage").onload =
-    function(){
-
-      setupCropImage();
-
-    };
-
-}
-
-
-/* --------------------------------------------------
-   CROP IMAGE SETUP
--------------------------------------------------- */
-
-function setupCropImage(){
-
-  const image =
-    $("cropImage");
-
-
-  const area =
-    $("cropArea");
-
-
-  const mask =
-    $("cropMask");
-
-
-  const maskWidth =
-    mask.getBoundingClientRect().width;
-
-
-  const maskHeight =
-    mask.getBoundingClientRect().height;
-
-
-  const imageWidth =
-    image.naturalWidth;
-
-
-  const imageHeight =
-    image.naturalHeight;
-
-
-  const imageRatio =
-    imageWidth /
-    imageHeight;
-
-
-  const cropRatio =
-    maskWidth /
-    maskHeight;
-
-
-  let displayWidth;
-
-  let displayHeight;
-
-
-  /*
-    Make the image cover the crop frame.
-  */
-
-  if(imageRatio > cropRatio){
-
-    displayHeight =
-      maskHeight;
-
-    displayWidth =
-      displayHeight *
-      imageRatio;
-
-  }else{
-
-    displayWidth =
-      maskWidth;
-
-    displayHeight =
-      displayWidth /
-      imageRatio;
-
-  }
-
-
-  image.style.width =
-    displayWidth + "px";
-
-
-  image.style.height =
-    displayHeight + "px";
-
-
-  image.style.left =
-    "50%";
-
-
-  image.style.top =
-    "50%";
-
-
-  image.style.transform =
-    "translate(-50%, -50%)";
-
-
-  image.dataset.baseWidth =
-    displayWidth;
-
-
-  image.dataset.baseHeight =
-    displayHeight;
-
-
-  updateCropTransform();
-
-}
-
-
-/* --------------------------------------------------
-   CROP TRANSFORM
--------------------------------------------------- */
-
-function updateCropTransform(){
-
-  const image =
-    $("cropImage");
-
-
-  const baseWidth =
-    parseFloat(
-      image.dataset.baseWidth
-    ) || 1;
-
-
-  const baseHeight =
-    parseFloat(
-      image.dataset.baseHeight
-    ) || 1;
-
-
-  image.style.width =
-    (baseWidth * zoom) +
-    "px";
-
-
-  image.style.height =
-    (baseHeight * zoom) +
-    "px";
-
-
-  image.style.left =
-    `calc(50% + ${dragX}px)`;
-
-
-  image.style.top =
-    `calc(50% + ${dragY}px)`;
-
-
-  image.style.transform =
-    "translate(-50%, -50%)";
-
-}
-
-
-/* --------------------------------------------------
-   ZOOM
--------------------------------------------------- */
-
-$("zoomSlider").addEventListener(
-  "input",
-  function(){
-
-    zoom =
-      parseFloat(
-        this.value
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
       );
 
 
-    updateCropTransform();
+    /* =========================================
+       STATE
+    ========================================== */
 
-  }
-);
+    let currentUser = null;
 
+    let currentProfile = null;
 
-/* --------------------------------------------------
-   DRAGGING
--------------------------------------------------- */
+    let avatarBlob = null;
 
-$("cropImage").addEventListener(
-  "pointerdown",
-  function(event){
+    let bannerBlob = null;
 
-    event.preventDefault();
+    let cropType = null;
 
-    dragging = true;
+    let cropImageElement = null;
 
-    startX =
-      event.clientX;
+    let cropImageNaturalWidth = 0;
 
-    startY =
-      event.clientY;
+    let cropImageNaturalHeight = 0;
 
-    startDragX =
-      dragX;
+    let cropScale = 1;
 
-    startDragY =
-      dragY;
+    let cropX = 0;
 
+    let cropY = 0;
 
-    this.setPointerCapture(
-      event.pointerId
-    );
+    let dragging = false;
 
-  }
-);
+    let dragStartX = 0;
+
+    let dragStartY = 0;
+
+    let dragOriginX = 0;
+
+    let dragOriginY = 0;
 
 
-$("cropImage").addEventListener(
-  "pointermove",
-  function(event){
+    /* =========================================
+       DEFAULT AVATAR
+    ========================================== */
 
-    if(!dragging){
+    const defaultAvatar =
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Crect width='100%25' height='100%25' fill='%23ddd'/%3E%3Ccircle cx='250' cy='190' r='85' fill='%23aaa'/%3E%3Cellipse cx='250' cy='430' rx='145' ry='115' fill='%23aaa'/%3E%3C/svg%3E";
 
-      return;
+
+    /* =========================================
+       HELPERS
+    ========================================== */
+
+    function get(id) {
+      return document.getElementById(id);
     }
 
 
-    event.preventDefault();
+    function setStatus(message) {
+
+      get("status").textContent =
+        message;
+
+    }
 
 
-    dragX =
-      startDragX +
-      (event.clientX - startX);
+    /* =========================================
+       LOAD PROFILE
+    ========================================== */
+
+    async function loadProfile() {
+
+      try {
+
+        const {
+          data: {
+            session
+          }
+        } =
+          await supabaseClient
+            .auth
+            .getSession();
 
 
-    dragY =
-      startDragY +
-      (event.clientY - startY);
+        if (!session) {
+
+          window.location.href =
+            "auth.html";
+
+          return;
+        }
 
 
-    updateCropTransform();
-
-  }
-);
+        currentUser =
+          session.user;
 
 
-$("cropImage").addEventListener(
-  "pointerup",
-  function(){
-
-    dragging = false;
-
-  }
-);
-
-
-$("cropImage").addEventListener(
-  "pointercancel",
-  function(){
-
-    dragging = false;
-
-  }
-);
+        const {
+          data: profile,
+          error
+        } =
+          await supabaseClient
+            .from("profiles")
+            .select("*")
+            .eq(
+              "id",
+              currentUser.id
+            )
+            .maybeSingle();
 
 
-/* --------------------------------------------------
-   CLOSE CROPPER
--------------------------------------------------- */
-
-$("cancelCrop").addEventListener(
-  "click",
-  closeCropper
-);
+        if (error) {
+          throw error;
+        }
 
 
-function closeCropper(){
+        if (!profile) {
 
-  $("cropOverlay")
-    .classList
-    .remove("active");
+          setStatus(
+            "profile not found."
+          );
+
+          return;
+        }
 
 
-  if(cropObjectUrl){
+        currentProfile =
+          profile;
 
-    URL.revokeObjectURL(
-      cropObjectUrl
+
+        fillForm(profile);
+
+        updatePreview();
+
+      } catch (error) {
+
+        console.error(
+          "Profile error:",
+          error
+        );
+
+        setStatus(
+          "couldn't load profile."
+        );
+
+      }
+
+    }
+
+
+    /* =========================================
+       FILL FORM
+    ========================================== */
+
+    function fillForm(profile) {
+
+      get(
+        "displayNameInput"
+      ).value =
+        profile.display_name || "";
+
+
+      get(
+        "usernameInput"
+      ).value =
+        profile.username || "";
+
+
+      get(
+        "bioInput"
+      ).value =
+        profile.bio || "";
+
+
+      get(
+        "pageColorInput"
+      ).value =
+        profile.page_color ||
+        "#efedef";
+
+
+      get(
+        "accentColorInput"
+      ).value =
+        profile.accent_color ||
+        "#e8b8cb";
+
+
+      get(
+        "fontInput"
+      ).value =
+        profile.font ||
+        "sans";
+
+
+      selectLayout(
+        profile.layout ||
+        "soft"
+      );
+
+
+      get(
+        "pageColorValue"
+      ).textContent =
+        profile.page_color ||
+        "#efedef";
+
+
+      get(
+        "accentColorValue"
+      ).textContent =
+        profile.accent_color ||
+        "#e8b8cb";
+
+
+      get(
+        "avatarPreview"
+      ).src =
+        profile.avatar_url ||
+        defaultAvatar;
+
+
+      if (
+        profile.background_url
+      ) {
+
+        get(
+          "bannerPreview"
+        ).style.backgroundImage =
+          `
+            url("${profile.background_url}")
+          `;
+
+      }
+
+    }
+
+
+    /* =========================================
+       LIVE PREVIEW
+    ========================================== */
+
+    function updatePreview() {
+
+      const displayName =
+        get(
+          "displayNameInput"
+        ).value ||
+        "your name";
+
+
+      const username =
+        get(
+          "usernameInput"
+        ).value ||
+        "username";
+
+
+      const bio =
+        get(
+          "bioInput"
+        ).value;
+
+
+      const pageColor =
+        get(
+          "pageColorInput"
+        ).value;
+
+
+      const accentColor =
+        get(
+          "accentColorInput"
+        ).value;
+
+
+      const font =
+        get(
+          "fontInput"
+        ).value;
+
+
+      get(
+        "previewName"
+      ).textContent =
+        displayName;
+
+
+      get(
+        "previewUsername"
+      ).textContent =
+        username.startsWith("@")
+          ? username
+          : "@" + username;
+
+
+      get(
+        "previewBio"
+      ).textContent =
+        bio;
+
+
+      get(
+        "previewAvatar"
+      ).src =
+        get(
+          "avatarPreview"
+        ).src;
+
+
+      get(
+        "previewLayoutBox"
+      ).style.background =
+        pageColor;
+
+
+      if (
+        font === "serif"
+      ) {
+
+        get(
+          "previewLayoutBox"
+        ).style.fontFamily =
+          "Georgia, serif";
+
+      } else if (
+        font === "mono"
+      ) {
+
+        get(
+          "previewLayoutBox"
+        ).style.fontFamily =
+          "monospace";
+
+      } else {
+
+        get(
+          "previewLayoutBox"
+        ).style.fontFamily =
+          "Arial, sans-serif";
+
+      }
+
+
+      if (
+        !bannerBlob &&
+        currentProfile &&
+        currentProfile.background_url
+      ) {
+
+        get(
+          "previewBanner"
+        ).style.backgroundImage =
+          `
+            url("${currentProfile.background_url}")
+          `;
+
+      } else if (!bannerBlob) {
+
+        get(
+          "previewBanner"
+        ).style.backgroundImage =
+          `
+            linear-gradient(
+              135deg,
+              ${accentColor},
+              ${pageColor}
+            )
+          `;
+
+      }
+
+    }
+
+
+    /* =========================================
+       INPUT LISTENERS
+    ========================================== */
+
+    [
+      "displayNameInput",
+      "usernameInput",
+      "bioInput",
+      "pageColorInput",
+      "accentColorInput",
+      "fontInput"
+    ].forEach(
+      id => {
+
+        get(id).addEventListener(
+          "input",
+          () => {
+
+            if (
+              id ===
+              "pageColorInput"
+            ) {
+
+              get(
+                "pageColorValue"
+              ).textContent =
+                get(id).value;
+
+            }
+
+
+            if (
+              id ===
+              "accentColorInput"
+            ) {
+
+              get(
+                "accentColorValue"
+              ).textContent =
+                get(id).value;
+
+            }
+
+
+            updatePreview();
+
+          }
+        );
+
+      }
     );
 
-    cropObjectUrl = null;
 
-  }
+    /* =========================================
+       LAYOUT
+    ========================================== */
 
+    function selectLayout(layout) {
 
-  $("avatarInput").value = "";
+      document
+        .querySelectorAll(
+          ".option"
+        )
+        .forEach(
+          button => {
 
-  $("bannerInput").value = "";
+            button.classList.toggle(
+              "active",
+              button.dataset.layout ===
+              layout
+            );
 
+          }
+        );
 
-  cropFile = null;
+      get(
+        "previewLayoutBox"
+      ).dataset.layout =
+        layout;
 
-  cropType = null;
-
-}
-
-
-/* --------------------------------------------------
-   CREATE ACTUAL CROP
--------------------------------------------------- */
-
-function createCroppedImage(){
-
-  return new Promise(
-    function(resolve, reject){
-
-      const image =
-        new Image();
-
-
-      image.onload =
-        function(){
-
-          const mask =
-            $("cropMask");
+    }
 
 
-          const maskRect =
-            mask.getBoundingClientRect();
+    document
+      .querySelectorAll(
+        ".option"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              selectLayout(
+                button.dataset.layout
+              );
+
+            }
+          );
+
+        }
+      );
 
 
-          const imageElement =
-            $("cropImage");
+    /* =========================================
+       FILE BUTTONS
+    ========================================== */
 
+    get(
+      "avatarButton"
+    ).addEventListener(
+      "click",
+      () => {
+
+        get(
+          "avatarInput"
+        ).click();
+
+      }
+    );
+
+
+    get(
+      "bannerButton"
+    ).addEventListener(
+      "click",
+      () => {
+
+        get(
+          "bannerInput"
+        ).click();
+
+      }
+    );
+
+
+    /* =========================================
+       FILE SELECTION
+    ========================================== */
+
+    get(
+      "avatarInput"
+    ).addEventListener(
+      "change",
+      event => {
+
+        const file =
+          event.target.files[0];
+
+        if (!file) return;
+
+        openCropper(
+          file,
+          "profile"
+        );
+
+      }
+    );
+
+
+    get(
+      "bannerInput"
+    ).addEventListener(
+      "change",
+      event => {
+
+        const file =
+          event.target.files[0];
+
+        if (!file) return;
+
+        openCropper(
+          file,
+          "banner"
+        );
+
+      }
+    );
+
+
+    /* =========================================
+       CROPPER
+    ========================================== */
+
+    function openCropper(
+      file,
+      type
+    ) {
+
+      cropType =
+        type;
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        event => {
+
+          get(
+            "cropImage"
+          ).src =
+            event.target.result;
+
+
+          get(
+            "cropTitle"
+          ).textContent =
+            type === "profile"
+              ? "crop profile picture"
+              : "crop banner";
+
+
+          get(
+            "cropArea"
+          ).className =
+            type === "profile"
+              ? "crop-area profile-crop"
+              : "crop-area banner-crop";
+
+
+          get(
+            "zoomSlider"
+          ).value =
+            "1";
+
+
+          get(
+            "cropModal"
+          ).classList.add(
+            "open"
+          );
+
+
+          cropImageElement =
+            get(
+              "cropImage"
+            );
+
+
+          cropImageElement.onload =
+            setupCropper;
+
+        };
+
+
+      reader.readAsDataURL(file);
+
+    }
+
+
+    function setupCropper() {
+
+      cropImageNaturalWidth =
+        cropImageElement.naturalWidth;
+
+      cropImageNaturalHeight =
+        cropImageElement.naturalHeight;
+
+
+      cropScale = 1;
+
+      cropX = 0;
+
+      cropY = 0;
+
+      positionCropImage();
+
+    }
+
+
+    function positionCropImage() {
+
+      const area =
+        get("cropArea");
+
+      if (
+        !cropImageNaturalWidth ||
+        !cropImageNaturalHeight
+      ) return;
+
+
+      const areaWidth =
+        area.clientWidth;
+
+      const areaHeight =
+        area.clientHeight;
+
+
+      const imageRatio =
+        cropImageNaturalWidth /
+        cropImageNaturalHeight;
+
+
+      const areaRatio =
+        areaWidth /
+        areaHeight;
+
+
+      let baseWidth;
+      let baseHeight;
+
+
+      if (
+        imageRatio > areaRatio
+      ) {
+
+        baseHeight =
+          areaHeight;
+
+        baseWidth =
+          baseHeight *
+          imageRatio;
+
+      } else {
+
+        baseWidth =
+          areaWidth;
+
+        baseHeight =
+          baseWidth /
+          imageRatio;
+
+      }
+
+
+      const width =
+        baseWidth *
+        cropScale;
+
+
+      const height =
+        baseHeight *
+        cropScale;
+
+
+      cropImageElement.style.width =
+        width + "px";
+
+
+      cropImageElement.style.height =
+        height + "px";
+
+
+      cropImageElement.style.left =
+        `calc(50% + ${cropX}px)`;
+
+
+      cropImageElement.style.top =
+        `calc(50% + ${cropY}px)`;
+
+
+      cropImageElement.style.transform =
+        "translate(-50%, -50%)";
+
+    }
+
+
+    get(
+      "zoomSlider"
+    ).addEventListener(
+      "input",
+      event => {
+
+        cropScale =
+          Number(
+            event.target.value
+          );
+
+        positionCropImage();
+
+      }
+    );
+
+
+    /* =========================================
+       CROP DRAGGING
+    ========================================== */
+
+    const cropArea =
+      get("cropArea");
+
+
+    cropArea.addEventListener(
+      "pointerdown",
+      event => {
+
+        dragging = true;
+
+        dragStartX =
+          event.clientX;
+
+        dragStartY =
+          event.clientY;
+
+        dragOriginX =
+          cropX;
+
+        dragOriginY =
+          cropY;
+
+        cropImageElement.classList.add(
+          "dragging"
+        );
+
+        cropArea.setPointerCapture(
+          event.pointerId
+        );
+
+      }
+    );
+
+
+    cropArea.addEventListener(
+      "pointermove",
+      event => {
+
+        if (!dragging) return;
+
+        cropX =
+          dragOriginX +
+          (
+            event.clientX -
+            dragStartX
+          );
+
+        cropY =
+          dragOriginY +
+          (
+            event.clientY -
+            dragStartY
+          );
+
+        positionCropImage();
+
+      }
+    );
+
+
+    cropArea.addEventListener(
+      "pointerup",
+      () => {
+
+        dragging = false;
+
+        cropImageElement.classList.remove(
+          "dragging"
+        );
+
+      }
+    );
+
+
+    cropArea.addEventListener(
+      "pointercancel",
+      () => {
+
+        dragging = false;
+
+        cropImageElement.classList.remove(
+          "dragging"
+        );
+
+      }
+    );
+
+
+    /* =========================================
+       CLOSE CROPPER
+    ========================================== */
+
+    get(
+      "cropCancel"
+    ).addEventListener(
+      "click",
+      () => {
+
+        get(
+          "cropModal"
+        ).classList.remove(
+          "open"
+        );
+
+        get(
+          "avatarInput"
+        ).value = "";
+
+        get(
+          "bannerInput"
+        ).value = "";
+
+      }
+    );
+
+
+    /* =========================================
+       CREATE CROPPED IMAGE
+    ========================================== */
+
+    get(
+      "cropSave"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          const area =
+            get("cropArea");
+
+          const rect =
+            area.getBoundingClientRect();
 
           const imageRect =
-            imageElement.getBoundingClientRect();
+            cropImageElement
+              .getBoundingClientRect();
 
 
-          const outputWidth =
-            cropType === "avatar"
-              ? 800
-              : 1600;
+          const left =
+            Math.max(
+              0,
+              rect.left -
+              imageRect.left
+            );
 
 
-          const outputHeight =
-            cropType === "avatar"
-              ? 800
-              : 600;
+          const top =
+            Math.max(
+              0,
+              rect.top -
+              imageRect.top
+            );
+
+
+          const right =
+            Math.min(
+              imageRect.width,
+              rect.right -
+              imageRect.left
+            );
+
+
+          const bottom =
+            Math.min(
+              imageRect.height,
+              rect.bottom -
+              imageRect.top
+            );
+
+
+          const sourceScaleX =
+            cropImageNaturalWidth /
+            imageRect.width;
+
+
+          const sourceScaleY =
+            cropImageNaturalHeight /
+            imageRect.height;
+
+
+          const sx =
+            left *
+            sourceScaleX;
+
+          const sy =
+            top *
+            sourceScaleY;
+
+          const sw =
+            (
+              right -
+              left
+            ) *
+            sourceScaleX;
+
+          const sh =
+            (
+              bottom -
+              top
+            ) *
+            sourceScaleY;
 
 
           const canvas =
@@ -1684,216 +2233,142 @@ function createCroppedImage(){
             );
 
 
-          canvas.width =
-            outputWidth;
+          if (
+            cropType ===
+            "profile"
+          ) {
 
+            canvas.width =
+              800;
 
-          canvas.height =
-            outputHeight;
+            canvas.height =
+              800;
+
+          } else {
+
+            canvas.width =
+              1600;
+
+            canvas.height =
+              600;
+
+          }
 
 
           const ctx =
-            canvas.getContext("2d");
-
-
-          /*
-            Determine exactly what part of the
-            source image is underneath the crop frame.
-          */
-
-          const scaleX =
-            image.naturalWidth /
-            imageRect.width;
-
-
-          const scaleY =
-            image.naturalHeight /
-            imageRect.height;
-
-
-          const sourceX =
-            (
-              maskRect.left -
-              imageRect.left
-            ) * scaleX;
-
-
-          const sourceY =
-            (
-              maskRect.top -
-              imageRect.top
-            ) * scaleY;
-
-
-          const sourceWidth =
-            maskRect.width *
-            scaleX;
-
-
-          const sourceHeight =
-            maskRect.height *
-            scaleY;
-
-
-          /*
-            Clamp the crop to the actual image.
-            This prevents black areas.
-          */
-
-          const safeX =
-            Math.max(
-              0,
-              Math.min(
-                sourceX,
-                image.naturalWidth -
-                sourceWidth
-              )
-            );
-
-
-          const safeY =
-            Math.max(
-              0,
-              Math.min(
-                sourceY,
-                image.naturalHeight -
-                sourceHeight
-              )
-            );
-
-
-          const safeWidth =
-            Math.min(
-              sourceWidth,
-              image.naturalWidth -
-              safeX
-            );
-
-
-          const safeHeight =
-            Math.min(
-              sourceHeight,
-              image.naturalHeight -
-              safeY
+            canvas.getContext(
+              "2d"
             );
 
 
           ctx.drawImage(
-            image,
-            safeX,
-            safeY,
-            safeWidth,
-            safeHeight,
+            cropImageElement,
+            sx,
+            sy,
+            sw,
+            sh,
             0,
             0,
-            outputWidth,
-            outputHeight
+            canvas.width,
+            canvas.height
           );
 
 
-          canvas.toBlob(
-            function(blob){
+          const blob =
+            await new Promise(
+              resolve =>
+                canvas.toBlob(
+                  resolve,
+                  "image/jpeg",
+                  .92
+                )
+            );
 
-              if(blob){
 
-                resolve(blob);
+          if (
+            cropType ===
+            "profile"
+          ) {
 
-              }else{
+            avatarBlob =
+              blob;
 
-                reject(
-                  new Error(
-                    "couldn't create cropped image."
-                  )
-                );
 
-              }
+            get(
+              "avatarPreview"
+            ).src =
+              URL.createObjectURL(
+                blob
+              );
 
-            },
-            "image/jpeg",
-            0.92
+          } else {
+
+            bannerBlob =
+              blob;
+
+
+            const url =
+              URL.createObjectURL(
+                blob
+              );
+
+
+            get(
+              "bannerPreview"
+            ).style.backgroundImage =
+              `url("${url}")`;
+
+
+            get(
+              "previewBanner"
+            ).style.backgroundImage =
+              `url("${url}")`;
+
+          }
+
+
+          updatePreview();
+
+
+          get(
+            "cropModal"
+          ).classList.remove(
+            "open"
           );
 
-        };
 
+          get(
+            "avatarInput"
+          ).value = "";
 
-      image.onerror =
-        function(){
+          get(
+            "bannerInput"
+          ).value = "";
 
-          reject(
-            new Error(
-              "couldn't read image."
-            )
+        } catch (error) {
+
+          console.error(
+            "Crop error:",
+            error
           );
 
-        };
+        }
 
-
-      image.src =
-        cropObjectUrl;
-
-    }
-  );
-
-}
-
-
-/* --------------------------------------------------
-   APPLY CROP + UPLOAD
--------------------------------------------------- */
-
-$("applyCrop").addEventListener(
-  "click",
-  async function(){
-
-    if(!cropFile ||
-       !cropType ||
-       !user){
-
-      return;
-    }
-
-
-    const uploadedType =
-      cropType;
-
-
-    setStatus(
-      "cropping image..."
+      }
     );
 
 
-    $("applyCrop").disabled =
-      true;
+    /* =========================================
+       UPLOAD IMAGE
+    ========================================== */
 
-
-    try{
-
-      const blob =
-        await createCroppedImage();
-
-
-      setStatus(
-        "uploading image..."
-      );
-
-
-      const folder =
-        uploadedType === "avatar"
-          ? "profile"
-          : "banners";
-
-
-      const path =
-        folder +
-        "/" +
-        user.id +
-        "-" +
-        Date.now() +
-        ".jpg";
-
+    async function uploadImage(
+      blob,
+      path
+    ) {
 
       const {
-        error: uploadError
+        error
       } =
         await supabaseClient
           .storage
@@ -1904,21 +2379,18 @@ $("applyCrop").addEventListener(
             {
               contentType:
                 "image/jpeg",
-              upsert:
-                false
+              upsert: false
             }
           );
 
 
-      if(uploadError){
-
-        throw uploadError;
-
+      if (error) {
+        throw error;
       }
 
 
       const {
-        data: publicData
+        data
       } =
         supabaseClient
           .storage
@@ -1928,284 +2400,288 @@ $("applyCrop").addEventListener(
           );
 
 
-      if(
-        !publicData ||
-        !publicData.publicUrl
-      ){
+      return data.publicUrl;
 
-        throw new Error(
-          "Supabase did not return an image URL."
+    }
+
+
+    /* =========================================
+       SAVE PROFILE
+    ========================================== */
+
+    get(
+      "saveButton"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        if (!currentUser) return;
+
+
+        const saveButton =
+          get(
+            "saveButton"
+          );
+
+
+        saveButton.disabled =
+          true;
+
+
+        setStatus(
+          "saving..."
         );
 
-      }
+
+        try {
+
+          let avatarUrl =
+            currentProfile.avatar_url ||
+            null;
 
 
-      const finalUrl =
-        publicData.publicUrl +
-        "?v=" +
-        Date.now();
+          let bannerUrl =
+            currentProfile.background_url ||
+            null;
 
 
-      if(uploadedType === "avatar"){
+          /* Profile picture */
 
-        avatarUrl =
-          finalUrl;
+          if (avatarBlob) {
 
-      }else{
-
-        bannerUrl =
-          finalUrl;
-
-      }
+            const avatarPath =
+              `profile/${currentUser.id}-${Date.now()}.jpg`;
 
 
-      updateImages();
+            avatarUrl =
+              await uploadImage(
+                avatarBlob,
+                avatarPath
+              );
 
-      updatePreview();
-
-
-      closeCropper();
-
-
-      setStatus(
-        uploadedType === "avatar"
-          ? "profile picture uploaded. save your profile."
-          : "banner uploaded. save your profile."
-      );
-
-
-    }catch(error){
-
-      console.error(
-        "IMAGE UPLOAD ERROR:",
-        error
-      );
-
-
-      setStatus(
-        "Upload error: " +
-        (
-          error.message ||
-          "something went wrong."
-        )
-      );
-
-    }finally{
-
-      $("applyCrop").disabled =
-        false;
-
-    }
-
-  }
-);
-
-
-/* --------------------------------------------------
-   SAVE PROFILE
--------------------------------------------------- */
-
-$("saveBtn").addEventListener(
-  "click",
-  async function(){
-
-    if(!user){
-
-      return;
-
-    }
-
-
-    const username =
-      $("username")
-        .value
-        .trim()
-        .replace(/^@/, "");
-
-
-    const displayName =
-      $("displayName")
-        .value
-        .trim();
-
-
-    if(!username){
-
-      setStatus(
-        "username is required."
-      );
-
-      return;
-
-    }
-
-
-    $("saveBtn").disabled =
-      true;
-
-
-    setStatus(
-      "saving..."
-    );
-
-
-    const profileData = {
-
-      id:
-        user.id,
-
-      username:
-        username,
-
-      display_name:
-        displayName,
-
-      bio:
-        $("bio")
-          .value
-          .trim(),
-
-      avatar_url:
-        avatarUrl,
-
-      background_url:
-        bannerUrl,
-
-      page_color:
-        $("pageColor")
-          .value,
-
-      accent_color:
-        $("accentColor")
-          .value,
-
-      font:
-        $("font")
-          .value,
-
-      layout:
-        $("layout")
-          .value,
-
-      updated_at:
-        new Date()
-          .toISOString()
-
-    };
-
-
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("profiles")
-        .upsert(
-          profileData,
-          {
-            onConflict:
-              "id"
           }
-        );
 
 
-    $("saveBtn").disabled =
-      false;
+          /* Banner */
+
+          if (bannerBlob) {
+
+            const bannerPath =
+              `banners/${currentUser.id}-${Date.now()}.jpg`;
 
 
-    if(error){
+            bannerUrl =
+              await uploadImage(
+                bannerBlob,
+                bannerPath
+              );
 
-      console.error(error);
-
-      setStatus(
-        "Save error: " +
-        error.message
-      );
-
-      return;
-
-    }
+          }
 
 
-    setStatus(
-      "profile saved ✓"
+          const selectedLayout =
+            document
+              .querySelector(
+                ".option.active"
+              )
+              ?.dataset.layout ||
+            "soft";
+
+
+          const username =
+            get(
+              "usernameInput"
+            ).value
+              .trim()
+              .replace(
+                /^@/,
+                ""
+              )
+              .replace(
+                /\s+/g,
+                ""
+              );
+
+
+          if (!username) {
+
+            setStatus(
+              "username is required."
+            );
+
+            saveButton.disabled =
+              false;
+
+            return;
+
+          }
+
+
+          const updates = {
+
+            username,
+
+            display_name:
+              get(
+                "displayNameInput"
+              ).value.trim(),
+
+            bio:
+              get(
+                "bioInput"
+              ).value.trim(),
+
+            avatar_url:
+              avatarUrl,
+
+            background_url:
+              bannerUrl,
+
+            page_color:
+              get(
+                "pageColorInput"
+              ).value,
+
+            accent_color:
+              get(
+                "accentColorInput"
+              ).value,
+
+            font:
+              get(
+                "fontInput"
+              ).value,
+
+            layout:
+              selectedLayout,
+
+            updated_at:
+              new Date().toISOString()
+
+          };
+
+
+          const {
+            error
+          } =
+            await supabaseClient
+              .from("profiles")
+              .update(updates)
+              .eq(
+                "id",
+                currentUser.id
+              );
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          currentProfile = {
+            ...currentProfile,
+            ...updates
+          };
+
+
+          avatarBlob =
+            null;
+
+          bannerBlob =
+            null;
+
+
+          setStatus(
+            "saved."
+          );
+
+
+          setTimeout(
+            () => {
+
+              window.location.href =
+                "profile.html";
+
+            },
+            500
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Save error:",
+            error
+          );
+
+
+          setStatus(
+            "couldn't save: " +
+            (
+              error.message ||
+              "unknown error"
+            )
+          );
+
+
+        } finally {
+
+          saveButton.disabled =
+            false;
+
+        }
+
+      }
     );
 
-  }
-);
 
+    /* =========================================
+       BACK TO PROFILE
+    ========================================== */
 
-/* --------------------------------------------------
-   LIVE SETTINGS
--------------------------------------------------- */
+    get(
+      "backButton"
+    ).addEventListener(
+      "click",
+      () => {
 
-[
-  "displayName",
-  "username",
-  "bio",
-  "pageColor",
-  "accentColor",
-  "font",
-  "layout"
-].forEach(
-  function(id){
+        window.location.href =
+          "profile.html";
 
-    $(id).addEventListener(
-      "input",
-      updatePreview
+      }
     );
 
 
-    $(id).addEventListener(
-      "change",
-      updatePreview
+    /* =========================================
+       LOG OUT
+    ========================================== */
+
+    get(
+      "logoutButton"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "index.html";
+
+      }
     );
 
-  }
-);
 
+    /* =========================================
+       START
+    ========================================== */
 
-/* --------------------------------------------------
-   BACK
--------------------------------------------------- */
+    loadProfile();
 
-$("backBtn").addEventListener(
-  "click",
-  function(){
-
-    window.location.href =
-      "index.html";
-
-  }
-);
-
-
-/* --------------------------------------------------
-   LOGOUT
--------------------------------------------------- */
-
-$("logoutBtn").addEventListener(
-  "click",
-  async function(){
-
-    await supabaseClient
-      .auth
-      .signOut();
-
-
-    window.location.href =
-      "auth.html";
-
-  }
-);
-
-
-/* --------------------------------------------------
-   START
--------------------------------------------------- */
-
-loadProfile();
-
-</script>
+  </script>
 
 </body>
+
 </html>
