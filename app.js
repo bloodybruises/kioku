@@ -4,927 +4,643 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_enmLwzFK9xOIZGLVe-3BdA_P6F7kmNn";
 
-
-/* =========================================
-   SUPABASE
-========================================= */
-
 let supabaseClient = null;
 
-if (window.supabase) {
-  supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
+if(window.supabase){
+  supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
 }
 
 
-/* =========================================
-   DEFAULT PHOTOS
-   These stay as backup photos so the gallery
-   never looks empty while real posts are added.
-========================================= */
+/* --------------------------------------------------
+   DEFAULT KIoku POSTS
+-------------------------------------------------- */
 
 const defaults = [
   {
-    id: "001",
-    src: "assets/clouds.jpg",
-    title: "between weather",
-    tags: ["sky", "clouds", "quiet"]
+    id:"001",
+    src:"assets/clouds.jpg",
+    title:"between weather",
+    description:"",
+    tags:["sky","clouds","quiet"]
   },
   {
-    id: "002",
-    src: "assets/purple-glow.jpg",
-    title: "violet static",
-    tags: ["purple", "liminal", "light"]
+    id:"002",
+    src:"assets/purple-glow.jpg",
+    title:"violet static",
+    description:"",
+    tags:["purple","liminal","light"]
   },
   {
-    id: "003",
-    src: "assets/purple-architecture.jpg",
-    title: "afterimage",
-    tags: ["purple", "night", "liminal"]
+    id:"003",
+    src:"assets/purple-architecture.jpg",
+    title:"afterimage",
+    description:"",
+    tags:["purple","night","liminal"]
   },
   {
-    id: "004",
-    src: "assets/night-trails.jpg",
-    title: "somewhere above",
-    tags: ["night", "sky", "light"]
+    id:"004",
+    src:"assets/night-trails.jpg",
+    title:"somewhere above",
+    description:"",
+    tags:["night","sky","light"]
   },
   {
-    id: "005",
-    src: "assets/night-sky.jpg",
-    title: "02:17",
-    tags: ["night", "sky", "stars"]
+    id:"005",
+    src:"assets/night-sky.jpg",
+    title:"02:17",
+    description:"",
+    tags:["night","sky","stars"]
   },
   {
-    id: "006",
-    src: "assets/night-blue.jpg",
-    title: "blue hour",
-    tags: ["night", "sky", "blue"]
+    id:"006",
+    src:"assets/night-blue.jpg",
+    title:"blue hour",
+    description:"",
+    tags:["night","sky","blue"]
   }
 ];
 
-
-let posts = [...defaults];
-let filteredPosts = [...posts];
-
-
-/* =========================================
-   HELPERS
-========================================= */
-
-const $ = (selector) =>
-  document.querySelector(selector);
-
-const escapeHTML = (value = "") =>
-  String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+let allPosts = [];
+let filteredPosts = [];
 
 
-/* =========================================
+/* --------------------------------------------------
    LOAD REAL POSTS
-========================================= */
+-------------------------------------------------- */
 
-async function loadRealPosts() {
-  if (!supabaseClient) return;
+async function loadRealPosts(){
 
-  try {
-    const { data, error } =
-      await supabaseClient
-        .from("posts")
-        .select("*")
-        .order("created_at", {
-          ascending: false
-        });
+  let realPosts = [];
 
-    if (error) {
-      console.error("Could not load posts:", error);
-      return;
-    }
+  if(supabaseClient){
 
-    if (!data || data.length === 0) {
-      posts = [...defaults];
-    } else {
-      const realPosts = data.map((post) => ({
-        id: post.id,
-        src: post.image_url,
-        title: post.title || "",
-        description: post.description || "",
-        tags: post.tags || [],
-        userId: post.user_id,
-        real: true
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("posts")
+      .select("*")
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+    if(error){
+
+      console.error(
+        "Could not load posts:",
+        error
+      );
+
+    }else{
+
+      realPosts = (data || []).map(post => ({
+        id:post.id,
+        src:post.image_url,
+        title:post.title || "untitled",
+        description:post.description || "",
+        tags:Array.isArray(post.tags)
+          ? post.tags
+          : []
       }));
-
-      posts = [
-        ...realPosts,
-        ...defaults
-      ];
     }
-
-    filteredPosts = [...posts];
-
-    renderGallery();
-
-  } catch (error) {
-    console.error(error);
   }
+
+  /*
+    Real posts appear first.
+    Default kioku images remain underneath them.
+  */
+
+  allPosts = [
+    ...realPosts,
+    ...defaults
+  ];
+
+  filteredPosts = [...allPosts];
+
+  renderGallery();
 }
 
 
-/* =========================================
+/* --------------------------------------------------
    GALLERY
-========================================= */
+-------------------------------------------------- */
 
-function renderGallery() {
-  const gallery = $("#gallery");
-  const empty = $("#empty");
+function renderGallery(){
 
-  if (!gallery) return;
+  const gallery =
+    document.getElementById("gallery");
 
-  gallery.innerHTML = "";
+  const empty =
+    document.getElementById("empty");
 
-  if (filteredPosts.length === 0) {
-    if (empty) empty.style.display = "block";
+  if(!gallery){
     return;
   }
 
-  if (empty) empty.style.display = "none";
+  gallery.innerHTML = "";
 
-  filteredPosts.forEach((post) => {
+  if(!filteredPosts.length){
 
-    const card = document.createElement("article");
+    if(empty){
+      empty.hidden = false;
+    }
 
-    card.className = "photo-card";
+    return;
+  }
 
-    card.innerHTML = `
-      <img
-        src="${escapeHTML(post.src)}"
-        alt="${escapeHTML(post.title || "kioku photo")}"
-        loading="lazy"
-      >
+  if(empty){
+    empty.hidden = true;
+  }
 
-      <div class="photo-info">
-        ${
-          post.title
-            ? `<div class="photo-title">${escapeHTML(post.title)}</div>`
-            : ""
-        }
+  filteredPosts.forEach(post => {
 
-        ${
-          post.tags && post.tags.length
-            ? `
-              <div class="photo-tags">
-                ${post.tags
-                  .map(
-                    tag =>
-                      `<span>#${escapeHTML(tag)}</span>`
-                  )
-                  .join("")}
-              </div>
-            `
-            : ""
-        }
-      </div>
-    `;
+    const card =
+      document.createElement("article");
 
-    card.addEventListener("click", () => {
-      openViewer(post);
-    });
+    /*
+      The homepage uses .card.
+      Keeping this class consistent lets
+      the inline viewer code recognize cards.
+    */
+
+    card.className = "card";
+
+    card.dataset.id =
+      String(post.id);
+
+    const image =
+      document.createElement("img");
+
+    image.src =
+      post.src;
+
+    image.alt =
+      post.title || "kioku photo";
+
+    image.loading =
+      "lazy";
+
+    image.onerror = () => {
+      card.remove();
+
+      if(!gallery.children.length &&
+         empty){
+        empty.hidden = false;
+      }
+    };
+
+    const info =
+      document.createElement("div");
+
+    info.className =
+      "info";
+
+    const title =
+      document.createElement("div");
+
+    title.className =
+      "title";
+
+    title.textContent =
+      post.title || "untitled";
+
+    const tags =
+      document.createElement("div");
+
+    tags.className =
+      "tags";
+
+    tags.textContent =
+      Array.isArray(post.tags)
+        ? post.tags
+            .map(tag => "#" + tag)
+            .join(" ")
+        : "";
+
+    const save =
+      document.createElement("button");
+
+    save.className =
+      "save";
+
+    save.type =
+      "button";
+
+    save.setAttribute(
+      "aria-label",
+      "save post"
+    );
+
+    save.textContent =
+      "♡";
+
+    save.addEventListener(
+      "click",
+      event => {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        toggleFavorite(
+          String(post.id),
+          card,
+          save
+        );
+      }
+    );
+
+    info.append(
+      title,
+      tags
+    );
+
+    card.append(
+      image,
+      info,
+      save
+    );
+
+    /*
+      The inline index.html viewer listens
+      for clicks on .card elements.
+    */
 
     gallery.appendChild(card);
   });
+
+  restoreFavorites();
 }
 
 
-/* =========================================
+/* --------------------------------------------------
    SEARCH
-========================================= */
+-------------------------------------------------- */
 
-function setupSearch() {
-  const search = $("#search");
+function setupSearch(){
 
-  if (!search) return;
+  const search =
+    document.getElementById("search");
 
-  search.addEventListener("input", () => {
-
-    const query =
-      search.value
-        .trim()
-        .toLowerCase();
-
-    if (!query) {
-      filteredPosts = [...posts];
-      renderGallery();
-      return;
-    }
-
-    filteredPosts = posts.filter((post) => {
-
-      const title =
-        (post.title || "")
-          .toLowerCase();
-
-      const description =
-        (post.description || "")
-          .toLowerCase();
-
-      const tags =
-        (post.tags || [])
-          .join(" ")
-          .toLowerCase();
-
-      return (
-        title.includes(query) ||
-        description.includes(query) ||
-        tags.includes(query)
-      );
-    });
-
-    renderGallery();
-  });
-}
-
-
-/* =========================================
-   FAVORITES
-========================================= */
-
-function setupFavorites() {
-
-  const fav = $("#fav");
-
-  if (!fav) return;
-
-  fav.addEventListener("click", () => {
-
-    fav.classList.toggle("active");
-
-    if (fav.classList.contains("active")) {
-      filteredPosts = posts.filter(
-        post => post.favorite
-      );
-    } else {
-      filteredPosts = [...posts];
-    }
-
-    renderGallery();
-  });
-}
-
-
-/* =========================================
-   VIEWER
-========================================= */
-
-function openViewer(post) {
-
-  const viewer =
-    $("#viewer");
-
-  if (!viewer) return;
-
-  const viewerImage =
-    viewer.querySelector("img");
-
-  if (viewerImage) {
-    viewerImage.src = post.src;
-    viewerImage.alt =
-      post.title || "kioku photo";
+  if(!search){
+    return;
   }
 
-  const title =
-    viewer.querySelector(".viewer-title");
+  search.addEventListener(
+    "input",
+    () => {
 
-  if (title) {
-    title.textContent =
-      post.title || "";
-  }
+      const query =
+        search.value
+          .trim()
+          .toLowerCase();
 
-  viewer.classList.add("open");
-  viewer.style.display = "flex";
-}
+      if(!query){
 
+        filteredPosts =
+          [...allPosts];
 
-function closeViewer() {
+      }else{
 
-  const viewer =
-    $("#viewer");
+        filteredPosts =
+          allPosts.filter(post => {
 
-  if (!viewer) return;
+            const title =
+              post.title || "";
 
-  viewer.classList.remove("open");
-  viewer.style.display = "none";
-}
+            const description =
+              post.description || "";
 
+            const tags =
+              Array.isArray(post.tags)
+                ? post.tags.join(" ")
+                : "";
 
-function setupViewer() {
+            const searchable =
+              [
+                title,
+                description,
+                tags
+              ]
+                .join(" ")
+                .toLowerCase();
 
-  const viewer =
-    $("#viewer");
-
-  if (!viewer) return;
-
-  const close =
-    viewer.querySelector(
-      "[data-close]"
-    );
-
-  if (close) {
-    close.addEventListener(
-      "click",
-      closeViewer
-    );
-  }
-
-  viewer.addEventListener(
-    "click",
-    (event) => {
-
-      if (event.target === viewer) {
-        closeViewer();
+            return searchable.includes(query);
+          });
       }
 
+      renderGallery();
     }
   );
 }
 
 
-/* =========================================
-   AUTH / PROFILE BUTTON
-========================================= */
+/* --------------------------------------------------
+   FAVORITES
+-------------------------------------------------- */
 
-async function checkAuth() {
+function getFavorites(){
 
-  const profileButton =
-    $("#profileBtn");
+  try{
 
-  if (!profileButton) return;
+    return JSON.parse(
+      localStorage.getItem(
+        "kioku-favorites"
+      ) || "[]"
+    );
 
-  if (!supabaseClient) {
+  }catch{
 
-    profileButton.textContent =
+    return [];
+  }
+}
+
+function saveFavorites(favorites){
+
+  localStorage.setItem(
+    "kioku-favorites",
+    JSON.stringify(favorites)
+  );
+}
+
+function toggleFavorite(
+  id,
+  card,
+  button
+){
+
+  let favorites =
+    getFavorites();
+
+  if(favorites.includes(id)){
+
+    favorites =
+      favorites.filter(
+        favorite => favorite !== id
+      );
+
+    card.classList.remove(
+      "saved"
+    );
+
+    button.textContent =
+      "♡";
+
+  }else{
+
+    favorites.push(id);
+
+    card.classList.add(
+      "saved"
+    );
+
+    button.textContent =
+      "♥";
+  }
+
+  saveFavorites(
+    favorites
+  );
+}
+
+function restoreFavorites(){
+
+  const favorites =
+    getFavorites();
+
+  document
+    .querySelectorAll(".card")
+    .forEach(card => {
+
+      const id =
+        card.dataset.id;
+
+      const button =
+        card.querySelector(".save");
+
+      if(
+        id &&
+        favorites.includes(id)
+      ){
+
+        card.classList.add(
+          "saved"
+        );
+
+        if(button){
+          button.textContent =
+            "♥";
+        }
+      }
+    });
+}
+
+function setupFavorites(){
+  /*
+    Favorites are attached directly
+    when gallery cards are created.
+  */
+}
+
+
+/* --------------------------------------------------
+   AUTH BUTTON
+-------------------------------------------------- */
+
+async function checkAuth(){
+
+  const authButton =
+    document.getElementById("authBtn");
+
+  if(!authButton){
+    return;
+  }
+
+  if(!supabaseClient){
+
+    authButton.textContent =
       "log in";
-
-    profileButton.onclick = () => {
-      window.location.href =
-        "auth.html";
-    };
 
     return;
   }
 
   const {
-    data: { session }
+    data:{session}
   } =
     await supabaseClient.auth.getSession();
 
-  if (session) {
+  if(session){
 
-    profileButton.textContent =
+    authButton.textContent =
       "profile";
 
-    profileButton.onclick = () => {
-      window.location.href =
-        "profile.html";
-    };
+    authButton.onclick =
+      () => {
+        window.location.href =
+          "profile.html";
+      };
 
-  } else {
+  }else{
 
-    profileButton.textContent =
+    authButton.textContent =
       "log in";
 
-    profileButton.onclick = () => {
-      window.location.href =
-        "auth.html";
-    };
+    authButton.onclick =
+      () => {
+        window.location.href =
+          "auth.html";
+      };
   }
 }
 
 
-/* =========================================
-   ADD PHOTO MODAL
-========================================= */
+/* --------------------------------------------------
+   ADD BUTTON
+-------------------------------------------------- */
 
-function setupAddButton() {
+function setupAddButton(){
 
-  const add =
-    $("#add");
+  const addButton =
+    document.getElementById("add");
 
-  if (!add) return;
+  if(!addButton){
+    return;
+  }
 
-  add.addEventListener(
+  /*
+    The actual upload modal is handled by
+    index.html so there is only one uploader.
+  */
+
+  addButton.addEventListener(
     "click",
-    async () => {
+    async event => {
 
-      if (!supabaseClient) {
+      /*
+        Stop this handler from doing anything
+        if the page already has its own modal
+        handler.
+      */
+
+      if(
+        document.getElementById(
+          "addModal"
+        )
+      ){
+        return;
+      }
+
+      event.preventDefault();
+
+      if(!supabaseClient){
         window.location.href =
           "auth.html";
         return;
       }
 
       const {
-        data: { session }
+        data:{session}
       } =
         await supabaseClient.auth.getSession();
 
-      if (!session) {
+      if(!session){
+
         window.location.href =
           "auth.html";
+
         return;
       }
 
-      openAddModal();
+      /*
+        Fallback for older homepage versions.
+      */
+
+      if(typeof openAddModal === "function"){
+        openAddModal();
+      }
     }
   );
 }
 
 
-/* =========================================
-   ADD MODAL
-========================================= */
+/* --------------------------------------------------
+   PUBLIC PROFILE HELPER
+-------------------------------------------------- */
 
-function openAddModal() {
+function openPublicProfile(
+  username
+){
 
-  const modal =
-    $("#addModal");
-
-  if (!modal) {
-    createAddModal();
+  if(!username){
+    return;
   }
 
-  const realModal =
-    $("#addModal");
-
-  if (realModal) {
-    realModal.style.display =
-      "flex";
-  }
+  window.location.href =
+    "public.html?username=" +
+    encodeURIComponent(username);
 }
 
 
-function closeAddModal() {
+/* --------------------------------------------------
+   AUTH STATE CHANGES
+-------------------------------------------------- */
 
-  const modal =
-    $("#addModal");
+function setupAuthListener(){
 
-  if (modal) {
-    modal.style.display =
-      "none";
+  if(!supabaseClient){
+    return;
   }
-}
 
+  supabaseClient.auth.onAuthStateChange(
+    (_event, session) => {
 
-/* =========================================
-   CREATE ADD MODAL
-========================================= */
+      const authButton =
+        document.getElementById(
+          "authBtn"
+        );
 
-function createAddModal() {
-
-  if ($("#addModal")) return;
-
-  const modal =
-    document.createElement("div");
-
-  modal.id =
-    "addModal";
-
-  modal.innerHTML = `
-    <div class="add-box">
-
-      <button
-        class="add-close"
-        id="addClose"
-      >
-        ×
-      </button>
-
-      <h2>new memory</h2>
-
-      <input
-        id="postImage"
-        type="file"
-        accept="image/*"
-      >
-
-      <div
-        id="imagePreview"
-        class="image-preview"
-      ></div>
-
-      <input
-        id="postTitle"
-        type="text"
-        placeholder="title"
-        maxlength="100"
-      >
-
-      <textarea
-        id="postDescription"
-        placeholder="description"
-        maxlength="500"
-      ></textarea>
-
-      <input
-        id="postTags"
-        type="text"
-        placeholder="tags, separated by commas"
-      >
-
-      <button
-        id="publishPost"
-        class="publish-button"
-      >
-        publish
-      </button>
-
-      <div
-        id="uploadStatus"
-        class="upload-status"
-      ></div>
-
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  addModalStyles();
-
-  $("#addClose")
-    .addEventListener(
-      "click",
-      closeAddModal
-    );
-
-  modal.addEventListener(
-    "click",
-    (event) => {
-
-      if (event.target === modal) {
-        closeAddModal();
+      if(!authButton){
+        return;
       }
 
+      if(session){
+
+        authButton.textContent =
+          "profile";
+
+        authButton.onclick =
+          () => {
+            window.location.href =
+              "profile.html";
+          };
+
+      }else{
+
+        authButton.textContent =
+          "log in";
+
+        authButton.onclick =
+          () => {
+            window.location.href =
+              "auth.html";
+          };
+      }
     }
   );
-
-  $("#postImage")
-    .addEventListener(
-      "change",
-      previewPostImage
-    );
-
-  $("#publishPost")
-    .addEventListener(
-      "click",
-      publishPost
-    );
 }
 
 
-/* =========================================
-   PHOTO PREVIEW
-========================================= */
-
-function previewPostImage(event) {
-
-  const file =
-    event.target.files[0];
-
-  const preview =
-    $("#imagePreview");
-
-  if (!file || !preview) return;
-
-  const url =
-    URL.createObjectURL(file);
-
-  preview.innerHTML = `
-    <img src="${url}">
-  `;
-}
-
-
-/* =========================================
-   PUBLISH POST
-========================================= */
-
-async function publishPost() {
-
-  const status =
-    $("#uploadStatus");
-
-  const publishButton =
-    $("#publishPost");
-
-  const fileInput =
-    $("#postImage");
-
-  const titleInput =
-    $("#postTitle");
-
-  const descriptionInput =
-    $("#postDescription");
-
-  const tagsInput =
-    $("#postTags");
-
-  if (!supabaseClient) {
-    if (status)
-      status.textContent =
-        "Supabase is not connected.";
-
-    return;
-  }
-
-  const {
-    data: { session }
-  } =
-    await supabaseClient.auth.getSession();
-
-  if (!session) {
-
-    window.location.href =
-      "auth.html";
-
-    return;
-  }
-
-  const file =
-    fileInput.files[0];
-
-  if (!file) {
-
-    status.textContent =
-      "choose a photo first.";
-
-    return;
-  }
-
-  publishButton.disabled = true;
-
-  status.textContent =
-    "uploading...";
-
-  try {
-
-    const extension =
-      file.name
-        .split(".")
-        .pop()
-        .toLowerCase();
-
-    const filePath =
-      `photos/${session.user.id}-${Date.now()}.${extension}`;
-
-
-    /* Upload image */
-
-    const {
-      error: uploadError
-    } =
-      await supabaseClient
-        .storage
-        .from("avatars")
-        .upload(
-          filePath,
-          file,
-          {
-            contentType:
-              file.type,
-            upsert: false
-          }
-        );
-
-    if (uploadError) {
-      throw uploadError;
-    }
-
-
-    /* Get public URL */
-
-    const {
-      data: publicData
-    } =
-      supabaseClient
-        .storage
-        .from("avatars")
-        .getPublicUrl(
-          filePath
-        );
-
-    const imageUrl =
-      publicData.publicUrl;
-
-
-    /* Tags */
-
-    const tags =
-      tagsInput.value
-        .split(",")
-        .map(tag => tag.trim())
-        .filter(Boolean);
-
-
-    /* Create post */
-
-    const {
-      error: postError
-    } =
-      await supabaseClient
-        .from("posts")
-        .insert({
-          user_id:
-            session.user.id,
-
-          image_url:
-            imageUrl,
-
-          title:
-            titleInput.value.trim(),
-
-          description:
-            descriptionInput.value.trim(),
-
-          tags
-        });
-
-    if (postError) {
-      throw postError;
-    }
-
-
-    status.textContent =
-      "published.";
-
-    fileInput.value = "";
-
-    titleInput.value = "";
-
-    descriptionInput.value = "";
-
-    tagsInput.value = "";
-
-    $("#imagePreview").innerHTML = "";
-
-
-    await loadRealPosts();
-
-
-    setTimeout(
-      closeAddModal,
-      700
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Publish error:",
-      error
-    );
-
-    status.textContent =
-      "upload failed: " +
-      (
-        error.message ||
-        "unknown error"
-      );
-
-  } finally {
-
-    publishButton.disabled =
-      false;
-  }
-}
-
-
-/* =========================================
-   MODAL STYLES
-========================================= */
-
-function addModalStyles() {
-
-  if ($("#kiokuAddStyles"))
-    return;
-
-  const style =
-    document.createElement("style");
-
-  style.id =
-    "kiokuAddStyles";
-
-  style.textContent = `
-
-    #addModal {
-      position:fixed;
-      inset:0;
-      z-index:9999;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      background:rgba(0,0,0,.45);
-      padding:20px;
-      box-sizing:border-box;
-    }
-
-    .add-box {
-      width:min(480px,100%);
-      max-height:90vh;
-      overflow:auto;
-      background:#fff;
-      border:1px solid #222;
-      padding:24px;
-      box-sizing:border-box;
-      position:relative;
-      box-shadow:0 15px 50px rgba(0,0,0,.2);
-    }
-
-    .add-box h2 {
-      margin:0 0 20px;
-      font-weight:400;
-    }
-
-    .add-box input,
-    .add-box textarea {
-      width:100%;
-      box-sizing:border-box;
-      border:1px solid #ccc;
-      padding:12px;
-      margin-bottom:12px;
-      font:inherit;
-      background:#fff;
-    }
-
-    .add-box textarea {
-      min-height:100px;
-      resize:vertical;
-    }
-
-    .add-close {
-      position:absolute;
-      right:14px;
-      top:10px;
-      border:0;
-      background:none;
-      font-size:28px;
-      cursor:pointer;
-    }
-
-    .image-preview {
-      width:100%;
-      margin-bottom:12px;
-    }
-
-    .image-preview img {
-      display:block;
-      width:100%;
-      max-height:280px;
-      object-fit:contain;
-      background:#f3f3f3;
-    }
-
-    .publish-button {
-      width:100%;
-      padding:13px;
-      border:1px solid #222;
-      background:#222;
-      color:#fff;
-      cursor:pointer;
-      font:inherit;
-    }
-
-    .publish-button:disabled {
-      opacity:.5;
-      cursor:wait;
-    }
-
-    .upload-status {
-      min-height:20px;
-      margin-top:12px;
-      font-size:13px;
-      text-align:center;
-    }
-
-  `;
-
-  document.head.appendChild(style);
-}
-
-
-/* =========================================
+/* --------------------------------------------------
    START
-========================================= */
+-------------------------------------------------- */
 
 setupSearch();
-
 setupFavorites();
-
-setupViewer();
-
 setupAddButton();
-
+setupAuthListener();
 checkAuth();
-
 loadRealPosts();
